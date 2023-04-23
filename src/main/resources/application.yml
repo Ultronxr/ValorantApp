@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: secret, dev
+    active: secret, local
 
   mvc:
     static-path-pattern: /static/**

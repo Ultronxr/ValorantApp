@@ -12,9 +12,15 @@ import cn.ultronxr.valorant.service.RiotAccountService;
 import cn.ultronxr.valorant.util.RSOUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.util.Arrays;
 
 /**
@@ -60,6 +66,25 @@ public class RiotAccountController {
             return AjaxResponseUtils.success(state.getMsg());
         }
         return AjaxResponseUtils.fail(state.getMsg());
+    }
+
+    @PostMapping("/import")
+    @ResponseBody
+    public AjaxResponse importFile(@RequestParam("file") MultipartFile file) {
+        if(accountService.importFile(file)) {
+            return AjaxResponseUtils.success();
+        }
+        return AjaxResponseUtils.fail();
+    }
+
+    @RequestMapping("/importResult")
+    public ResponseEntity<ByteArrayResource> importFileResult() throws Exception {
+        byte[] bytes = Files.readAllBytes(new File("cache/files/拳头账号导入结果.xlsx").toPath());
+        ByteArrayResource resource = new ByteArrayResource(bytes);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header("Content-disposition", "attachment; filename=拳头账号导入结果.xlsx")
+                .body(resource);
     }
 
     @DeleteMapping("/delete")

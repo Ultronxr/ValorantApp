@@ -20,6 +20,8 @@ const app = {
                 url: '/account',
                 multiFactor: '/multiFactor',
                 create: '/create',
+                import: '/import',
+                importResult: '/importResult',
                 delete: '/delete',
                 // update: '/update',
                 query: '/query',

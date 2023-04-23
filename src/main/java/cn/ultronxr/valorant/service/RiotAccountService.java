@@ -5,6 +5,7 @@ import cn.ultronxr.valorant.bean.enums.RiotAccountCreateState;
 import cn.ultronxr.valorant.bean.mybatis.bean.RiotAccount;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author Ultronxr
@@ -14,6 +15,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface RiotAccountService extends IService<RiotAccount> {
 
     RiotAccountCreateState create(RiotAccount account);
+
+    boolean importFile(MultipartFile file);
 
     //boolean update(RiotAccount account);
 

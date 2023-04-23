@@ -35,8 +35,9 @@ build/
 ### Mac OS ###
 .DS_Store
 
-# 日志
+# 日志及缓存
 /logs/
+/cache/
 
 # 敏感信息文件
 application-secret.yml

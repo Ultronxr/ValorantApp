@@ -22,18 +22,6 @@
                     <input class="layui-input" name="username" id="username" autocomplete="off">
                 </div>
             </div>
-            <!--<div class="layui-inline">-->
-            <!--    <label class="layui-form-label">社交名称</label>-->
-            <!--    <div class="layui-input-inline">-->
-            <!--        <input class="layui-input" name="socialName" id="socialName" autocomplete="off">-->
-            <!--    </div>-->
-            <!--</div>-->
-            <!--<div class="layui-inline">-->
-            <!--    <label class="layui-form-label">社交标签</label>-->
-            <!--    <div class="layui-input-inline">-->
-            <!--        <input class="layui-input" name="socialTag" id="socialTag" autocomplete="off">-->
-            <!--    </div>-->
-            <!--</div>-->
 
             <div class="layui-inline">
                 <button type="button" class="layui-btn"  data-type="reload" lay-filter="data-search-btn" id="searchBtn"><i class="layui-icon"></i> 搜 索</button>
@@ -48,6 +36,12 @@
 
 <script type="text/html" id="toolbar">
     <div class="layui-btn-container">
+        <button type="button" class="layui-btn" id="import">
+            <i class="layui-icon">&#xe67c;</i>批量导入账号
+        </button>
+        <button type="button" class="layui-btn" id="importResult" onclick="downloadImportResult()">
+            <i class="layui-icon">&#xe601;</i>获取上次批量导入结果
+        </button>
         <button class="layui-btn layui-btn-sm" lay-event="create">新增</button>
         <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">批量删除</button>
     </div>

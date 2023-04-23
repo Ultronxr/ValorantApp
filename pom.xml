@@ -46,6 +46,7 @@
         <apache.commons-io.version>2.11.0</apache.commons-io.version>
         <apache.commons-collections.version>3.2.2</apache.commons-collections.version>
         <apache.commons-collections4.version>4.4</apache.commons-collections4.version>
+        <apache.poi.version>5.2.3</apache.poi.version>
         <commons-cli.version>1.5</commons-cli.version>
         <devtools.version>2.3.5.RELEASE</devtools.version>
         <jetbrains.annotations.verison>23.1.0</jetbrains.annotations.verison>
@@ -159,6 +160,18 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
             <version>${apache.commons-collections4.version}</version>
+        </dependency>
+
+        <!-- Excel -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${apache.poi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${apache.poi.version}</version>
         </dependency>
 
         <dependency>

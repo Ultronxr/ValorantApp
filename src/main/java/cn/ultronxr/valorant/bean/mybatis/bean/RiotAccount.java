@@ -17,13 +17,15 @@ public class RiotAccount {
     @TableId(type = IdType.INPUT)
     private String userId;
 
+    private Long accountNo;
+
     private String username;
 
     private String password;
 
-    private String socialName;
+    private String email;
 
-    private String socialTag;
+    private String emailPwd;
 
     private String accessToken;
 
@@ -32,5 +34,7 @@ public class RiotAccount {
     private String multiFactor;
 
     private Boolean isVerified;
+
+    private Boolean isDel;
 
 }
