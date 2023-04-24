@@ -30,7 +30,8 @@ function loadSelect(url, targetSelect, selectName, selectValue, async, callback,
     app.util.ajax.get(url,
         null,
         function (res) {
-            loadSelectFromJson(res.data, targetSelect, selectName, selectValue, excludeEmptyOption);
+            // loadSelectFromJson(res.data, targetSelect, selectName, selectValue, excludeEmptyOption);
+            loadSelectFromPagedJson(res.data, targetSelect, selectName, selectValue, excludeEmptyOption);
         },
         function () {
             let msg = targetSelect.selector + ' select 数据加载失败！';
@@ -70,6 +71,26 @@ function loadSelectFromJson(json, targetSelect, selectName, selectValue, exclude
     let options = !excludeEmptyOption ? '<option value="">--- 请选择 ---</option>' : '';
     for (let i in jsonObj) {
         options += '<option value="' + jsonObj[i][selectValue] + '">' + jsonObj[i][selectName] + '</option>';
+    }
+    targetSelect.html(options);
+    form.render('select');
+}
+
+function loadSelectFromPagedJson(json, targetSelect, selectName, selectValue, excludeEmptyOption) {
+    if(app.util.string.isEmpty(selectName)) {
+        selectName = "name";
+    }
+    if(app.util.string.isEmpty(selectValue)) {
+        selectValue = "id";
+    }
+
+    let jsonObj = json;
+    if(app.util.string.isJsonStringify(json)) {
+        jsonObj = JSON.parse(json);
+    }
+    let options = !excludeEmptyOption ? '<option value="">--- 请选择 ---</option>' : '';
+    for (let i in jsonObj.records) {
+        options += '<option value="' + jsonObj.records[i][selectValue] + '">' + jsonObj.records[i][selectName] + '</option>';
     }
     targetSelect.html(options);
     form.render('select');

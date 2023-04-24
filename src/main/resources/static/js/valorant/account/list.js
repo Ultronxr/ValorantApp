@@ -45,6 +45,7 @@ table.render({
     // ,height: 500
     ,cols: [[ //表头
         {type: 'checkbox', fixed: 'left'}
+        ,{field: 'accountNo', title: '编号', width: '7%', sort: true, hide: false}
         ,{field: 'userId', title: 'ID', sort: true, hide: false}
         ,{field: 'username', title: '用户名', sort: true}
         ,{title:'操作', width: 125, minWidth: 125, fixed: 'right', toolbar: '#inlineToolbar'}
@@ -105,12 +106,14 @@ var active = {
             //     curr: 1 //重新从第 1 页开始
             // },
             where: { //设定异步数据接口的额外参数
+                accountNo: $("#accountNo").val(),
                 userId: $("#userId").val(),
                 username: $("#username").val(),
             }
         });
     },
     clear: function () {
+        $("#accountNo").val("");
         $("#userId").val("");
         $("#username").val("");
         refreshTable();

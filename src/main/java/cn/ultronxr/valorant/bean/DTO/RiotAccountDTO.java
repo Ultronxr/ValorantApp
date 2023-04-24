@@ -10,6 +10,8 @@ import lombok.Data;
 @Data
 public class RiotAccountDTO {
 
+    private Long accountNo;
+
     private String username;
 
     private String userId;

@@ -114,7 +114,7 @@ public class RiotAccountController {
     @GetMapping("/select")
     @ResponseBody
     public AjaxResponse select() {
-        return AjaxResponseUtils.success(accountService.queryAccount(null));
+        return AjaxResponseUtils.success(accountService.queryAccount(new RiotAccountDTO()));
     }
 
 }

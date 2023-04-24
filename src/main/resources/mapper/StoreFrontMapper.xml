@@ -37,6 +37,7 @@
                         valorant_store_front AS store, valorant_weapon_skin AS skin
                     WHERE
                         store.item_id = skin.uuid
+                        AND account.is_del = 0
                         AND store.date = #{batchQueryBothDTO.date}
                         AND store.is_bonus = 0
                     GROUP BY
@@ -100,6 +101,7 @@
         WHERE
             store.item_id = skin.uuid
             AND store.user_id = account.user_id
+            AND account.is_del = 0
             AND store.date = #{batchQueryBothDTO.date}
             AND store.user_id IN
                 (SELECT
