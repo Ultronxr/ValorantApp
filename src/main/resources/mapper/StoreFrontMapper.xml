@@ -3,23 +3,26 @@
 <mapper namespace="cn.ultronxr.valorant.bean.mybatis.mapper.StoreFrontMapper">
 
     <resultMap id="ResultMapBatchBoth" type="cn.ultronxr.valorant.bean.VO.BatchBothStoreFrontVO">
-        <result column="username" jdbcType="VARCHAR" property="username" />
-        <result column="user_id" jdbcType="VARCHAR" property="userId" />
+        <result column="account_no" jdbcType="BIGINT" property="accountNo" />
         <result column="is_bonus" jdbcType="TINYINT" property="isBonus" />
         <result column="date" jdbcType="VARCHAR" property="date" />
         <result column="cost_list" jdbcType="VARCHAR" property="costList" typeHandler="cn.ultronxr.valorant.typeHandler.IntegerJsonArrayTypeHandler" />
         <result column="discount_percent_list" jdbcType="VARCHAR" property="discountPercentList" typeHandler="cn.ultronxr.valorant.typeHandler.IntegerJsonArrayTypeHandler" />
         <result column="discount_cost_list" jdbcType="VARCHAR" property="discountCostList" typeHandler="cn.ultronxr.valorant.typeHandler.IntegerJsonArrayTypeHandler" />
         <result column="display_name_list" jdbcType="VARCHAR" property="displayNameList" typeHandler="cn.ultronxr.valorant.typeHandler.StringJsonArrayTypeHandler" />
+        <result column="display_icon_list" jdbcType="VARCHAR" property="displayIconList" typeHandler="cn.ultronxr.valorant.typeHandler.StringJsonArrayTypeHandler" />
+        <result column="content_tier_list" jdbcType="VARCHAR" property="contentTierList" typeHandler="cn.ultronxr.valorant.typeHandler.StringJsonArrayTypeHandler" />
     </resultMap>
 
     <select id="batchQueryBoth" parameterType="java.lang.Object" resultMap="ResultMapBatchBoth">
         SELECT
-            account.username, store.user_id, store.is_bonus, store.date,
+            account.account_no, store.is_bonus, store.date,
             JSON_ARRAYAGG(store.cost) AS cost_list,
             JSON_ARRAYAGG(store.discount_percent) AS discount_percent_list,
             JSON_ARRAYAGG(store.discount_cost) AS discount_cost_list,
-            JSON_ARRAYAGG(skin.display_name) AS display_name_list
+            JSON_ARRAYAGG(skin.display_name) AS display_name_list,
+            JSON_ARRAYAGG(skin.display_icon) AS display_icon_list,
+            JSON_ARRAYAGG(skin.content_tier_uuid) AS content_tier_list
         FROM
             valorant_store_front AS store, valorant_weapon_skin AS skin, valorant_riot_account AS account
         WHERE
@@ -78,18 +81,20 @@
                     ) AS bonus
                 ON single.user_id = bonus.user_id))
         GROUP BY
-            store.user_id, store.is_bonus, store.date
+            account.account_no, store.user_id, store.is_bonus, store.date
         ORDER BY
-            account.username ASC, is_bonus ASC
+            account_no ASC, is_bonus ASC, skin.uuid ASC
     </select>
 
     <select id="batchQueryBothWhileNightShopClosed" parameterType="java.lang.Object" resultMap="ResultMapBatchBoth">
         SELECT
-            account.username, store.user_id, store.is_bonus, store.date,
+            account.account_no, store.is_bonus, store.date,
             JSON_ARRAYAGG(store.cost) AS cost_list,
             JSON_ARRAYAGG(store.discount_percent) AS discount_percent_list,
             JSON_ARRAYAGG(store.discount_cost) AS discount_cost_list,
-            JSON_ARRAYAGG(skin.display_name) AS display_name_list
+            JSON_ARRAYAGG(skin.display_name) AS display_name_list,
+            JSON_ARRAYAGG(skin.display_icon) AS display_icon_list,
+            JSON_ARRAYAGG(skin.content_tier_uuid) AS content_tier_list
         FROM
             valorant_store_front AS store, valorant_weapon_skin AS skin, valorant_riot_account AS account
         WHERE
@@ -123,9 +128,9 @@
                     </if>
                 )
         GROUP BY
-            store.user_id, store.is_bonus, store.date
+            account.account_no, store.user_id, store.is_bonus, store.date
         ORDER BY
-            account.username ASC, is_bonus ASC
+            account_no ASC, is_bonus ASC, skin.uuid ASC
     </select>
 
 </mapper>

@@ -480,8 +480,6 @@ var selectData = [
 ];
 
 $(function () {
-   // loadAllSelect();
-
     dropdown.render({
         elem: '#skin1' // 绑定的元素，可以是任意元素
         ,data: selectData
@@ -541,43 +539,33 @@ $(function () {
     });
 });
 
-// function loadAllSelect() {
-//     loadSelect(app.util.api.getAPIUrl('valorant.account.select'), $('#userId'), "username", "userId", false, null, true);
-// }
-
 table.render({
     elem: '#data-table'
     ,id: 'dataTable'
     // ,height: 500
     ,toolbar: '#toolbar'
     ,cols: [[ //表头
-        {field: 'userId', title: '用户ID', sort: false, align: 'center', width: '10%', style: 'height:80px;',
-            templet: '<div>{{=d.userId}}</div>'}
-        ,{field: 'username', title: '用户名', sort: false, align: 'center', width: '8%', style: 'height:80px;',
-            templet: '<div>{{=d.username}}</div>'}
-        // ,{field: 'date', title: '日期', sort: false, align: 'center', width: '10%', style: 'height:80px;',
-        //     templet: '<div>{{=d.date}}</div>'}
-        ,{field: 'displayName', title: '每日商店', sort: false, align: 'center', width: '35%', style: 'height:80px;',
+        {field: 'accountNo', title: '账号编号', sort: false, align: 'center', width: '5%', style: 'height:50px;',
+            templet: '<div>{{=d.accountNo}}</div>'}
+        ,{field: 'displayName', title: '每日商店', sort: false, align: 'center', width: '30%', style: 'height:50px;',
             templet: function (d) {
                 let res = '';
                 for(let i = 0; i < d.displayNameList.length; ++i) {
-                    res += d.displayNameList[i] + "， " //+ d.costList[i] + "VP" + "， ";
+                    res += d.displayNameList[i] + ", ";
                 }
                 return res;
             }}
-        ,{field: 'cost', title: '夜市', sort: false, align: 'center', width: '45%', style: 'height:80px;',
+        ,{field: 'cost', title: '夜市', sort: false, align: 'center', width: '50%', style: 'height:50px;',
             templet: function (d) {
                 let res = '';
                 if(d.bonusOffer != null) {
                     for(let i = 0; i < d.bonusOffer.displayNameList.length; ++i) {
-                        res += d.bonusOffer.displayNameList[i] + " -" + d.bonusOffer.discountPercentList[i] + "%" + "， ";
-                        if(i === 2) {
-                            res += '<br/>';
-                        }
+                        res += d.bonusOffer.displayNameList[i] + ":" + d.bonusOffer.discountPercentList[i] + ", ";
                     }
                 }
                 return res;
             }}
+        ,{title:'操作', sort: false, align: 'center', width: '5%', fixed: 'right', toolbar: '#inlineToolbar'}
     ]]
     ,totalRow: false
     ,loading: true
@@ -703,4 +691,27 @@ function batchUpdateBoth() {
         true,
         8000000
     );
+}
+
+// 单元格内工具栏事件
+table.on('tool(dataTable)', function(obj) {
+    let rowData = obj.data;
+    if(obj.event === 'showPic') {
+        layerOpenImg(rowData);
+    }
+});
+
+function layerOpenImg(rowData) {
+    layer.open({
+        title: '商店信息 编号：' + rowData.accountNo,
+        type: 2,
+        content: ['/static/html/valorant/storefront/batch/storefrontImg.html', 'no'],
+        area: ['1500px', '670px'],
+        shadeClose: true,
+        success: function (layero, index) {
+            // 执行子页面的函数
+            let iframe = window[layero.find('iframe')[0]['name']];
+            iframe.setRowData(rowData);
+        }
+    });
 }

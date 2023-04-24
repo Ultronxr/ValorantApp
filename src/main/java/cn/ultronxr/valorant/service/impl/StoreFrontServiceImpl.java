@@ -267,7 +267,7 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
             List<BatchBothStoreFrontVO> list = result.getRecords();
             for (int i = 0; i < list.size() - 1; i++) {
                 if(!list.get(i).getIsBonus() && list.get(i+1).getIsBonus()
-                        && list.get(i).getUserId().equals(list.get(i+1).getUserId())) {
+                        && list.get(i).getAccountNo().equals(list.get(i+1).getAccountNo())) {
                     list.get(i).setBonusOffer(list.get(i+1));
                 }
             }

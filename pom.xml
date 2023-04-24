@@ -55,6 +55,7 @@
         <aliyun-sdk-oss.version>3.11.0</aliyun-sdk-oss.version>
         <tencentcloud-sdk-java.version>3.1.621</tencentcloud-sdk-java.version>
         <quartz.version>2.3.2</quartz.version>
+        <opencc4j.version>1.8.0</opencc4j.version>
     </properties>
 
     <dependencies>
@@ -193,6 +194,13 @@
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
             <version>${hutool.version}</version>
+        </dependency>
+
+        <!-- 中文简繁体转换 -->
+        <dependency>
+            <groupId>com.github.houbb</groupId>
+            <artifactId>opencc4j</artifactId>
+            <version>${opencc4j.version}</version>
         </dependency>
 
     </dependencies>

@@ -58,6 +58,11 @@
                 <button type="button" class="layui-btn"  data-type="reload" lay-filter="data-search-btn" id="searchBtn"><i class="layui-icon"></i> 搜 索</button>
                 <button type="button" class="layui-btn"  data-type="clear" lay-filter="data-search-btn" id="clearBtn"> 清 空</button>
             </div>
+
+            <br/>
+            <div class="layui-inline" style="color: lightseagreen; font-size: 18px;">
+                列表初始号信息为实时数据,有心仪商店账号可直接下单自助提取！下单直通车：<a href="#" style="color: blue; text-decoration: underline;">无畏电玩</a>
+            </div>
         </div>
     </form>
     <table id="data-table" lay-filter="dataTable" class="layui-table" lay-skin="line"></table>
@@ -67,6 +72,10 @@
     <div class="layui-btn-container">
         <button class="layui-btn layui-btn-sm" lay-event="batchUpdateBoth">批量更新每日商店和夜市（两步验证账号无法自动更新）</button>
     </div>
+</script>
+
+<script type="text/html" id="inlineToolbar">
+    <a class="layui-btn layui-btn-xs" lay-event="showPic">查看图片</a>
 </script>
 
 <script src="/static/lib/layui-v2.7.6/layui.js"></script>

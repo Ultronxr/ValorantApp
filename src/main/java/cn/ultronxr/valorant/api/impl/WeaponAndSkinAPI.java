@@ -9,6 +9,7 @@ import cn.ultronxr.valorant.bean.mybatis.bean.Weapon;
 import cn.ultronxr.valorant.bean.mybatis.bean.WeaponSkin;
 import cn.ultronxr.valorant.service.WeaponService;
 import cn.ultronxr.valorant.service.WeaponSkinService;
+import com.github.houbb.opencc4j.util.ZhConverterUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,7 @@ public class WeaponAndSkinAPI extends BaseAPI {
             return;
         }
         parseWeapon(dataArray);
+        log.info("更新武器皮肤数据库完成。");
     }
 
     /**
@@ -72,6 +74,7 @@ public class WeaponAndSkinAPI extends BaseAPI {
         dataArray.parallelStream().forEach(obj -> {
             JSONObject jObj = (JSONObject) obj;
             Weapon weapon = JSONUtil.toBean(jObj, Weapon.class);
+            weapon.setDisplayName(ZhConverterUtil.toSimple(weapon.getDisplayName()));
             weaponService.saveOrUpdate(weapon);
 
             JSONArray skinArray = jObj.getJSONArray("skins");
@@ -92,19 +95,20 @@ public class WeaponAndSkinAPI extends BaseAPI {
             WeaponSkin skin = JSONUtil.toBean(jObj, WeaponSkin.class);
             skin.setType("skin");
             skin.setParentWeaponUuid(parentWeaponID);
+            skin.setDisplayName(ZhConverterUtil.toSimple(skin.getDisplayName()));
             weaponSkinService.saveOrUpdate(skin);
 
             JSONArray levelArray = jObj.getJSONArray("levels"),
                     chromaArray = jObj.getJSONArray("chromas");
-            parseWeaponSkinLevelOrChroma(levelArray, parentWeaponID, skin.getUuid(), "level");
-            parseWeaponSkinLevelOrChroma(chromaArray, parentWeaponID, skin.getUuid(), "chroma");
+            parseWeaponSkinLevelOrChroma(levelArray, parentWeaponID, skin.getUuid(), "level", skin.getContentTierUuid());
+            parseWeaponSkinLevelOrChroma(chromaArray, parentWeaponID, skin.getUuid(), "chroma", skin.getContentTierUuid());
         });
     }
 
     /**
      * 解析武器皮肤包含的升级、炫彩数据
      */
-    private void parseWeaponSkinLevelOrChroma(JSONArray levelArray, String parentWeaponID, String parentSkinID, String type) {
+    private void parseWeaponSkinLevelOrChroma(JSONArray levelArray, String parentWeaponID, String parentSkinID, String type, String contentTierUuid) {
         if(null == levelArray || levelArray.isEmpty()) {
             return;
         }
@@ -114,6 +118,8 @@ public class WeaponAndSkinAPI extends BaseAPI {
             levelOrChroma.setType(type);
             levelOrChroma.setParentWeaponUuid(parentWeaponID);
             levelOrChroma.setParentSkinUuid(parentSkinID);
+            levelOrChroma.setContentTierUuid(contentTierUuid);
+            levelOrChroma.setDisplayName(ZhConverterUtil.toSimple(levelOrChroma.getDisplayName()));
             weaponSkinService.saveOrUpdate(levelOrChroma);
         });
     }

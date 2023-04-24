@@ -10,9 +10,7 @@ import lombok.Data;
 @Data
 public class BatchBothStoreFrontVO {
 
-    private String username;
-
-    private String userId;
+    private Long accountNo;
 
     private Boolean isBonus;
 
@@ -25,6 +23,10 @@ public class BatchBothStoreFrontVO {
     private Integer[] discountCostList;
 
     private String[] displayNameList;
+
+    private String[] displayIconList;
+
+    private String[] contentTierList;
 
     // 用于把夜市数据合并到每日商店数据（两条数据合并为一条）
     private BatchBothStoreFrontVO bonusOffer;
