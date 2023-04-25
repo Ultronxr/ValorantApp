@@ -150,7 +150,7 @@ public class RiotAccountServiceImpl extends ServiceImpl<RiotAccountMapper, RiotA
                 .like(StringUtils.isNotEmpty(accountDTO.getUserId()), RiotAccount::getUserId, accountDTO.getUserId())
                 .like(StringUtils.isNotEmpty(accountDTO.getUsername()), RiotAccount::getUsername, accountDTO.getUsername())
                 .eq(RiotAccount::getIsDel, false)
-                .orderByAsc(RiotAccount::getUsername);
+                .orderByAsc(RiotAccount::getAccountNo);
 
         return accountMapper.selectPage(page, wrapper);
     }

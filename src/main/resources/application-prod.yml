@@ -20,6 +20,8 @@ spring:
       testOnReturn: false
       poolPreparedStatements: true
       maxOpenPreparedStatements: 20
+      connectTimeout: 200000
+      socketTimeout: 200000
       web:
         username: ${secret.prod.spring.datasource.druid.web.username}
         password: ${secret.prod.spring.datasource.druid.web.password}

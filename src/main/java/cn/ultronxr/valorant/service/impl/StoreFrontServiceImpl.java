@@ -260,7 +260,8 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
 
         // 如果夜市开放，那么需要对查询结果进行处理
         log.info("夜市开放。");
-        IPage<BatchBothStoreFrontVO> result = sfMapper.batchQueryBoth(Page.of(batchQueryBothDTO.getCurrent(), batchQueryBothDTO.getSize()), batchQueryBothDTO);
+        // 结果集会删去一半，所以size需要事先乘2
+        IPage<BatchBothStoreFrontVO> result = sfMapper.batchQueryBoth(Page.of(batchQueryBothDTO.getCurrent(), batchQueryBothDTO.getSize()*2), batchQueryBothDTO);
         if(CollectionUtils.isNotEmpty(result.getRecords())) {
             // 把夜市的数据合并到每日商店数据中（两条数据合并为一条）
             // SQL查询出来的总是 同一个账号的两条数据相连，且每日商店数据在夜市数据前面
@@ -274,9 +275,10 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
             // 删除夜市的数据条目
             list.removeIf(BatchBothStoreFrontVO::getIsBonus);
             result.setRecords(list);
-            result.setTotal(list.size());
             log.info("每日商店+夜市 查询结果处理完毕。");
         }
+        // 总数据量除2
+        result.setTotal(result.getTotal() / 2);
         return result;
     }
 

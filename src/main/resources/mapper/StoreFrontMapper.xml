@@ -28,6 +28,7 @@
         WHERE
             store.item_id = skin.uuid
             AND store.user_id = account.user_id
+            AND account.is_del = 0
             AND store.date >= #{batchQueryBothDTO.date}
             AND store.user_id IN
                 (SELECT single.user_id FROM (
@@ -37,7 +38,6 @@
                         valorant_store_front AS store, valorant_weapon_skin AS skin
                     WHERE
                         store.item_id = skin.uuid
-                        AND account.is_del = 0
                         AND store.date = #{batchQueryBothDTO.date}
                         AND store.is_bonus = 0
                     GROUP BY
@@ -84,7 +84,8 @@
         GROUP BY
             account.account_no, store.user_id, store.is_bonus, store.date
         ORDER BY
-            account_no ASC, is_bonus ASC, skin.uuid ASC
+            -- ANY_VALUE() 函数用于抑制 ONLY_FULL_GROUP_BY SQL_MODE 限制
+            account_no ASC, is_bonus ASC, ANY_VALUE(skin.uuid) ASC
     </select>
 
     <select id="batchQueryBothWhileNightShopClosed" parameterType="java.lang.Object" resultMap="ResultMapBatchBoth">
@@ -132,7 +133,7 @@
         GROUP BY
             account.account_no, store.user_id, store.is_bonus, store.date
         ORDER BY
-            account_no ASC, is_bonus ASC, skin.uuid ASC
+            account_no ASC, is_bonus ASC, ANY_VALUE(skin.uuid) ASC
     </select>
 
 </mapper>
