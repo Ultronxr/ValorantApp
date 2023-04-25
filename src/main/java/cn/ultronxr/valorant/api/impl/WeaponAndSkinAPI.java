@@ -12,9 +12,13 @@ import cn.ultronxr.valorant.service.WeaponSkinService;
 import com.github.houbb.opencc4j.util.ZhConverterUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Ultronxr
@@ -46,8 +50,17 @@ public class WeaponAndSkinAPI extends BaseAPI {
         if(null == dataArray) {
             return;
         }
-        parseWeapon(dataArray);
-        log.info("更新武器皮肤数据库完成。");
+
+        List<Weapon> weaponList = new ArrayList<>(25);
+        List<WeaponSkin> skinList = new ArrayList<>(4000);
+        parseWeapon(dataArray, weaponList, skinList);
+
+        if(weaponService.saveOrUpdateBatch(weaponList)
+                && weaponSkinService.saveOrUpdateBatch(skinList)) {
+            log.info("更新武器及皮肤数据库完成。武器（weapon）数据量={}，皮肤（skin/level/chroma）数据量={}", weaponList.size(), skinList.size());
+            return;
+        }
+        log.info("更新武器及皮肤数据库失败。");
     }
 
     /**
@@ -66,61 +79,63 @@ public class WeaponAndSkinAPI extends BaseAPI {
     /**
      * 解析武器信息数据
      */
-    private void parseWeapon(JSONArray dataArray) {
+    private void parseWeapon(JSONArray dataArray, @NotNull List<Weapon> weaponList, @NotNull List<WeaponSkin> skinList) {
         if(null == dataArray || dataArray.isEmpty()) {
             return;
         }
 
-        dataArray.parallelStream().forEach(obj -> {
+        dataArray.forEach(obj -> {
             JSONObject jObj = (JSONObject) obj;
             Weapon weapon = JSONUtil.toBean(jObj, Weapon.class);
             weapon.setDisplayName(ZhConverterUtil.toSimple(weapon.getDisplayName()));
-            weaponService.saveOrUpdate(weapon);
+            weaponList.add(weapon);
 
             JSONArray skinArray = jObj.getJSONArray("skins");
-            parseWeaponSkin(skinArray, weapon.getUuid());
+            parseWeaponSkin(skinArray, weapon.getUuid(), skinList);
         });
     }
 
     /**
      * 解析武器的皮肤数据
      */
-    private void parseWeaponSkin(JSONArray skinArray, String parentWeaponID) {
+    private void parseWeaponSkin(JSONArray skinArray, String parentWeaponID, @NotNull List<WeaponSkin> skinList) {
         if(null == skinArray || skinArray.isEmpty()) {
             return;
         }
 
-        skinArray.parallelStream().forEach(obj -> {
+        skinArray.forEach(obj -> {
             JSONObject jObj = (JSONObject) obj;
             WeaponSkin skin = JSONUtil.toBean(jObj, WeaponSkin.class);
             skin.setType("skin");
             skin.setParentWeaponUuid(parentWeaponID);
             skin.setDisplayName(ZhConverterUtil.toSimple(skin.getDisplayName()));
-            weaponSkinService.saveOrUpdate(skin);
+            skinList.add(skin);
 
             JSONArray levelArray = jObj.getJSONArray("levels"),
                     chromaArray = jObj.getJSONArray("chromas");
-            parseWeaponSkinLevelOrChroma(levelArray, parentWeaponID, skin.getUuid(), "level", skin.getContentTierUuid());
-            parseWeaponSkinLevelOrChroma(chromaArray, parentWeaponID, skin.getUuid(), "chroma", skin.getContentTierUuid());
+            parseWeaponSkinLevelOrChroma(levelArray, parentWeaponID, skin.getUuid(), "level", skin.getContentTierUuid(), skinList);
+            parseWeaponSkinLevelOrChroma(chromaArray, parentWeaponID, skin.getUuid(), "chroma", skin.getContentTierUuid(), skinList);
         });
     }
 
     /**
      * 解析武器皮肤包含的升级、炫彩数据
      */
-    private void parseWeaponSkinLevelOrChroma(JSONArray levelArray, String parentWeaponID, String parentSkinID, String type, String contentTierUuid) {
+    private void parseWeaponSkinLevelOrChroma(JSONArray levelArray,
+                                              String parentWeaponID, String parentSkinID, String type, String contentTierUuid,
+                                              @NotNull List<WeaponSkin> skinList) {
         if(null == levelArray || levelArray.isEmpty()) {
             return;
         }
 
-        levelArray.parallelStream().forEach(obj -> {
+        levelArray.forEach(obj -> {
             WeaponSkin levelOrChroma = JSONUtil.toBean((JSONObject) obj, WeaponSkin.class);
             levelOrChroma.setType(type);
             levelOrChroma.setParentWeaponUuid(parentWeaponID);
             levelOrChroma.setParentSkinUuid(parentSkinID);
             levelOrChroma.setContentTierUuid(contentTierUuid);
             levelOrChroma.setDisplayName(ZhConverterUtil.toSimple(levelOrChroma.getDisplayName()));
-            weaponSkinService.saveOrUpdate(levelOrChroma);
+            skinList.add(levelOrChroma);
         });
     }
 

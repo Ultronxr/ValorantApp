@@ -78,7 +78,7 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
     }
 
     @Override
-    public List<StoreFront> singleItemOffersWithSleep(String userId, String date, int sleepSeconds) {
+    public List<StoreFront> singleItemOffersWithSleep(String userId, String date, float sleepSeconds) {
         log.info("获取每日商店数据（WithSleep）：userId={} , date={}", userId, date);
         List<StoreFront> list = queryDB(userId, date, false);
 
@@ -100,7 +100,7 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
             // 请求API之后等待时间
             try {
                 log.info("请求API后等待时间：{} 秒", sleepSeconds);
-                Thread.sleep(1000L * sleepSeconds);
+                Thread.sleep((long) (sleepSeconds * 1000.0f));
             } catch (InterruptedException e) {
                 log.warn("Thread.sleep 抛出异常！", e);
             }
@@ -236,7 +236,7 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
             // 拳头API速率限制：100 requests every 2 minutes
             // 处理一个账号数据需要请求4-6次API（包括RSO认证），2分钟的请求上限为20个账号，即6秒处理一个账号
             // 实测处理一个账号数据请求时间为1.5秒左右，添加 sleep
-            singleItemOffersWithSleep(account.getUserId(), date, 2);
+            singleItemOffersWithSleep(account.getUserId(), date, 1.5f);
         });
         return true;
     }

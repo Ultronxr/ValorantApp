@@ -31,7 +31,7 @@ public interface StoreFrontService extends IMppService<StoreFront> {
      * @param sleepSeconds 请求API之后的等待时间（秒）
      * @return 商品列表
      */
-    List<StoreFront> singleItemOffersWithSleep(String userId, String date, int sleepSeconds);
+    List<StoreFront> singleItemOffersWithSleep(String userId, String date, float sleepSeconds);
 
     /**
      * 获取夜市商品

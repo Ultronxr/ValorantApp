@@ -29,7 +29,7 @@ public interface StoreFrontMapper extends MppBaseMapper<StoreFront> {
     default boolean isNightShopClosed(String date) {
         return this.selectCount(
                 new QueryWrapper<StoreFront>()
-                        .gt("date", date)
+                        .ge("date", date)
                         .eq("is_bonus", 1)
         ) == 0;
     }
