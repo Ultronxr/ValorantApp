@@ -27,9 +27,9 @@ CREATE TABLE valorant_riot_account (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT 'valorant 模块 - 拳头账户信息';
 
 -- 注：旧版本更新SQL
-ALTER TABLE valorant_riot_account ADD account_no BIGINT UNIQUE KEY NOT NULL AUTO_INCREMENT     COMMENT '账户编号' AFTER user_id;
-ALTER TABLE valorant_riot_account CHANGE social_name email VARCHAR(100)     DEFAULT NULL       COMMENT '初始邮箱';
-ALTER TABLE valorant_riot_account CHANGE social_tag email_pwd VARCHAR(500)     DEFAULT NULL    COMMENT '初始邮箱密码';
+ALTER TABLE valorant_riot_account ADD `account_no` BIGINT UNIQUE KEY NOT NULL AUTO_INCREMENT     COMMENT '账户编号' AFTER user_id;
+ALTER TABLE valorant_riot_account CHANGE `social_name` `email` VARCHAR(100)     DEFAULT NULL       COMMENT '初始邮箱';
+ALTER TABLE valorant_riot_account CHANGE `social_tag` `email_pwd` VARCHAR(500)     DEFAULT NULL    COMMENT '初始邮箱密码';
 
 CREATE TABLE valorant_cdk (
     `no`               BIGINT     NOT NULL AUTO_INCREMENT         COMMENT 'CDK编号',
