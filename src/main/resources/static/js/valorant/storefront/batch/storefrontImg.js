@@ -9,6 +9,11 @@ function setRowData(rowData) {
 }
 
 function renderSingle() {
+    if(ROW_DATA.displayNameList == null) {
+        $('#img-list').html('无每日商店数据');
+        return;
+    }
+
     let html = '';
     for(let i = 0; i < ROW_DATA.displayNameList.length; i++) {
         let simpleTier = getSimpleTier(ROW_DATA.contentTierList[i]),
@@ -31,6 +36,11 @@ function renderSingle() {
 }
 
 function renderBonus() {
+    if(ROW_DATA.bonusOffer == null) {
+        $('#img-list-bonus').html('无夜市数据');
+        return;
+    }
+
     let html = '';
     for(let i = 0; i < ROW_DATA.bonusOffer.displayNameList.length; i++) {
         let simpleTier = getSimpleTier(ROW_DATA.bonusOffer.contentTierList[i]),

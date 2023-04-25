@@ -630,11 +630,18 @@ table.on('tool(dataTable)', function(obj) {
 });
 
 function layerOpenImg(rowData) {
+    let layerWidth = '1500px',
+        layerHeight = '670px';
+    // 无夜市数据时，缩短弹窗高度
+    if(rowData.bonusOffer == null) {
+        layerHeight = '340px';
+    }
+
     layer.open({
         title: '商店信息 编号：' + rowData.accountNo,
         type: 2,
         content: ['/static/html/valorant/storefront/batch/storefrontImg.html', 'no'],
-        area: ['1500px', '670px'],
+        area: [layerWidth, layerHeight],
         shadeClose: true,
         success: function (layero, index) {
             // 执行子页面的函数
