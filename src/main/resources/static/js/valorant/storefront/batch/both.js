@@ -472,26 +472,28 @@ table.render({
     ,id: 'dataTable'
     // ,height: 500
     ,toolbar: '#toolbar'
+    ,defaultToolbar: [] //清空默认的三个工具栏按钮
     ,cols: [[ //表头
         {field: 'accountNo', title: '账号编号', sort: false, align: 'center', width: '5%', style: 'height:50px;',
             templet: '<div>{{=d.accountNo}}</div>'}
-        ,{field: 'displayName', title: '每日商店', sort: false, align: 'center', width: '30%', style: 'height:50px;',
+        ,{field: 'displayName', title: '每日商店', sort: false, align: 'center', width: '35%', style: 'height:50px;',
             templet: function (d) {
                 let res = '';
                 for(let i = 0; i < d.displayNameList.length; ++i) {
                     res += d.displayNameList[i] + ", ";
                 }
-                return res;
+                return res.slice(0, -2);
             }}
-        ,{field: 'cost', title: '夜市', sort: false, align: 'center', width: '50%', style: 'height:50px;',
+        ,{field: 'cost', title: '夜市', sort: false, align: 'center', width: '55%', style: 'height:50px;',
             templet: function (d) {
-                let res = '';
                 if(d.bonusOffer != null) {
+                    let res = '';
                     for(let i = 0; i < d.bonusOffer.displayNameList.length; ++i) {
                         res += d.bonusOffer.displayNameList[i] + ":" + d.bonusOffer.discountPercentList[i] + ", ";
                     }
+                    return res.slice(0, -2);
                 }
-                return res;
+                return '夜市未开放';
             }}
         ,{title:'操作', sort: false, align: 'center', width: '5%', fixed: 'right', toolbar: '#inlineToolbar'}
     ]]

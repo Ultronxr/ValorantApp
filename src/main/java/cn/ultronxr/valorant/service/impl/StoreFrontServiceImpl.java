@@ -66,6 +66,10 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
         if((null == list || list.isEmpty()) && isDateValid(date)) {
             log.info("数据库没有对应的每日商店数据，尝试请求API获取：userId={} , date={}", userId, date);
             JSONObject jObj = requestAPI(userId);
+            if(null == jObj) {
+                log.warn("StoreFront API 请求异常，跳过解析数据。userId={} , date={}", userId, date);
+                return list;
+            }
             list = sfAPI.getSingleItemOffers(jObj, userId);
             this.saveOrUpdateBatchByMultiId(list);
 
@@ -148,7 +152,7 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
                 log.warn("StoreFront API 账号验证失败！");
             }
         }
-        log.info("StoreFront API 请求成功，response=\n{}", jObj);
+        log.info("StoreFront API 请求成功。");
         return jObj;
     }
 
