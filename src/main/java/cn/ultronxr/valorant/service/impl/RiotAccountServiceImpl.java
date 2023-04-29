@@ -147,7 +147,7 @@ public class RiotAccountServiceImpl extends ServiceImpl<RiotAccountMapper, RiotA
         Page<RiotAccount> page = Page.of(accountDTO.getCurrent(), accountDTO.getSize());
 
         LambdaQueryWrapper<RiotAccount> wrapper = Wrappers.lambdaQuery();
-        wrapper.select(RiotAccount::getUserId, RiotAccount::getUsername, RiotAccount::getAccountNo, RiotAccount::getHasEmail)
+        wrapper.select(RiotAccount::getUserId, RiotAccount::getUsername, RiotAccount::getAccountNo, RiotAccount::getHasEmail, RiotAccount::getEmail)
                 .eq(accountDTO.getAccountNo() != null, RiotAccount::getAccountNo, accountDTO.getAccountNo())
                 .like(StringUtils.isNotEmpty(accountDTO.getUserId()), RiotAccount::getUserId, accountDTO.getUserId())
                 .like(StringUtils.isNotEmpty(accountDTO.getUsername()), RiotAccount::getUsername, accountDTO.getUsername())

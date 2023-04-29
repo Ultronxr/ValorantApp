@@ -4,6 +4,7 @@
 
     <resultMap id="ResultMapBatchBoth" type="cn.ultronxr.valorant.bean.VO.BatchBothStoreFrontVO">
         <result column="account_no" jdbcType="BIGINT" property="accountNo" />
+        <result column="has_email" jdbcType="TINYINT" property="hasEmail" />
         <result column="is_bonus" jdbcType="TINYINT" property="isBonus" />
         <result column="date" jdbcType="VARCHAR" property="date" />
         <result column="cost_list" jdbcType="VARCHAR" property="costList" typeHandler="cn.ultronxr.valorant.typeHandler.IntegerJsonArrayTypeHandler" />
@@ -16,7 +17,7 @@
 
     <select id="batchQueryBoth" parameterType="java.lang.Object" resultMap="ResultMapBatchBoth">
         SELECT
-            account.account_no, store.is_bonus, store.date,
+            account.account_no, account.has_email, store.is_bonus, store.date,
             JSON_ARRAYAGG(store.cost) AS cost_list,
             JSON_ARRAYAGG(store.discount_percent) AS discount_percent_list,
             JSON_ARRAYAGG(store.discount_cost) AS discount_cost_list,
@@ -29,6 +30,9 @@
             store.item_id = skin.uuid
             AND store.user_id = account.user_id
             AND account.is_del = 0
+            <if test="batchQueryBothDTO.hasEmail != null">
+                AND account.has_email = #{batchQueryBothDTO.hasEmail}
+            </if>
             AND store.date >= #{batchQueryBothDTO.date}
             AND store.user_id IN
                 (SELECT single.user_id FROM (
@@ -90,7 +94,7 @@
 
     <select id="batchQueryBothWhileNightShopClosed" parameterType="java.lang.Object" resultMap="ResultMapBatchBoth">
         SELECT
-            account.account_no, store.is_bonus, store.date,
+            account.account_no, account.has_email, store.is_bonus, store.date,
             JSON_ARRAYAGG(store.cost) AS cost_list,
             JSON_ARRAYAGG(store.discount_percent) AS discount_percent_list,
             JSON_ARRAYAGG(store.discount_cost) AS discount_cost_list,
@@ -103,6 +107,9 @@
             store.item_id = skin.uuid
             AND store.user_id = account.user_id
             AND account.is_del = 0
+            <if test="batchQueryBothDTO.hasEmail != null">
+                AND account.has_email = #{batchQueryBothDTO.hasEmail}
+            </if>
             AND store.date = #{batchQueryBothDTO.date}
             AND store.user_id IN
                 (SELECT

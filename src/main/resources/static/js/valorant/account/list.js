@@ -56,7 +56,7 @@ table.render({
         ,{field: 'hasEmail', title: '初邮', sort: true,
             templet: function (d) {
                 if(d.hasEmail != null && d.hasEmail === true) {
-                    return '带初邮';
+                    return d.email;
                 }
                 return '未验证初邮';
             }

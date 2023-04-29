@@ -408,64 +408,39 @@ var selectData = [
 ];
 
 $(function () {
+    renderDropdown('#skin1', 'skin1');
+    renderDropdown('#skin2', 'skin2');
+    renderDropdown('#skin3', 'skin3');
+    renderDropdown('#skin4', 'skin4');
+    renderDropdown('#bonusSkin1', 'bonusSkin1');
+    renderDropdown('#bonusSkin2', 'skin2');
+    renderDropdown('#bonusSkin3', 'skin3');
+
+    loadAllSelect();
+});
+
+function loadAllSelect() {
+    let hasEmailSelectOptions = [
+        {name: "未验证初邮", value: false},
+        {name: "带初邮", value: true}
+    ];
+    loadSelectFromJson(hasEmailSelectOptions, $("#hasEmail"), "name", "value");
+}
+
+function renderDropdown(element, id) {
+    if(element === undefined || id === undefined) {
+        return;
+    }
     dropdown.render({
-        elem: '#skin1' // 绑定的元素，可以是任意元素
+        elem: element // 绑定的元素，可以是任意元素
         ,data: selectData
-        ,id: 'skin1'
+        ,id: id
         //菜单被点击的事件
         ,click: function(obj, othis){
             $(this.elem).val(obj.id);
         }
     });
-    dropdown.render({
-        elem: '#skin2'
-        ,data: selectData
-        ,id: 'skin2'
-        ,click: function(obj, othis){
-            $(this.elem).val(obj.id);
-        }
-    });
-    dropdown.render({
-        elem: '#skin3'
-        ,data: selectData
-        ,id: 'skin3'
-        ,click: function(obj, othis){
-            $(this.elem).val(obj.id);
-        }
-    });
-    dropdown.render({
-        elem: '#skin4'
-        ,data: selectData
-        ,id: 'skin4'
-        ,click: function(obj, othis){
-            $(this.elem).val(obj.id);
-        }
-    });
-    dropdown.render({
-        elem: '#bonusSkin1'
-        ,data: selectData
-        ,id: 'bonusSkin1'
-        ,click: function(obj, othis){
-            $(this.elem).val(obj.id);
-        }
-    });
-    dropdown.render({
-        elem: '#bonusSkin2'
-        ,data: selectData
-        ,id: 'bonusSkin2'
-        ,click: function(obj, othis){
-            $(this.elem).val(obj.id);
-        }
-    });
-    dropdown.render({
-        elem: '#bonusSkin3'
-        ,data: selectData
-        ,id: 'bonusSkin3'
-        ,click: function(obj, othis){
-            $(this.elem).val(obj.id);
-        }
-    });
-});
+}
 
 table.render({
     elem: '#data-table'
@@ -474,9 +449,9 @@ table.render({
     ,toolbar: '#toolbar'
     ,defaultToolbar: [] //清空默认的三个工具栏按钮
     ,cols: [[ //表头
-        {field: 'accountNo', title: '账号编号', sort: false, align: 'center', width: '5%', style: 'height:50px;',
+        {field: 'accountNo', title: '账号编号', sort: false, align: 'center', width: '7%', style: 'height:50px;',
             templet: '<div>{{=d.accountNo}}</div>'}
-        ,{field: 'displayName', title: '每日商店', sort: false, align: 'center', width: '35%', style: 'height:50px;',
+        ,{field: 'displayName', title: '每日商店', sort: false, align: 'center', width: '30%', style: 'height:50px;',
             templet: function (d) {
                 let res = '';
                 for(let i = 0; i < d.displayNameList.length; ++i) {
@@ -484,7 +459,7 @@ table.render({
                 }
                 return res.slice(0, -2);
             }}
-        ,{field: 'cost', title: '夜市', sort: false, align: 'center', width: '55%', style: 'height:50px;',
+        ,{field: 'cost', title: '夜市', sort: false, align: 'center', width: '50%', style: 'height:50px;',
             templet: function (d) {
                 if(d.bonusOffer != null) {
                     let res = '';
@@ -495,6 +470,14 @@ table.render({
                 }
                 return '夜市未开放';
             }}
+        ,{field: 'hasEmail', title: '初邮', sort: false, align: 'center', width: '8%', style: 'height:50px;',
+            templet: function (d) {
+                if(d.hasEmail != null && d.hasEmail === true) {
+                    return '带初邮';
+                }
+                return '未验证初邮';
+            }
+        }
         ,{title:'操作', sort: false, align: 'center', width: '5%', fixed: 'right', toolbar: '#inlineToolbar'}
     ]]
     ,totalRow: false
@@ -512,6 +495,7 @@ table.render({
         bonusSkin1: $('#bonusSkin1').val(),
         bonusSkin2: $('#bonusSkin2').val(),
         bonusSkin3: $('#bonusSkin3').val(),
+        hasEmail: $('#hasEmail').val(),
     }
     ,page: true //分页
     ,limit: 100
@@ -566,6 +550,7 @@ var active = {
                 bonusSkin1: $('#bonusSkin1').val(),
                 bonusSkin2: $('#bonusSkin2').val(),
                 bonusSkin3: $('#bonusSkin3').val(),
+                hasEmail: $('#hasEmail').val(),
             }
         });
     },
@@ -577,6 +562,7 @@ var active = {
         $('#bonusSkin1').val('');
         $('#bonusSkin2').val('');
         $('#bonusSkin3').val('');
+        $('#hasEmail').val('');
         table.reloadData('dataTable', {
             where: {}
         });

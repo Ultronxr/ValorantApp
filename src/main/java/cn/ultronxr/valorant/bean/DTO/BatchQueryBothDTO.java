@@ -26,6 +26,8 @@ public class BatchQueryBothDTO {
 
     private String bonusSkin3;
 
+    private Boolean hasEmail;
+
     private Integer current = 1;
 
     private Integer size = 100;

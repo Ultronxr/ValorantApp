@@ -12,6 +12,8 @@ public class BatchBothStoreFrontVO {
 
     private Long accountNo;
 
+    private Boolean hasEmail;
+
     private Boolean isBonus;
 
     private String date;
