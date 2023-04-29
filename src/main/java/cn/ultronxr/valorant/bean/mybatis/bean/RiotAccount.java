@@ -23,6 +23,8 @@ public class RiotAccount {
 
     private String password;
 
+    private Boolean hasEmail;
+
     private String email;
 
     private String emailPwd;

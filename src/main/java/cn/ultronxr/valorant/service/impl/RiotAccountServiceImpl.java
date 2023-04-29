@@ -60,6 +60,8 @@ public class RiotAccountServiceImpl extends ServiceImpl<RiotAccountMapper, RiotA
         }
 
         log.info("添加拳头账号：{}", account);
+        // 手动设置是否带初邮
+        account.setHasEmail(StringUtils.isNotEmpty(account.getEmail()));
         RSO rso = rsoService.getRSOByAccount(account);
         if(null != rso) {
             account.setUserId(rso.getUserId());
@@ -145,10 +147,11 @@ public class RiotAccountServiceImpl extends ServiceImpl<RiotAccountMapper, RiotA
         Page<RiotAccount> page = Page.of(accountDTO.getCurrent(), accountDTO.getSize());
 
         LambdaQueryWrapper<RiotAccount> wrapper = Wrappers.lambdaQuery();
-        wrapper.select(RiotAccount::getUserId, RiotAccount::getUsername, RiotAccount::getAccountNo)
+        wrapper.select(RiotAccount::getUserId, RiotAccount::getUsername, RiotAccount::getAccountNo, RiotAccount::getHasEmail)
                 .eq(accountDTO.getAccountNo() != null, RiotAccount::getAccountNo, accountDTO.getAccountNo())
                 .like(StringUtils.isNotEmpty(accountDTO.getUserId()), RiotAccount::getUserId, accountDTO.getUserId())
                 .like(StringUtils.isNotEmpty(accountDTO.getUsername()), RiotAccount::getUsername, accountDTO.getUsername())
+                .eq(accountDTO.getHasEmail() != null, RiotAccount::getHasEmail, accountDTO.getHasEmail())
                 .eq(RiotAccount::getIsDel, false)
                 .orderByAsc(RiotAccount::getAccountNo);
 

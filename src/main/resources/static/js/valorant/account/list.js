@@ -37,6 +37,11 @@ $(function () {
 });
 
 function loadAllSelect() {
+    let hasEmailSelectOptions = [
+        {name: "未验证初邮", value: false},
+        {name: "带初邮", value: true}
+    ];
+    loadSelectFromJson(hasEmailSelectOptions, $("#hasEmail"), "name", "value");
 }
 
 table.render({
@@ -48,6 +53,14 @@ table.render({
         ,{field: 'accountNo', title: '编号', width: '7%', sort: true, hide: false}
         ,{field: 'userId', title: 'ID', sort: true, hide: false}
         ,{field: 'username', title: '用户名', sort: true}
+        ,{field: 'hasEmail', title: '初邮', sort: true,
+            templet: function (d) {
+                if(d.hasEmail != null && d.hasEmail === true) {
+                    return '带初邮';
+                }
+                return '未验证初邮';
+            }
+        }
         ,{title:'操作', width: 125, minWidth: 125, fixed: 'right', toolbar: '#inlineToolbar'}
     ]]
     ,toolbar: '#toolbar'
@@ -109,6 +122,7 @@ var active = {
                 accountNo: $("#accountNo").val(),
                 userId: $("#userId").val(),
                 username: $("#username").val(),
+                hasEmail: $("#hasEmail").val(),
             }
         });
     },
@@ -116,6 +130,7 @@ var active = {
         $("#accountNo").val("");
         $("#userId").val("");
         $("#username").val("");
+        $("#hasEmail").val("");
         refreshTable();
         form.render('select');
     }

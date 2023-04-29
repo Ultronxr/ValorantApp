@@ -16,6 +16,8 @@ public class RiotAccountDTO {
 
     private String userId;
 
+    private Boolean hasEmail;
+
     private Integer current = 1;
 
     private Integer size = 100;
