@@ -42,10 +42,25 @@ public interface RSOService {
      */
     RSO updateRSO(String userId);
 
-    RSO getRSOByAccount(RiotAccount riotAccount);
+    /**
+     * 为一个账号请求获取一个新的 RSO 对象（token是全新的）
+     * @param riotAccount 账号对象
+     * @return RSO 对象
+     */
+    RSO requestRSOByAccount(RiotAccount riotAccount);
 
+    /**
+     * 使用 RiotAccount 对象其中的 token 字段拼装一个 RSO 对象（token有可能是过期的）
+     * @param account 数据库记录
+     * @return RSO 对象
+     */
     RSO fromAccount(RiotAccount account);
 
+    /**
+     * 使用 userId 查找数据库，再用 RiotAccount 对象其中的 token 字段拼装一个 RSO 对象（token有可能是过期的）
+     * @param userId 账号ID
+     * @return RSO 对象
+     */
     RSO fromAccount(String userId);
 
 }

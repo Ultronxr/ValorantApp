@@ -18,6 +18,8 @@ public class RiotAccountDTO {
 
     private Boolean hasEmail;
 
+    private Boolean isAuthFailure;
+
     private Integer current = 1;
 
     private Integer size = 100;

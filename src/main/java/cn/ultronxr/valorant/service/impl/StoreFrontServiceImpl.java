@@ -26,7 +26,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -82,32 +84,33 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
     }
 
     @Override
-    public List<StoreFront> singleItemOffersWithSleep(String userId, String date, float sleepSeconds) {
+    public List<StoreFront> singleItemOffersWithSleep(@NotNull String userId, @NotNull String date, float sleepSeconds) {
         log.info("获取每日商店数据（WithSleep）：userId={} , date={}", userId, date);
         List<StoreFront> list = queryDB(userId, date, false);
+        if(CollectionUtils.isNotEmpty(list) || !isDateValid(date)) {
+            return list;
+        }
 
-        if((null == list || list.isEmpty()) && isDateValid(date)) {
-            log.info("数据库没有对应的每日商店数据，尝试请求API获取：userId={} , date={}", userId, date);
-            JSONObject jObj = requestAPI(userId);
-            if(null == jObj) {
-                log.warn("StoreFront API 请求异常，跳过解析数据。userId={} , date={}", userId, date);
-                return list;
-            }
+        log.info("数据库没有对应的每日商店数据，尝试请求API获取：userId={} , date={}", userId, date);
+        JSONObject jObj = requestAPI(userId);
+        if(null == jObj) {
+            log.warn("StoreFront API 请求异常，跳过解析数据。userId={} , date={}", userId, date);
+            return list;
+        }
 
-            list = sfAPI.getSingleItemOffers(jObj, userId);
-            this.saveOrUpdateBatchByMultiId(list);
+        list = sfAPI.getSingleItemOffers(jObj, userId);
+        this.saveOrUpdateBatchByMultiId(list);
 
-            // 既然请求API了，那么顺便更新一下夜市数据
-            List<StoreFront> byTheWayList = sfAPI.getBonusOffers(jObj, userId);
-            this.saveOrUpdateBatchByMultiId(byTheWayList);
+        // 既然请求API了，那么顺便更新一下夜市数据
+        List<StoreFront> byTheWayList = sfAPI.getBonusOffers(jObj, userId);
+        this.saveOrUpdateBatchByMultiId(byTheWayList);
 
-            // 请求API之后等待时间
-            try {
-                log.info("请求API后等待时间：{} 秒", sleepSeconds);
-                Thread.sleep((long) (sleepSeconds * 1000.0f));
-            } catch (InterruptedException e) {
-                log.warn("Thread.sleep 抛出异常！", e);
-            }
+        // 请求API之后等待时间
+        try {
+            log.info("请求API后等待时间：{} 秒", sleepSeconds);
+            Thread.sleep((long) (sleepSeconds * 1000.0f));
+        } catch (InterruptedException e) {
+            log.warn("Thread.sleep 抛出异常！", e);
         }
 
         return list;
@@ -230,17 +233,26 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
         return DateUtil.date(dateObj).toDateStr();
     }
 
+    // 每天上午8点自动运行
+    @Scheduled(cron = "0 0 8 * * ? ")
     @Override
     public boolean batchUpdateBoth() {
         log.info("批量更新每日商店+夜市数据。");
 
         String date = DateUtil.today();
-        List<RiotAccount> accountList = accountMapper.selectList(null);
-        accountList.forEach(account -> {
+
+        // 获取未被删除，且上次RSO认证成功的所有账号ID
+        List<Object> accountUserIdList = accountMapper.selectObjs(
+                new LambdaQueryWrapper<RiotAccount>()
+                        .select(RiotAccount::getUserId)
+                        .eq(RiotAccount::getIsDel, false)
+                        .eq(RiotAccount::getIsAuthFailure, false)
+        );
+        accountUserIdList.forEach(userId -> {
             // 拳头API速率限制：100 requests every 2 minutes
             // 处理一个账号数据需要请求4-6次API（包括RSO认证），2分钟的请求上限为20个账号，即6秒处理一个账号
             // 实测处理一个账号数据请求时间为1.5秒左右，添加 sleep
-            singleItemOffersWithSleep(account.getUserId(), date, 1.5f);
+            singleItemOffersWithSleep((String) userId, date, 1.5f);
         });
         return true;
     }

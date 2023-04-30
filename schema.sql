@@ -21,14 +21,15 @@ CREATE TABLE valorant_riot_account (
     `entitlements_token`    VARCHAR(3000)    DEFAULT NULL               COMMENT 'API用户验证token（从拳头RSO接口中获取）',
     `multi_factor`          VARCHAR(3000)    DEFAULT NULL               COMMENT '两步验证信息',
     `is_verified`           TINYINT(1)       DEFAULT NULL               COMMENT '该账户信息是否通过验证：1-true; 0-false',
-    `is_del`                TINYINT(1)       DEFAULT 0                  COMMENT '是否删除：1-true; 0-false',
+    `is_del`                TINYINT(1)       NOT NULL DEFAULT 0         COMMENT '是否删除：1-true; 0-false',
     PRIMARY KEY(`user_id`),
     UNIQUE KEY(`account_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT 'valorant 模块 - 拳头账户信息';
 
 -- 注：旧版本更新SQL
 ALTER TABLE valorant_riot_account ADD `account_no` BIGINT UNIQUE KEY NOT NULL AUTO_INCREMENT     COMMENT '账户编号' AFTER `user_id`;
-ALTER TABLE valorant_riot_account ADD `has_email`    TINYINT(1)    NOT NULL DEFAULT 0    COMMENT '是否验证初邮' AFTER `password`;
+ALTER TABLE valorant_riot_account ADD `has_email`    TINYINT(1)    NOT NULL DEFAULT 0    COMMENT '是否带初邮。0-不带初邮；1-带初邮' AFTER `password`;
+ALTER TABLE valorant_riot_account ADD `is_auth_failure`    TINYINT(1)    NOT NULL DEFAULT 0    COMMENT '是否RSO验证失败（账号或密码错误，批量更新时会跳过验证失败的账号）。0-验证成功；1-验证失败' AFTER `is_verified`;
 ALTER TABLE valorant_riot_account CHANGE `social_name` `email` VARCHAR(100)     DEFAULT NULL       COMMENT '初始邮箱';
 ALTER TABLE valorant_riot_account CHANGE `social_tag` `email_pwd` VARCHAR(500)     DEFAULT NULL    COMMENT '初始邮箱密码';
 

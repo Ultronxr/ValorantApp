@@ -146,8 +146,14 @@ public class RSOServiceImpl implements RSOService {
         try {
             HttpRequest request = HttpUtil.createPost(RSOUtils.AUTH_URL);
             rso = this.processRSO(request, account.getUsername(), account.getPassword(), account.getMultiFactor());
+        } catch (RSOAuthFailureException authFailureEx) {
+            log.warn("RSO验证失败：exception={}, userId={}, username={}, 更新RiotAccount数据库字段 is_auth_failure=1",
+                    authFailureEx.getMessage(), account.getUserId(), account.getUsername());
+            account.setIsAuthFailure(true);
+            accountMapper.updateById(account);
+            return null;
         } catch (Exception e) {
-            log.warn("RSO验证失败：username = {}, exception = {}", account.getUsername(), e.getMessage());
+            log.warn("RSO验证失败：exception={}, userId={}, username={}, ", e.getMessage(), account.getUserId(), account.getUsername());
             return null;
         }
         account.setAccessToken(rso.getAccessToken());
@@ -157,7 +163,7 @@ public class RSOServiceImpl implements RSOService {
     }
 
     @Override
-    public RSO getRSOByAccount(RiotAccount account) {
+    public RSO requestRSOByAccount(RiotAccount account) {
         RSO rso;
         if(StringUtils.isNotEmpty(account.getUserId())) {
             rso = updateRSO(account.getUserId());

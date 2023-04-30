@@ -6,6 +6,7 @@ import cn.ultronxr.valorant.bean.VO.StoreFrontVO;
 import cn.ultronxr.valorant.bean.mybatis.bean.StoreFront;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.github.jeffreyning.mybatisplus.service.IMppService;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -26,12 +27,12 @@ public interface StoreFrontService extends IMppService<StoreFront> {
 
     /**
      * 获取每日刷新的商店，如果请求了API，加入 Thread.sleep 等待时间，限制API请求速率
-     * @param userId 拳头账户ID
-     * @param date   日期
+     * @param userId       拳头账户ID
+     * @param date         日期
      * @param sleepSeconds 请求API之后的等待时间（秒）
      * @return 商品列表
      */
-    List<StoreFront> singleItemOffersWithSleep(String userId, String date, float sleepSeconds);
+    List<StoreFront> singleItemOffersWithSleep(@NotNull String userId, @NotNull String date, float sleepSeconds);
 
     /**
      * 获取夜市商品

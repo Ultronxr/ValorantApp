@@ -41,7 +41,12 @@ function loadAllSelect() {
         {name: "未验证初邮", value: false},
         {name: "带初邮", value: true}
     ];
+    let isAuthFailureSelectOptions = [
+        {name: "登录验证成功", value: false},
+        {name: "用户名或密码错误", value: true}
+    ];
     loadSelectFromJson(hasEmailSelectOptions, $("#hasEmail"), "name", "value");
+    loadSelectFromJson(isAuthFailureSelectOptions, $("#isAuthFailure"), "name", "value");
 }
 
 table.render({
@@ -59,6 +64,14 @@ table.render({
                     return d.email;
                 }
                 return '未验证初邮';
+            }
+        }
+        ,{field: 'isAuthFailure', title: '登录验证', sort: false,
+            templet: function (d) {
+                if(d.isAuthFailure != null && d.isAuthFailure === true) {
+                    return '用户名或密码错误';
+                }
+                return '登录验证成功';
             }
         }
         ,{title:'操作', width: 125, minWidth: 125, fixed: 'right', toolbar: '#inlineToolbar'}
@@ -123,6 +136,7 @@ var active = {
                 userId: $("#userId").val(),
                 username: $("#username").val(),
                 hasEmail: $("#hasEmail").val(),
+                isAuthFailure: $("#isAuthFailure").val(),
             }
         });
     },
@@ -131,6 +145,7 @@ var active = {
         $("#userId").val("");
         $("#username").val("");
         $("#hasEmail").val("");
+        $("#isAuthFailure").val("");
         refreshTable();
         form.render('select');
     }

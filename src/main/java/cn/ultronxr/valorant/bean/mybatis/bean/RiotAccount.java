@@ -37,6 +37,8 @@ public class RiotAccount {
 
     private Boolean isVerified;
 
+    private Boolean isAuthFailure;
+
     private Boolean isDel;
 
 }

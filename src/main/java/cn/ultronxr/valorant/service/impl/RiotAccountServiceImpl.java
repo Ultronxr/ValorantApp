@@ -62,11 +62,12 @@ public class RiotAccountServiceImpl extends ServiceImpl<RiotAccountMapper, RiotA
         log.info("添加拳头账号：{}", account);
         // 手动设置是否带初邮
         account.setHasEmail(StringUtils.isNotEmpty(account.getEmail()));
-        RSO rso = rsoService.getRSOByAccount(account);
+        RSO rso = rsoService.requestRSOByAccount(account);
         if(null != rso) {
             account.setUserId(rso.getUserId());
             account.setAccessToken(rso.getAccessToken());
             account.setEntitlementsToken(rso.getEntitlementsToken());
+            account.setIsAuthFailure(false);
             if(this.save(account)) {
                 log.info("拳头账号添加成功。username={}", account.getUsername());
                 return OK;
@@ -147,11 +148,12 @@ public class RiotAccountServiceImpl extends ServiceImpl<RiotAccountMapper, RiotA
         Page<RiotAccount> page = Page.of(accountDTO.getCurrent(), accountDTO.getSize());
 
         LambdaQueryWrapper<RiotAccount> wrapper = Wrappers.lambdaQuery();
-        wrapper.select(RiotAccount::getUserId, RiotAccount::getUsername, RiotAccount::getAccountNo, RiotAccount::getHasEmail, RiotAccount::getEmail)
+        wrapper.select(RiotAccount::getUserId, RiotAccount::getUsername, RiotAccount::getAccountNo, RiotAccount::getHasEmail, RiotAccount::getEmail, RiotAccount::getIsAuthFailure)
                 .eq(accountDTO.getAccountNo() != null, RiotAccount::getAccountNo, accountDTO.getAccountNo())
                 .like(StringUtils.isNotEmpty(accountDTO.getUserId()), RiotAccount::getUserId, accountDTO.getUserId())
                 .like(StringUtils.isNotEmpty(accountDTO.getUsername()), RiotAccount::getUsername, accountDTO.getUsername())
                 .eq(accountDTO.getHasEmail() != null, RiotAccount::getHasEmail, accountDTO.getHasEmail())
+                .eq(accountDTO.getIsAuthFailure() != null, RiotAccount::getIsAuthFailure, accountDTO.getIsAuthFailure())
                 .eq(RiotAccount::getIsDel, false)
                 .orderByAsc(RiotAccount::getAccountNo);
 
