@@ -32,7 +32,7 @@ public interface StoreFrontService extends IMppService<StoreFront> {
      * @param sleepSeconds 请求API之后的等待时间（秒）
      * @return 商品列表
      */
-    List<StoreFront> singleItemOffersWithSleep(@NotNull String userId, @NotNull String date, float sleepSeconds);
+    void singleItemOffersWithSleep(@NotNull String userId, @NotNull String date, float sleepSeconds);
 
     /**
      * 获取夜市商品
@@ -48,6 +48,8 @@ public interface StoreFrontService extends IMppService<StoreFront> {
      * @return 包装成 VO 的商品列表
      */
     List<StoreFrontVO> toVO(List<StoreFront> storeFrontList);
+
+    void batchUpdateAccountToken();
 
     /**
      * 批量更新所有账号的每日商店+夜市

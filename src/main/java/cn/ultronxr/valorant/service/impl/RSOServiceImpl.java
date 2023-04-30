@@ -51,7 +51,7 @@ public class RSOServiceImpl implements RSOService {
                 .headerMap(RSOUtils.getHeader(), true)
                 .body(RSOUtils.getPingBodyJsonStr());
         HttpResponse response = request.execute();
-        log.info("RSO流程第一步：ping response = {}", response.body());
+        log.info("RSO流程第一步：ping response = {}", StringUtils.substring(response.body(), 0, 100));
 
         JSONObject resObj = JSONUtil.parseObj(response.body());
         String resType = resObj.getStr("type", "null");
@@ -60,7 +60,7 @@ public class RSOServiceImpl implements RSOService {
                     .headerMap(RSOUtils.getHeader(), true)
                     .body(RSOUtils.getAuthBodyJsonStr(username, password, true));
             response = request.execute();
-            log.info("RSO流程第二步：auth response = {}", response.body());
+            log.info("RSO流程第二步：auth response = {}", StringUtils.substring(response.body(), 0, 100));
 
             resObj = JSONUtil.parseObj(response.body());
             resType = resObj.getStr("type", "null");
@@ -70,7 +70,7 @@ public class RSOServiceImpl implements RSOService {
                         .headerMap(RSOUtils.getHeader(), true)
                         .body(RSOUtils.getMultiFactorBodyJsonStr(multiFactorCode, true));
                 response = request.execute();
-                log.info("RSO流程第三步：multifactor response = {}", response.body());
+                log.info("RSO流程第三步：multifactor response = {}", StringUtils.substring(response.body(), 0, 100));
 
                 JSONObject multiFactorResObj  = JSONUtil.parseObj(response.body());
                 if (multiFactorResObj.containsKey("error") && multiFactorResObj.getStr("error").equals("multifactor_attempt_failed")) {

@@ -67,7 +67,8 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
         // 注意：已经过去的日期是无法再通过接口获取数据的，如果当天没有存入数据库，那么只能返回空结果！
         if((null == list || list.isEmpty()) && isDateValid(date)) {
             log.info("数据库没有对应的每日商店数据，尝试请求API获取：userId={} , date={}", userId, date);
-            JSONObject jObj = requestAPI(userId);
+            RSO rso = rsoService.fromAccount(userId);
+            JSONObject jObj = requestAPI(rso);
             if(null == jObj) {
                 log.warn("StoreFront API 请求异常，跳过解析数据。userId={} , date={}", userId, date);
                 return list;
@@ -84,27 +85,33 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
     }
 
     @Override
-    public List<StoreFront> singleItemOffersWithSleep(@NotNull String userId, @NotNull String date, float sleepSeconds) {
+    public void singleItemOffersWithSleep(@NotNull String userId, @NotNull String date, float sleepSeconds) {
         log.info("获取每日商店数据（WithSleep）：userId={} , date={}", userId, date);
         List<StoreFront> list = queryDB(userId, date, false);
         if(CollectionUtils.isNotEmpty(list) || !isDateValid(date)) {
-            return list;
+            return;
         }
 
         log.info("数据库没有对应的每日商店数据，尝试请求API获取：userId={} , date={}", userId, date);
-        JSONObject jObj = requestAPI(userId);
-        if(null == jObj) {
+
+        RSO rso = rsoService.fromAccount(userId);
+        boolean skipSleep = !rso.isAccessTokenExpired();
+
+        JSONObject jObj = requestAPI(rso);
+        if(null != jObj) {
+            list = sfAPI.getSingleItemOffers(jObj, userId);
+            this.saveOrUpdateBatchByMultiId(list);
+
+            // 既然请求API了，那么顺便更新一下夜市数据
+            List<StoreFront> bonusList = sfAPI.getBonusOffers(jObj, userId);
+            this.saveOrUpdateBatchByMultiId(bonusList);
+        } else {
             log.warn("StoreFront API 请求异常，跳过解析数据。userId={} , date={}", userId, date);
-            return list;
         }
 
-        list = sfAPI.getSingleItemOffers(jObj, userId);
-        this.saveOrUpdateBatchByMultiId(list);
-
-        // 既然请求API了，那么顺便更新一下夜市数据
-        List<StoreFront> byTheWayList = sfAPI.getBonusOffers(jObj, userId);
-        this.saveOrUpdateBatchByMultiId(byTheWayList);
-
+        if(skipSleep) {
+            return;
+        }
         // 请求API之后等待时间
         try {
             log.info("请求API后等待时间：{} 秒", sleepSeconds);
@@ -112,8 +119,6 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
         } catch (InterruptedException e) {
             log.warn("Thread.sleep 抛出异常！", e);
         }
-
-        return list;
     }
 
     @Override
@@ -124,7 +129,8 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
         // 如果数据库中没有数据，则请求API获取，并插入数据库
         if((null == list || list.isEmpty()) && isDateValid(date)) {
             log.info("数据库没有对应的夜市数据，尝试请求API获取：userId={} , date={}", userId, date);
-            JSONObject jObj = requestAPI(userId);
+            RSO rso = rsoService.fromAccount(userId);
+            JSONObject jObj = requestAPI(rso);
             list = sfAPI.getBonusOffers(jObj, userId);
             this.saveOrUpdateBatchByMultiId(list);
 
@@ -135,20 +141,18 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
         return list;
     }
 
-    private JSONObject requestAPI(String userId) {
+    private JSONObject requestAPI(RSO rso) {
         JSONObject jObj = null;
-        RSO rso = rsoService.fromAccount(userId);
-        rso.setAccessTokenExpireAt(null);
         try {
             if(rso.isAccessTokenExpired()) {
                 throw new APIUnauthorizedException();
             } else {
-                log.info("StoreFront API 正在请求，userId={}", userId);
+                log.info("StoreFront API 正在请求，userId={}", rso.getUserId());
                 jObj = sfAPI.process(rso);
             }
         } catch (APIUnauthorizedException e1) {
-            log.info("RSO token 已过期，尝试更新 token ，userId={}", userId);
-            rso = rsoService.updateRSO(userId);
+            log.info("RSO token 已过期，尝试更新 token ，userId={}", rso.getUserId());
+            rso = rsoService.updateRSO(rso.getUserId());
             try {
                 if(rso != null) {
                     jObj = sfAPI.process(rso);
@@ -217,8 +221,8 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
         );
         boolean valid = DateUtil.compare(today8AM, dateTime) < 0
                 && DateUtil.compare(dateTime, tomorrow8AM) < 0;
-        log.info("dateTime={}, today8AM={}, tomorrow8AM={}", dateTime.toString(), today8AM.toString(), tomorrow8AM.toString());
-        log.info("valid={}", valid);
+        //log.info("dateTime={}, today8AM={}, tomorrow8AM={}", dateTime.toString(), today8AM.toString(), tomorrow8AM.toString());
+        //log.info("valid={}", valid);
         return valid;
     }
 
@@ -238,13 +242,11 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
         return DateUtil.date(dateObj).toDateStr();
     }
 
-    // 每天上午8点自动运行
-    @Scheduled(cron = "0 0 8 * * ? ")
+    // 每天上午07:07:00开始更新拳头账号的 RSO token （token有效期一小时）
+    @Scheduled(cron = "0 7 7 * * ? ")
     @Override
-    public boolean batchUpdateBoth() {
-        log.info("批量更新每日商店+夜市数据。");
-
-        String date = DateUtil.today();
+    public void batchUpdateAccountToken() {
+        log.info("开始事先更新拳头账号的RSO access token 。");
 
         // 获取未被删除，且上次RSO认证成功的所有账号ID
         List<Object> accountUserIdList = accountMapper.selectObjs(
@@ -253,8 +255,57 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
                         .eq(RiotAccount::getIsDel, false)
                         .eq(RiotAccount::getIsAuthFailure, false)
                         .orderByAsc(RiotAccount::getAccountNo)
+                        .last("LIMIT 1500")
         );
         accountUserIdList.forEach(userId -> {
+            RSO rso = rsoService.fromAccount((String) userId);
+            if(rso.isAccessTokenExpired()) {
+                rsoService.updateRSO((String) userId);
+                try {
+                    Thread.sleep(2100);
+                } catch (InterruptedException e) {
+                    log.warn("", e);
+                }
+            }
+        });
+        log.info("事先更新拳头账号的RSO access token 完成。");
+    }
+
+    // 每天上午8点自动运行
+    @Scheduled(cron = "0 0 8 * * ? ")
+    @Override
+    public boolean batchUpdateBoth() {
+        log.info("批量更新每日商店+夜市数据。");
+
+        String date = DateUtil.today();
+
+        Date now = new Date();
+        // 获取事先更新了RSO token的账号
+        List<Object> accountUserIdList = accountMapper.selectObjs(
+                new LambdaQueryWrapper<RiotAccount>()
+                        .select(RiotAccount::getUserId)
+                        .eq(RiotAccount::getIsDel, false)
+                        .eq(RiotAccount::getIsAuthFailure, false)
+                        .gt(RiotAccount::getAccessTokenExpireAt, now)
+                        .orderByAsc(RiotAccount::getAccountNo)
+        );
+        accountUserIdList.parallelStream().forEach(userId -> {
+            singleItemOffersWithSleep((String) userId, date, 0);
+        });
+
+        // 获取未事先更新RSO token的账号
+        List<Object> accountUserIdList2 = accountMapper.selectObjs(
+                new LambdaQueryWrapper<RiotAccount>()
+                        .select(RiotAccount::getUserId)
+                        .eq(RiotAccount::getIsDel, false)
+                        .eq(RiotAccount::getIsAuthFailure, false)
+                        .and(condition -> condition
+                                .le(RiotAccount::getAccessTokenExpireAt, now)
+                                .or().isNull(RiotAccount::getAccessTokenExpireAt)
+                        )
+                        .orderByAsc(RiotAccount::getAccountNo)
+        );
+        accountUserIdList2.forEach(userId -> {
             // 拳头API速率限制：100 requests every 2 minutes
             // 处理一个账号数据需要请求4-6次API（包括RSO认证），2分钟的请求上限为20个账号，即6秒处理一个账号
             // 实测处理一个账号数据请求时间为1.5秒左右，添加 sleep
