@@ -1,8 +1,11 @@
 package cn.ultronxr.valorant.auth;
 
+import cn.hutool.core.date.DateUtil;
 import cn.ultronxr.valorant.bean.RiotClientVersion;
+import cn.ultronxr.valorant.bean.mybatis.bean.RiotAccount;
 import lombok.Data;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +19,9 @@ public class RSO {
 
     /** 用户验证 token */
     private String accessToken;
+
+    /** accessToken 过期时间 */
+    private Date accessTokenExpireAt;
 
     /** 用户验证 token */
     private String entitlementsToken;
@@ -48,10 +54,11 @@ public class RSO {
         updateRiotClientAgent();
     }
 
-    public void updateToken(String accessToken, String entitlementsToken, String userId) {
-        this.accessToken = accessToken;
-        this.entitlementsToken = entitlementsToken;
-        this.userId = userId;
+    public void updateToken(RiotAccount riotAccount) {
+        this.accessToken = riotAccount.getAccessToken();
+        this.accessTokenExpireAt = riotAccount.getAccessTokenExpireAt();
+        this.entitlementsToken = riotAccount.getEntitlementsToken();
+        this.userId = riotAccount.getUserId();
     }
 
     /**
@@ -65,6 +72,13 @@ public class RSO {
             put("X-Riot-ClientPlatform", riotClientPlatform);
             put("X-Riot-ClientVersion", riotClientVersion);
         }};
+    }
+
+    /**
+     * 检验 accessToken 是否过期
+     */
+    public boolean isAccessTokenExpired() {
+        return DateUtil.compare(this.accessTokenExpireAt, DateUtil.date()) <= 0;
     }
 
     @Override

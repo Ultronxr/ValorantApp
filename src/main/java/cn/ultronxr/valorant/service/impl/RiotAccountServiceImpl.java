@@ -66,6 +66,7 @@ public class RiotAccountServiceImpl extends ServiceImpl<RiotAccountMapper, RiotA
         if(null != rso) {
             account.setUserId(rso.getUserId());
             account.setAccessToken(rso.getAccessToken());
+            account.setAccessTokenExpireAt(rso.getAccessTokenExpireAt());
             account.setEntitlementsToken(rso.getEntitlementsToken());
             account.setIsAuthFailure(false);
             if(this.save(account)) {

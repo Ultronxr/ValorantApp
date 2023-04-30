@@ -138,9 +138,14 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
     private JSONObject requestAPI(String userId) {
         JSONObject jObj = null;
         RSO rso = rsoService.fromAccount(userId);
+        rso.setAccessTokenExpireAt(null);
         try {
-            log.info("StoreFront API 正在请求，userId={}", userId);
-            jObj = sfAPI.process(rso);
+            if(rso.isAccessTokenExpired()) {
+                throw new APIUnauthorizedException();
+            } else {
+                log.info("StoreFront API 正在请求，userId={}", userId);
+                jObj = sfAPI.process(rso);
+            }
         } catch (APIUnauthorizedException e1) {
             log.info("RSO token 已过期，尝试更新 token ，userId={}", userId);
             rso = rsoService.updateRSO(userId);
@@ -247,6 +252,7 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
                         .select(RiotAccount::getUserId)
                         .eq(RiotAccount::getIsDel, false)
                         .eq(RiotAccount::getIsAuthFailure, false)
+                        .orderByAsc(RiotAccount::getAccountNo)
         );
         accountUserIdList.forEach(userId -> {
             // 拳头API速率限制：100 requests every 2 minutes

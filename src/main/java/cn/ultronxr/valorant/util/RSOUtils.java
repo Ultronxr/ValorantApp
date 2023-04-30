@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -124,25 +125,43 @@ public class RSOUtils {
             rso = new RSO();
         }
         RSOAuthResUri rsoARU = RSOAuthResUri.of(uri);
+        JSONObject JWTObj = decodeJWT(rsoARU.getAccessToken());
         rso.setAccessToken(rsoARU.getAccessToken());
-        rso.setUserId(getUserIdFromAccessToken(rsoARU.getAccessToken()));
+        rso.setAccessTokenExpireAt(getExpireAtTimeFromAccessTokenJsonObj(JWTObj));
+        rso.setUserId(getUserIdFromAccessTokenJsonObj(JWTObj));
         return rso;
     }
 
     /**
-     * 从 accessToken JWT 中解析出 userId
-     *
+     * 对 accessToken JWT 进行解码，并包装成 Json Object
      * @param base64CodedAccessToken 经过base64编码的 accessToken JWT
-     * @return userId
+     * @return JSONObject
      */
-    public static String getUserIdFromAccessToken(String base64CodedAccessToken) {
+    public static JSONObject decodeJWT(String base64CodedAccessToken) {
         if(StringUtils.isEmpty(base64CodedAccessToken)) {
             return null;
         }
         String payload = base64CodedAccessToken.split("\\.")[1];
         String decodedJWT = Base64Decoder.decodeStr(payload, StandardCharsets.UTF_8);
-        JSONObject obj = JSONUtil.parseObj(decodedJWT);
-        return obj.getStr("sub", null);
+        return JSONUtil.parseObj(decodedJWT);
+    }
+
+    /**
+     * 从 accessToken JWT 解码之后的 Json Object 对象中获取 userId
+     * @param decodedJWTJsonObj accessToken JWT 解码之后的 Json Object
+     * @return {@code String} userId
+     */
+    public static String getUserIdFromAccessTokenJsonObj(JSONObject decodedJWTJsonObj) {
+        return decodedJWTJsonObj == null ? null : decodedJWTJsonObj.getStr("sub", null);
+    }
+
+    /**
+     * 从 accessToken JWT 解码之后的 Json Object 对象中获取 expireAt
+     * @param decodedJWTJsonObj accessToken JWT 解码之后的 Json Object
+     * @return {@code Date} expireAt
+     */
+    public static Date getExpireAtTimeFromAccessTokenJsonObj(JSONObject decodedJWTJsonObj) {
+        return decodedJWTJsonObj == null ? null : new Date(1000L * decodedJWTJsonObj.getLong("exp", null));
     }
 
     /**

@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * @author Ultronxr
  * @date 2023/02/22 15:02
@@ -30,6 +32,8 @@ public class RiotAccount {
     private String emailPwd;
 
     private String accessToken;
+
+    private Date accessTokenExpireAt;
 
     private String entitlementsToken;
 

@@ -46,7 +46,7 @@ public class RiotAccountController {
         log.info("RSO获取邮箱验证码：username = {}", account.getUsername());
         try {
             HttpRequest request = HttpRequest.post(RSOUtils.AUTH_URL);
-            rsoService.processRSO(request, account.getUsername(), account.getPassword(), null);
+            rsoService.processRSO(request, account.getUsername(), account.getPassword(), null, false);
         } catch (Exception e) {
             if(e instanceof RSOMultiFactorAttemptFailedException) {
                 log.info("邮箱验证码发送成功");

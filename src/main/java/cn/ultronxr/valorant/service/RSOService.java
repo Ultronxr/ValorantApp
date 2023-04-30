@@ -22,9 +22,11 @@ public interface RSOService {
      * @param username        拳头账号登录用户名
      * @param password        拳头账号密码
      * @param multiFactorCode 两步验证邮箱代码
-     * @return
+     * @param needRequestEntitlementsToken 是否需要请求 entitlements token （因为entitlements token是长期有效的，不需要每次都获取）
+     * @return RSO 对象。<br/>
+     *          注意：如果 needRequestEntitlementsToken = false ，那么返回的 RSO 对象中的 entitlementsToken 属性为空，需要手动从 RiotAccount 数据库中读取并填充。
      */
-    RSO processRSO(HttpRequest request, String username, String password, String multiFactorCode);
+    RSO processRSO(HttpRequest request, String username, String password, String multiFactorCode, boolean needRequestEntitlementsToken);
 
     /**
      * 账户第一次录入，还未获取 userId 时，初始化生成 RSO 信息
