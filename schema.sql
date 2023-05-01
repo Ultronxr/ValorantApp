@@ -34,24 +34,6 @@ ALTER TABLE valorant_riot_account ADD `access_token_expire_at`    DATETIME    DE
 ALTER TABLE valorant_riot_account CHANGE `social_name` `email` VARCHAR(100)     DEFAULT NULL       COMMENT '初始邮箱';
 ALTER TABLE valorant_riot_account CHANGE `social_tag` `email_pwd` VARCHAR(500)     DEFAULT NULL    COMMENT '初始邮箱密码';
 
-CREATE TABLE valorant_cdk (
-    `no`               BIGINT     NOT NULL AUTO_INCREMENT         COMMENT 'CDK编号',
-    `content`              VARCHAR(100)     DEFAULT NULL     COMMENT 'CDK内容',
-    `type`               VARCHAR(10)     NOT NULL         COMMENT 'CDK种类：onetime 一次性；reusable 可重复使用',
-    `remaining_times`              INT     DEFAULT NULL     COMMENT 'CDK剩余可用次数',
-    `is_used`                TINYINT(1)       DEFAULT 0        COMMENT '是否删除：1-true; 0-false',
-    `is_del`                 TINYINT(1)       DEFAULT 0        COMMENT '是否删除：1-true; 0-false',
-    PRIMARY KEY(`no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT 'valorant 模块 - CDKey信息';
-
-CREATE TABLE valorant_cdk_history (
-    `cdk_no`               BIGINT     NOT NULL AUTO_INCREMENT         COMMENT 'CDK编号',
-    `account_no`              VARCHAR(100)     DEFAULT NULL     COMMENT 'CDK内容',
-    `use_time`               VARCHAR(10)     NOT NULL         COMMENT 'CDK种类：onetime 一次性；reusable 可重复使用',
-    `detail`              INT     DEFAULT NULL     COMMENT 'CDK剩余可用次数',
-    PRIMARY KEY(`cdk_no`, `account_no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT 'valorant 模块 - CDKey使用记录';
-
 CREATE TABLE valorant_weapon (
     `uuid`                 VARCHAR(100)    NOT NULL         COMMENT '对象ID，主键',
     `asset_path`           VARCHAR(300)    DEFAULT NULL     COMMENT '游戏素材路径',
@@ -103,3 +85,22 @@ CREATE TABLE valorant_store_front (
     `is_bonus`              TINYINT(1)      DEFAULT NULL     COMMENT '是否是Bonus商店（夜市）货物：1 - true / 0 - false',
     PRIMARY KEY(`user_id`, `offer_id`, `date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT 'valorant 模块 - 每日商店出售物品';
+
+CREATE TABLE valorant_cdk (
+    `cdk`                      VARCHAR(100)    NOT NULL                   COMMENT 'CDK内容',
+    `cdk_no`                   BIGINT          NOT NULL AUTO_INCREMENT    COMMENT 'CDK编号',
+    `type_has_email`           TINYINT(1)      NOT NULL DEFAULT 0         COMMENT 'CDK种类（初邮）：1 - 带初邮； 0 - 不带初邮',
+    `type_reusable`            TINYINT(1)      NOT NULL DEFAULT 0         COMMENT 'CDK种类（重复使用）：1 - 可重复使用；0 - 不可重复使用',
+    `reuse_remaining_times`    INT             DEFAULT NULL               COMMENT 'CDK剩余可用次数',
+    `is_used`                  TINYINT(1)      NOT NULL DEFAULT 0         COMMENT '是否被使用：1 - true; 0 - false',
+    PRIMARY KEY(`cdk`),
+    UNIQUE KEY(`cdk_no`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT 'valorant 模块 - CDKey信息';
+
+CREATE TABLE valorant_cdk_history (
+    `cdk`            VARCHAR(100)     NOT NULL        COMMENT 'CDK内容',
+    `account_no`     BIGINT           NOT NULL        COMMENT '拳头账户编号',
+    `redeem_time`    DATETIME         NOT NULL        COMMENT 'CDK兑换时间',
+    `detail`         VARCHAR(1000)    DEFAULT NULL    COMMENT '其他信息',
+    PRIMARY KEY(`cdk`, `account_no`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT 'valorant 模块 - CDKey使用记录';

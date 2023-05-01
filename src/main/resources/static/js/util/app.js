@@ -34,6 +34,15 @@ const app = {
                 batchUpdateBoth: '/batchUpdateBoth',
                 batchQueryBoth: '/batchQueryBoth',
             },
+            cdk: {
+                url: '/cdk',
+                create: '/create',
+                updateReuseRemainingTimes: '/updateReuseRemainingTimes',
+                query: '/query',
+                delete: '/delete',
+                redeem: '/redeem',
+                history: '/history',
+            }
         },
     },
 
