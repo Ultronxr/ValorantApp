@@ -242,8 +242,8 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
         return DateUtil.date(dateObj).toDateStr();
     }
 
-    // 每天上午07:07:00开始更新拳头账号的 RSO token （token有效期一小时）
-    @Scheduled(cron = "0 7 7 * * ? ")
+    // 每天上午07:05:00开始更新拳头账号的 RSO token （token有效期一小时）
+    @Scheduled(cron = "0 5 7 * * ? ")
     @Override
     public void batchUpdateAccountToken() {
         log.info("开始事先更新拳头账号的RSO access token 。");
@@ -255,7 +255,7 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
                         .eq(RiotAccount::getIsDel, false)
                         .eq(RiotAccount::getIsAuthFailure, false)
                         .orderByAsc(RiotAccount::getAccountNo)
-                        .last("LIMIT 1500")
+                        .last("LIMIT 800")
         );
         accountUserIdList.forEach(userId -> {
             RSO rso = rsoService.fromAccount((String) userId);
