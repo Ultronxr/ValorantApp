@@ -117,7 +117,8 @@ public class CDKServiceImpl extends ServiceImpl<CDKMapper, CDK> implements CDKSe
                 .eq(cdkDTO.getCdkNo() != null, CDK::getCdkNo, cdkDTO.getCdkNo())
                 .eq(cdkDTO.getTypeHasEmail() != null, CDK::getTypeHasEmail, cdkDTO.getTypeHasEmail())
                 .eq(cdkDTO.getTypeReusable() != null, CDK::getTypeReusable, cdkDTO.getTypeReusable())
-                .eq(cdkDTO.getIsUsed() == null, CDK::getIsUsed, false)
+                // 如果直接用CDK编号 或 CDK内容进行查询，那么即使 isUsed=true 的CDK也能被查出来
+                .eq(cdkDTO.getIsUsed() == null && StringUtils.isEmpty(cdkDTO.getCdk()) && cdkDTO.getCdkNo() == null, CDK::getIsUsed, false)
                 .eq(cdkDTO.getIsUsed() != null, CDK::getIsUsed, cdkDTO.getIsUsed())
                 .orderByDesc(CDK::getCdkNo);
 
