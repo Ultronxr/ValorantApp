@@ -3,51 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>game-register</title>
+    <title>valorant</title>
     <link href="/static/lib/layui-v2.7.6/css/layui.css" rel="stylesheet">
-    <link href="/static/css/valorant/account/create.css" rel="stylesheet">
+    <style>
+        body {
+            width: 800px;
+            margin: auto;
+        }
+        .layui-nav {
+            background: #fff;
+            margin-bottom: 10px;
+            border-style: solid;
+            border-color: rgba(204, 204, 204, 0.8);
+            border-width: 2px;
+            border-left: none;
+            border-right: none;
+            border-top: none;
+        }
+        .layui-nav-item * {
+            color: black !important;
+        }
+        .layui-this * {
+            color: #5fb878 !important;
+        }
+        #title {
+            font-size: 16px;
+            text-align: left;
+            margin-left: 35px;
+            margin-top: -10px;
+            margin-bottom: 20px
+        }
+        #data-form {
+            width: 100%;
+            margin: 3% 3%;
+            padding: 40px 10px;
+            border-style: solid;
+            border-color: rgba(204, 204, 204, 0.4);
+            border-radius: 10px;
+            box-shadow: -2px 2px 5px rgba(204, 204, 204, 0.4);
+        }
+        .layui-input-inline {
+            width: 60% !important;
+        }
+        .emphasize-red {
+            color: red;
+        }
+        #history-list {
+            margin-top: 3%;
+            margin-left: 5%;
+        }
+    </style>
 </head>
 <body>
-<div id="account-form">
-    <form class="layui-form" action="">
+<div id="data-form">
+    <div id="title">
+        无畏电玩-瓦罗兰特每日商店/夜市账号提取<br/>
+        账号编号请填写选号网站中的账号编号，选号网址：<a href="#" style="color: blue; text-decoration: underline;">无畏电玩</a>
+    </div>
+    <hr>
+    <ul class="layui-nav" lay-filter="">
+        <li class="layui-nav-item layui-this"><a href="javascript:navChange1();">账号提取</a></li>
+        <li class="layui-nav-item"><a href="javascript:navChange2();">记录查询</a></li>
+    </ul>
+    <form class="layui-form" action="" id="redeem-form">
         <div class="layui-form-item">
-            <label class="layui-form-label">用户名<label class="emphasize-red">*</label></label>
+            <label class="layui-form-label">账号编号<label class="emphasize-red">*</label></label>
             <div class="layui-input-inline">
-                <input type="text" name="username" required lay-verify="required" autocomplete="off" class="layui-input">
+                <input type="text" name="accountNo" required lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
-            <label class="layui-form-label">密码<label class="emphasize-red">*</label></label>
+            <label class="layui-form-label">CDK<label class="emphasize-red">*</label></label>
             <div class="layui-input-inline">
-                <input type="text" name="password" required lay-verify="required" autocomplete="off" class="layui-input">
-            </div>
-        </div>
-        <!--<div class="layui-form-item">-->
-        <!--    <label class="layui-form-label">邮箱验证码</label>-->
-        <!--    <div class="layui-input-inline">-->
-        <!--        <input type="number" name="multiFactor" required lay-verify="" autocomplete="off" class="layui-input">-->
-        <!--    </div>-->
-        <!--    <button class="layui-btn" lay-submit lay-filter="multiFactor">获取验证码</button>-->
-        <!--</div>-->
-        <div class="layui-form-item">
-            <label class="layui-form-label">初始邮箱</label>
-            <div class="layui-input-inline">
-                <input type="text" name="email" required lay-verify="" autocomplete="off" class="layui-input">
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">初邮密码</label>
-            <div class="layui-input-inline">
-                <input type="text" name="emailPwd" required lay-verify="" autocomplete="off" class="layui-input">
+                <input type="text" name="cdk" required lay-verify="required" autocomplete="off" class="layui-input">
             </div>
         </div>
         <div class="layui-form-item">
             <div class="layui-input-block">
-                <button class="layui-btn" lay-submit lay-filter="create">新增</button>
-                <button class="layui-btn layui-btn-primary" id="cancel-btn">取消</button>
+                <button class="layui-btn" lay-submit lay-filter="redeemVerify">提取</button>
             </div>
         </div>
     </form>
+
+    <form class="layui-form" action="" id="history-form" style="display: none;">
+        <div class="layui-form-item">
+            <label class="layui-form-label">CDK<label class="emphasize-red">*</label></label>
+            <div class="layui-input-inline">
+                <input type="text" name="cdk" required lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit lay-filter="history">查询</button>
+            </div>
+        </div>
+    </form>
+</div>
+<div id="history-list">
+
 </div>
 
 <script src="/static/lib/layui-v2.7.6/layui.js"></script>

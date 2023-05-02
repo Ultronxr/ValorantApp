@@ -421,7 +421,7 @@ $(function () {
 
 function loadAllSelect() {
     let hasEmailSelectOptions = [
-        {name: "未验证初邮", value: false},
+        {name: "不带初邮", value: false},
         {name: "带初邮", value: true}
     ];
     loadSelectFromJson(hasEmailSelectOptions, $("#hasEmail"), "name", "value");
@@ -475,7 +475,7 @@ table.render({
                 if(d.hasEmail != null && d.hasEmail === true) {
                     return '带初邮';
                 }
-                return '未验证初邮';
+                return '不带初邮';
             }
         }
         ,{title:'操作', sort: false, align: 'center', width: '5%', fixed: 'right', toolbar: '#inlineToolbar'}

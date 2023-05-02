@@ -5,6 +5,7 @@ import cn.ultronxr.common.bean.AjaxResponse;
 import cn.ultronxr.common.util.AjaxResponseUtils;
 import cn.ultronxr.valorant.bean.DTO.CDKDTO;
 import cn.ultronxr.valorant.bean.DTO.CDKHistoryDTO;
+import cn.ultronxr.valorant.bean.VO.CDKRedeemVerifyVO;
 import cn.ultronxr.valorant.bean.enums.CDKRedeemState;
 import cn.ultronxr.valorant.service.CDKService;
 import lombok.extern.slf4j.Slf4j;
@@ -56,6 +57,18 @@ public class CDKController {
             return AjaxResponseUtils.success();
         }
         return AjaxResponseUtils.fail();
+    }
+
+    @PostMapping("/redeemVerify")
+    @ResponseBody
+    public AjaxResponse redeemVerify(@RequestBody JSONObject jsonObject) {
+        String cdk = jsonObject.getStr("cdk");
+        Long accountNo = jsonObject.getLong("accountNo");
+        CDKRedeemVerifyVO vo = cdkService.redeemVerify(cdk, accountNo);
+        if(vo.getMsg().equals("OK")) {
+            return AjaxResponseUtils.success(vo);
+        }
+        return AjaxResponseUtils.fail(vo);
     }
 
     @PostMapping("/redeem")

@@ -1,6 +1,7 @@
 package cn.ultronxr.valorant.bean.mybatis.bean;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.jeffreyning.mybatisplus.anno.MppMultiId;
 import lombok.Data;
 
@@ -21,6 +22,7 @@ public class CDKHistory {
     @MppMultiId
     private Long accountNo;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date redeemTime;
 
     private String detail;

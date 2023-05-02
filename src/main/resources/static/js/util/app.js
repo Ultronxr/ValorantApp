@@ -40,6 +40,7 @@ const app = {
                 updateReuseRemainingTimes: '/updateReuseRemainingTimes',
                 query: '/query',
                 delete: '/delete',
+                redeemVerify: '/redeemVerify',
                 redeem: '/redeem',
                 history: '/history',
             }

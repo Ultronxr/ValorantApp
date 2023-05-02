@@ -62,4 +62,12 @@ public interface StoreFrontService extends IMppService<StoreFront> {
      */
     IPage<BatchBothStoreFrontVO> batchQueryBoth(BatchQueryBothDTO batchQueryBothDTO);
 
+    /**
+     * 使用指定的 账号ID或账号编号 查询每日商店+夜市
+     * @param userId    账号ID
+     * @param accountNo 账号编号
+     * @return 该账号的每日商店+夜市
+     */
+    BatchBothStoreFrontVO queryBothByAccountId(String userId, Long accountNo);
+
 }

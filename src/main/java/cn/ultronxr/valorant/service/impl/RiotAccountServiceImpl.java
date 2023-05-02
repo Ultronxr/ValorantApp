@@ -155,7 +155,8 @@ public class RiotAccountServiceImpl extends ServiceImpl<RiotAccountMapper, RiotA
                 .like(StringUtils.isNotEmpty(accountDTO.getUsername()), RiotAccount::getUsername, accountDTO.getUsername())
                 .eq(accountDTO.getHasEmail() != null, RiotAccount::getHasEmail, accountDTO.getHasEmail())
                 .eq(accountDTO.getIsAuthFailure() != null, RiotAccount::getIsAuthFailure, accountDTO.getIsAuthFailure())
-                .eq(RiotAccount::getIsDel, false)
+                // 如果使用账号编号/ID查找，是可以查出 isDel = true 的账号的
+                .eq(accountDTO.getAccountNo() == null && StringUtils.isEmpty(accountDTO.getUserId()), RiotAccount::getIsDel, false)
                 .orderByAsc(RiotAccount::getAccountNo);
 
         return accountMapper.selectPage(page, wrapper);

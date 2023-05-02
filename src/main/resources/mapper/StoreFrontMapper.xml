@@ -143,4 +143,31 @@
             account_no ASC, is_bonus ASC, ANY_VALUE(skin.uuid) ASC
     </select>
 
+    <select id="queryBothByAccountId" parameterType="java.lang.Object" resultMap="ResultMapBatchBoth">
+        SELECT
+            account.account_no, account.has_email, store.is_bonus, store.date,
+            JSON_ARRAYAGG(store.cost) AS cost_list,
+            JSON_ARRAYAGG(store.discount_percent) AS discount_percent_list,
+            JSON_ARRAYAGG(store.discount_cost) AS discount_cost_list,
+            JSON_ARRAYAGG(skin.display_name) AS display_name_list,
+            JSON_ARRAYAGG(skin.display_icon) AS display_icon_list,
+            JSON_ARRAYAGG(skin.content_tier_uuid) AS content_tier_list
+        FROM
+            valorant_store_front AS store, valorant_weapon_skin AS skin, valorant_riot_account AS account
+        WHERE
+            store.item_id = skin.uuid
+            AND store.user_id = account.user_id
+          <if test="userId != null">
+              AND account.user_id = #{userId}
+          </if>
+          <if test="accountNo != null">
+              AND account.account_no = #{accountNo}
+          </if>
+          AND store.date >= #{date}
+        GROUP BY
+            account.account_no, store.user_id, store.is_bonus, store.date
+        ORDER BY
+            account_no ASC, is_bonus ASC, ANY_VALUE(skin.uuid) ASC
+    </select>
+
 </mapper>

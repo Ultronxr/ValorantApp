@@ -355,4 +355,18 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
         return result;
     }
 
+    @Override
+    public BatchBothStoreFrontVO queryBothByAccountId(String userId, Long accountNo) {
+        String date = DateUtil.today();
+        if(!isNowAfterToday8AM()) {
+            date = addDays(date, -1);
+        }
+        List<BatchBothStoreFrontVO> list = sfMapper.queryBothByAccountId(userId, accountNo, date);
+        // 把每日商店和夜市合并为一条
+        if(list != null && list.size() > 1){
+            list.get(0).setBonusOffer(list.get(1));
+        }
+        return list != null ? list.get(0) : null;
+    }
+
 }

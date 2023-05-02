@@ -8,6 +8,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.github.jeffreyning.mybatisplus.base.MppBaseMapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * @author Ultronxr
  * @date 2023/02/22 10:20
@@ -39,5 +41,11 @@ public interface StoreFrontMapper extends MppBaseMapper<StoreFront> {
      * @return 实际上只返回每日商店的查询结果
      */
     IPage<BatchBothStoreFrontVO> batchQueryBothWhileNightShopClosed(@Param("page") IPage<BatchBothStoreFrontVO> page, @Param("batchQueryBothDTO") BatchQueryBothDTO batchQueryBothDTO);
+
+    /**
+     * 使用 拳头账号ID 或 拳头账号编号 查询 每日商店+夜市
+     * @return 对应拳头账号的每日商店+夜市数据。查询结果list中，每日商店数据在夜市数据前面
+     */
+    List<BatchBothStoreFrontVO> queryBothByAccountId(@Param("userId") String userId, @Param("accountNo") Long accountNo, @Param("date") String date);
 
 }

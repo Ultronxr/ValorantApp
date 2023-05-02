@@ -1,8 +1,11 @@
 package cn.ultronxr.valorant.service.impl;
 
 import cn.hutool.core.util.RandomUtil;
+import cn.ultronxr.common.util.ArrayUtils;
 import cn.ultronxr.valorant.bean.DTO.CDKDTO;
 import cn.ultronxr.valorant.bean.DTO.CDKHistoryDTO;
+import cn.ultronxr.valorant.bean.VO.BatchBothStoreFrontVO;
+import cn.ultronxr.valorant.bean.VO.CDKRedeemVerifyVO;
 import cn.ultronxr.valorant.bean.enums.CDKRedeemState;
 import cn.ultronxr.valorant.bean.mybatis.bean.CDK;
 import cn.ultronxr.valorant.bean.mybatis.bean.CDKHistory;
@@ -11,6 +14,7 @@ import cn.ultronxr.valorant.bean.mybatis.mapper.CDKHistoryMapper;
 import cn.ultronxr.valorant.bean.mybatis.mapper.CDKMapper;
 import cn.ultronxr.valorant.bean.mybatis.mapper.RiotAccountMapper;
 import cn.ultronxr.valorant.service.CDKService;
+import cn.ultronxr.valorant.service.StoreFrontService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -45,6 +49,9 @@ public class CDKServiceImpl extends ServiceImpl<CDKMapper, CDK> implements CDKSe
 
     @Autowired
     private RiotAccountMapper riotAccountMapper;
+
+    @Autowired
+    private StoreFrontService sfService;
 
     // 生成CDK使用的字符
     private static final String RANDOM_BASE_STRING = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -127,28 +134,52 @@ public class CDKServiceImpl extends ServiceImpl<CDKMapper, CDK> implements CDKSe
         return this.remove(wrapper);
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
-    public CDKRedeemState redeem(String cdk, Long accountNo) {
-        log.info("尝试兑换CDK，cdk={}, 拳头账号编号accountNo={}", cdk, accountNo);
+    public CDKRedeemVerifyVO redeemVerify(String cdk, Long accountNo) {
+        CDKRedeemVerifyVO verify = new CDKRedeemVerifyVO();
         CDK cdkObj = this.getById(cdk);
         RiotAccount account = riotAccountMapper.selectOne(new LambdaQueryWrapper<RiotAccount>().eq(RiotAccount::getAccountNo, accountNo));
         if(null == cdkObj) {
+            verify.setMsg(CDK_NOT_EXIST.getMsg());
+            return verify;
+        }
+        if(null == account) {
+            verify.setMsg(ACCOUNT_NOT_EXIST.getMsg());
+            return verify;
+        }
+
+        verify.setMsg("OK");
+        verify.setDetail(getCDKRedeemVerifyDetail(cdkObj, account));
+        return verify;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public CDKRedeemState redeem(String cdk, Long accountNo) {
+        CDK cdkObj = this.getById(cdk);
+        RiotAccount account = riotAccountMapper.selectOne(new LambdaQueryWrapper<RiotAccount>().eq(RiotAccount::getAccountNo, accountNo));
+        if(null == cdkObj) {
+            log.info("尝试兑换CDK，兑换结果={}, cdk={}, 拳头账号编号accountNo={}", CDK_NOT_EXIST, cdk, accountNo);
             return CDK_NOT_EXIST;
         }
         if(null == account) {
+            log.info("尝试兑换CDK，兑换结果={}, cdk={}, 拳头账号编号accountNo={}", ACCOUNT_NOT_EXIST, cdk, accountNo);
             return ACCOUNT_NOT_EXIST;
         }
         if(account.getIsDel()) {
+            log.info("尝试兑换CDK，兑换结果={}, cdk={}, 拳头账号编号accountNo={}", ACCOUNT_ALREADY_REDEEMED, cdk, accountNo);
             return ACCOUNT_ALREADY_REDEEMED;
         }
         if(cdkObj.getTypeHasEmail() != account.getHasEmail()) {
+            log.info("尝试兑换CDK，兑换结果={}, cdk={}, 拳头账号编号accountNo={}", CDK_VERSION_ERROR, cdk, accountNo);
             return CDK_VERSION_ERROR;
         }
         if(cdkObj.getIsUsed()) {
+            log.info("尝试兑换CDK，兑换结果={}, cdk={}, 拳头账号编号accountNo={}", CDK_USED, cdk, accountNo);
             return CDK_USED;
         }
         if(cdkObj.getTypeReusable() && cdkObj.getReuseRemainingTimes() <= 0) {
+            log.info("尝试兑换CDK，兑换结果={}, cdk={}, 拳头账号编号accountNo={}", CDK_REUSE_REMAINING_TIMES_EXHAUSTED, cdk, accountNo);
             return CDK_REUSE_REMAINING_TIMES_EXHAUSTED;
         }
 
@@ -167,16 +198,49 @@ public class CDKServiceImpl extends ServiceImpl<CDKMapper, CDK> implements CDKSe
         history.setCdk(cdkObj.getCdk());
         history.setAccountNo(accountNo);
         history.setRedeemTime(new Date());
+        history.setDetail(getCDKRedeemVerifyDetail(cdkObj, account));
         cdkHistoryMapper.insert(history);
 
+        log.info("尝试兑换CDK，兑换结果={}, cdk={}, 拳头账号编号accountNo={}", OK, cdk, accountNo);
         return OK;
+    }
+
+    /**
+     * 拼接 CDK 兑换前的确认信息
+     * @param cdk     CDK对象
+     * @param account 拳头账号对象
+     * @return 确认信息
+     */
+    private String getCDKRedeemVerifyDetail(CDK cdk, RiotAccount account) {
+        BatchBothStoreFrontVO storeFront = sfService.queryBothByAccountId(null, account.getAccountNo());
+        StringBuilder bonusOfferString = new StringBuilder();
+        if(null == storeFront.getBonusOffer()) {
+            bonusOfferString = new StringBuilder("夜市未开放");
+        } else {
+            BatchBothStoreFrontVO bonusOffer = storeFront.getBonusOffer();
+            for(int i = 0; i < bonusOffer.getDisplayNameList().length; i++) {
+                bonusOfferString.append(bonusOffer.getDisplayNameList()[i]).append(": ").append(bonusOffer.getDiscountPercentList()[i]);
+                if(i < bonusOffer.getDisplayNameList().length - 1) {
+                    bonusOfferString.append(", ");
+                }
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("账号编号：").append(account.getAccountNo()).append("<br/>\n")
+                .append("每日商店：").append(ArrayUtils.toString(storeFront.getDisplayNameList())).append("<br/>\n")
+                .append("夜市商店：").append(bonusOfferString).append("<br/>\n")
+                .append("账号版本：").append(account.getHasEmail() ? "完全版（带初邮）" : "黄金版（不带初邮）").append("<br/>\n")
+                .append("CDK版本：").append(cdk.getTypeHasEmail() ? "完全版（带初邮）" : "黄金版（不带初邮）").append("<br/>\n");
+
+        return sb.toString();
     }
 
     @Override
     public Page<CDKHistory> queryCDKHistory(CDKHistoryDTO cdkHistoryDTO) {
         Page<CDKHistory> page = Page.of(cdkHistoryDTO.getCurrent(), cdkHistoryDTO.getSize());
         LambdaQueryWrapper<CDKHistory> wrapper = Wrappers.lambdaQuery();
-        wrapper.eq(cdkHistoryDTO.getCdk() != null, CDKHistory::getCdk, cdkHistoryDTO.getCdk())
+        wrapper.eq(StringUtils.isNotEmpty(cdkHistoryDTO.getCdk()), CDKHistory::getCdk, cdkHistoryDTO.getCdk())
                 .eq(cdkHistoryDTO.getAccountNo() != null, CDKHistory::getAccountNo, cdkHistoryDTO.getAccountNo())
                 .orderByDesc(CDKHistory::getRedeemTime);
 

@@ -2,6 +2,7 @@ package cn.ultronxr.valorant.service;
 
 import cn.ultronxr.valorant.bean.DTO.CDKDTO;
 import cn.ultronxr.valorant.bean.DTO.CDKHistoryDTO;
+import cn.ultronxr.valorant.bean.VO.CDKRedeemVerifyVO;
 import cn.ultronxr.valorant.bean.enums.CDKRedeemState;
 import cn.ultronxr.valorant.bean.mybatis.bean.CDK;
 import cn.ultronxr.valorant.bean.mybatis.bean.CDKHistory;
@@ -44,6 +45,14 @@ public interface CDKService extends IService<CDK> {
      * @return 删除操作是否成功
      */
     boolean delete(Long[] cdkNoList);
+
+    /**
+     * 兑换CDK之前进行信息确认
+     * @param cdk       CDK 内容
+     * @param accountNo 拳头账号编号
+     * @return 确认信息
+     */
+    CDKRedeemVerifyVO redeemVerify(String cdk, Long accountNo);
 
     /**
      * 兑换CDK
