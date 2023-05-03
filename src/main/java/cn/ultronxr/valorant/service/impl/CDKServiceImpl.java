@@ -141,47 +141,47 @@ public class CDKServiceImpl extends ServiceImpl<CDKMapper, CDK> implements CDKSe
         CDK cdkObj = this.getById(cdk);
         RiotAccount account = riotAccountMapper.selectOne(new LambdaQueryWrapper<RiotAccount>().eq(RiotAccount::getAccountNo, accountNo));
         if(null == cdkObj) {
-            verify.setMsg(CDK_NOT_EXIST.getMsg());
+            verify.setState(CDK_NOT_EXIST);
             return verify;
         }
         if(null == account) {
-            verify.setMsg(ACCOUNT_NOT_EXIST.getMsg());
+            verify.setState(ACCOUNT_NOT_EXIST);
             return verify;
         }
 
-        verify.setMsg("OK");
-        verify.setDetail(getCDKRedeemVerifyDetail(cdkObj, account));
+        verify.setState(OK);
+        verify.setDetail(getCDKRedeemVerifyDetail(cdkObj, account, false));
         return verify;
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public CDKRedeemState redeem(String cdk, Long accountNo) {
+    public CDKRedeemVerifyVO redeem(String cdk, Long accountNo) {
         CDK cdkObj = this.getById(cdk);
         RiotAccount account = riotAccountMapper.selectOne(new LambdaQueryWrapper<RiotAccount>().eq(RiotAccount::getAccountNo, accountNo));
         if(null == cdkObj) {
             log.info("尝试兑换CDK，兑换结果={}, cdk={}, 拳头账号编号accountNo={}", CDK_NOT_EXIST, cdk, accountNo);
-            return CDK_NOT_EXIST;
+            return new CDKRedeemVerifyVO(CDK_NOT_EXIST);
         }
         if(null == account) {
             log.info("尝试兑换CDK，兑换结果={}, cdk={}, 拳头账号编号accountNo={}", ACCOUNT_NOT_EXIST, cdk, accountNo);
-            return ACCOUNT_NOT_EXIST;
+            return new CDKRedeemVerifyVO(ACCOUNT_NOT_EXIST);
         }
         if(account.getIsDel()) {
             log.info("尝试兑换CDK，兑换结果={}, cdk={}, 拳头账号编号accountNo={}", ACCOUNT_ALREADY_REDEEMED, cdk, accountNo);
-            return ACCOUNT_ALREADY_REDEEMED;
+            return new CDKRedeemVerifyVO(ACCOUNT_ALREADY_REDEEMED);
         }
         if(cdkObj.getTypeHasEmail() != account.getHasEmail()) {
             log.info("尝试兑换CDK，兑换结果={}, cdk={}, 拳头账号编号accountNo={}", CDK_VERSION_ERROR, cdk, accountNo);
-            return CDK_VERSION_ERROR;
+            return new CDKRedeemVerifyVO(CDK_VERSION_ERROR);
         }
         if(cdkObj.getIsUsed()) {
             log.info("尝试兑换CDK，兑换结果={}, cdk={}, 拳头账号编号accountNo={}", CDK_USED, cdk, accountNo);
-            return CDK_USED;
+            return new CDKRedeemVerifyVO(CDK_USED);
         }
         if(cdkObj.getTypeReusable() && cdkObj.getReuseRemainingTimes() <= 0) {
             log.info("尝试兑换CDK，兑换结果={}, cdk={}, 拳头账号编号accountNo={}", CDK_REUSE_REMAINING_TIMES_EXHAUSTED, cdk, accountNo);
-            return CDK_REUSE_REMAINING_TIMES_EXHAUSTED;
+            return new CDKRedeemVerifyVO(CDK_REUSE_REMAINING_TIMES_EXHAUSTED);
         }
 
         if(!cdkObj.getTypeReusable()) {
@@ -199,20 +199,23 @@ public class CDKServiceImpl extends ServiceImpl<CDKMapper, CDK> implements CDKSe
         history.setCdk(cdkObj.getCdk());
         history.setAccountNo(accountNo);
         history.setRedeemTime(new Date());
-        history.setDetail(getCDKRedeemVerifyDetail(cdkObj, account));
+        history.setDetail(getCDKRedeemVerifyDetail(cdkObj, account, true));
         cdkHistoryMapper.insert(history);
 
         log.info("尝试兑换CDK，兑换结果={}, cdk={}, 拳头账号编号accountNo={}", OK, cdk, accountNo);
-        return OK;
+        CDKRedeemVerifyVO verify = new CDKRedeemVerifyVO(OK);
+        verify.setDetail(history.getDetail());
+        return verify;
     }
 
     /**
      * 拼接 CDK 兑换前的确认信息
      * @param cdk     CDK对象
      * @param account 拳头账号对象
+     * @param withSecret 是否包含敏感信息（账号名、密码、初邮、初邮密码）
      * @return 确认信息
      */
-    private String getCDKRedeemVerifyDetail(CDK cdk, RiotAccount account) {
+    private String getCDKRedeemVerifyDetail(CDK cdk, RiotAccount account, boolean withSecret) {
         BatchBothStoreFrontVO storeFront = sfService.queryBothByAccountId(null, account.getAccountNo());
         StringBuilder bonusOfferString = new StringBuilder();
         if(null == storeFront.getBonusOffer()) {
@@ -233,6 +236,12 @@ public class CDKServiceImpl extends ServiceImpl<CDKMapper, CDK> implements CDKSe
                 .append("夜市商店：").append(bonusOfferString).append("<br/>\n")
                 .append("账号版本：").append(account.getHasEmail() ? "完全版（带初邮）" : "黄金版（不带初邮）").append("<br/>\n")
                 .append("CDK版本：").append(cdk.getTypeHasEmail() ? "完全版（带初邮）" : "黄金版（不带初邮）").append("<br/>\n");
+        if(withSecret) {
+            sb.append("拳头账号：").append(account.getUsername()).append("<br/>\n")
+                    .append("拳头账号密码：").append(account.getPassword()).append("<br/>\n")
+                    .append("初始邮箱：").append(account.getHasEmail() ? account.getEmail() : "不带初邮").append("<br/>\n")
+                    .append("初始邮箱密码：").append(account.getHasEmail() ? account.getEmailPwd() : "不带初邮").append("<br/>\n");
+        }
 
         return sb.toString();
     }

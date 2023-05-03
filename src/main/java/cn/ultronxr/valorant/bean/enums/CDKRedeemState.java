@@ -1,6 +1,10 @@
 package cn.ultronxr.valorant.bean.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Ultronxr
@@ -25,4 +29,13 @@ public enum CDKRedeemState {
         this.code = code;
         this.msg = msg;
     }
+
+    @JsonValue
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new HashMap<>(4);
+        map.put("code", getCode());
+        map.put("msg", getMsg());
+        return map;
+    }
+
 }

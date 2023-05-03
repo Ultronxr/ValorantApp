@@ -1,38 +1,39 @@
 CREATE USER `valorant`@`%` IDENTIFIED WITH caching_sha2_password BY 'xxx';
 GRANT Alter, Alter Routine, Create, Create Routine, Create Temporary Tables, Create View, Delete, Drop, Event, Execute, Grant Option, Index, Insert, Lock Tables, References, Select, Show View, Trigger, Update ON `valorant\_dev`.* TO `valorant`@`%`;
-GRANT Alter, Alter Routine, Create, Create Routine, Create Temporary Tables, Create View, Delete, Drop, Event, Execute, Grant Option, Index, Insert, Lock Tables, References, Select, Show View, Trigger, Update ON `valorant\_dev\_new`.* TO `valorant`@`%`;
 GRANT Alter, Alter Routine, Create, Create Routine, Create Temporary Tables, Create View, Delete, Drop, Event, Execute, Grant Option, Index, Insert, Lock Tables, References, Select, Show View, Trigger, Update ON `valorant\_prod`.* TO `valorant`@`%`;
 
 
 CREATE DATABASE `valorant_dev` DEFAULT CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_general_ci';
-CREATE DATABASE `valorant_dev_new` DEFAULT CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_general_ci';
 CREATE DATABASE `valorant_prod` DEFAULT CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4_general_ci';
 
 ### 详细表结构及数据查看 /exe/mysql-8.0.28-winx64/valorant_dev.sql
 
 CREATE TABLE valorant_riot_account (
-    `user_id`               VARCHAR(100)     NOT NULL                   COMMENT '账户ID（从拳头RSO接口中获取）',
-    `account_no`            BIGINT           NOT NULL AUTO_INCREMENT    COMMENT '账户编号',
-    `username`              VARCHAR(100)     DEFAULT NULL               COMMENT '用户名（登录名）',
-    `password`              VARCHAR(500)     DEFAULT NULL               COMMENT '密码',
-    `email`                 VARCHAR(100)     DEFAULT NULL               COMMENT '初始邮箱',
-    `email_pwd`             VARCHAR(500)     DEFAULT NULL               COMMENT '初始邮箱密码',
-    `access_token`          VARCHAR(3000)    DEFAULT NULL               COMMENT 'API用户验证token（从拳头RSO接口中获取）',
-    `entitlements_token`    VARCHAR(3000)    DEFAULT NULL               COMMENT 'API用户验证token（从拳头RSO接口中获取）',
-    `multi_factor`          VARCHAR(3000)    DEFAULT NULL               COMMENT '两步验证信息',
-    `is_verified`           TINYINT(1)       DEFAULT NULL               COMMENT '该账户信息是否通过验证：1-true; 0-false',
-    `is_del`                TINYINT(1)       NOT NULL DEFAULT 0         COMMENT '是否删除：1-true; 0-false',
+    `user_id`                   VARCHAR(100)     NOT NULL                   COMMENT '账户ID（从拳头RSO接口中获取）',
+    `account_no`                BIGINT           NOT NULL AUTO_INCREMENT    COMMENT '账户编号',
+    `username`                  VARCHAR(100)     DEFAULT NULL               COMMENT '用户名（登录名）',
+    `password`                  VARCHAR(500)     DEFAULT NULL               COMMENT '密码',
+    `has_email`                 TINYINT(1)       NOT NULL DEFAULT 0         COMMENT '是否带初邮。0-不带初邮；1-带初邮',
+    `email`                     VARCHAR(100)     DEFAULT NULL               COMMENT '初始邮箱',
+    `email_pwd`                 VARCHAR(500)     DEFAULT NULL               COMMENT '初始邮箱密码',
+    `access_token`              VARCHAR(3000)    DEFAULT NULL               COMMENT 'API用户验证token（从拳头RSO接口中获取）',
+    `access_token_expire_at`    DATETIME         DEFAULT NULL               COMMENT 'accessToken过期时间',
+    `entitlements_token`        VARCHAR(3000)    DEFAULT NULL               COMMENT 'API用户验证token（从拳头RSO接口中获取）',
+    `multi_factor`              VARCHAR(3000)    DEFAULT NULL               COMMENT '两步验证信息',
+    `is_verified`               TINYINT(1)       DEFAULT NULL               COMMENT '该账户信息是否通过验证：1-true; 0-false',
+    `is_auth_failure`           TINYINT(1)       NOT NULL DEFAULT 0         COMMENT '是否RSO验证失败（账号或密码错误，批量更新时会跳过验证失败的账号）。0-验证成功；1-验证失败',
+    `is_del`                    TINYINT(1)       NOT NULL DEFAULT 0         COMMENT '是否删除：1-true; 0-false',
     PRIMARY KEY(`user_id`),
     UNIQUE KEY(`account_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT 'valorant 模块 - 拳头账户信息';
 
 -- 注：旧版本更新SQL
 ALTER TABLE valorant_riot_account ADD `account_no` BIGINT UNIQUE KEY NOT NULL AUTO_INCREMENT     COMMENT '账户编号' AFTER `user_id`;
+ALTER TABLE valorant_riot_account CHANGE `social_name` `email` VARCHAR(100)     DEFAULT NULL       COMMENT '初始邮箱';
+ALTER TABLE valorant_riot_account CHANGE `social_tag` `email_pwd` VARCHAR(500)     DEFAULT NULL    COMMENT '初始邮箱密码';
 ALTER TABLE valorant_riot_account ADD `has_email`    TINYINT(1)    NOT NULL DEFAULT 0    COMMENT '是否带初邮。0-不带初邮；1-带初邮' AFTER `password`;
 ALTER TABLE valorant_riot_account ADD `is_auth_failure`    TINYINT(1)    NOT NULL DEFAULT 0    COMMENT '是否RSO验证失败（账号或密码错误，批量更新时会跳过验证失败的账号）。0-验证成功；1-验证失败' AFTER `is_verified`;
 ALTER TABLE valorant_riot_account ADD `access_token_expire_at`    DATETIME    DEFAULT NULL    COMMENT 'accessToken过期时间' AFTER `access_token`;
-ALTER TABLE valorant_riot_account CHANGE `social_name` `email` VARCHAR(100)     DEFAULT NULL       COMMENT '初始邮箱';
-ALTER TABLE valorant_riot_account CHANGE `social_tag` `email_pwd` VARCHAR(500)     DEFAULT NULL    COMMENT '初始邮箱密码';
 
 CREATE TABLE valorant_weapon (
     `uuid`                 VARCHAR(100)    NOT NULL         COMMENT '对象ID，主键',
@@ -101,6 +102,6 @@ CREATE TABLE valorant_cdk_history (
     `cdk`            VARCHAR(100)     NOT NULL        COMMENT 'CDK内容',
     `account_no`     BIGINT           NOT NULL        COMMENT '拳头账户编号',
     `redeem_time`    DATETIME         NOT NULL        COMMENT 'CDK兑换时间',
-    `detail`         VARCHAR(1000)    DEFAULT NULL    COMMENT '其他信息',
+    `detail`         VARCHAR(3000)    DEFAULT NULL    COMMENT '其他信息',
     PRIMARY KEY(`cdk`, `account_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT 'valorant 模块 - CDKey使用记录';

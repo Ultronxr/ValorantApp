@@ -24,7 +24,7 @@ form.on('submit(redeemVerify)', function(data) {
                     }
                 });
             } else {
-                layer.msg(res.data.msg, {time: 2000});
+                layer.msg(res.data.state.msg, {time: 2000});
             }
         },
         function (res) {
@@ -49,9 +49,12 @@ function redeem(layerIndex) {
             // console.log(res);
             if(res.code === app.RESPONSE_CODE.SUCCESS) {
                 layer.close(layerIndex);
-                layer.msg("兑换成功！", {time: 2000})
+                layer.open({
+                    title: '兑换成功！'
+                    ,content: res.data.detail
+                });
             } else {
-                layer.msg(res.msg, {time: 2000});
+                layer.msg(res.data.state.msg, {time: 2000});
             }
         },
         function (res) {

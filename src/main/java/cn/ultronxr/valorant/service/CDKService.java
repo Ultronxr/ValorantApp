@@ -58,10 +58,10 @@ public interface CDKService extends IService<CDK> {
      * 兑换CDK
      * @param cdk       CDK内容
      * @param accountNo 拳头账号编号
-     * @return 兑换操作结果枚举
+     * @return 兑换操作结果
      */
     @Transactional(rollbackFor = Exception.class)
-    CDKRedeemState redeem(String cdk, Long accountNo);
+    CDKRedeemVerifyVO redeem(String cdk, Long accountNo);
 
     /**
      * 查询CDK兑换历史记录

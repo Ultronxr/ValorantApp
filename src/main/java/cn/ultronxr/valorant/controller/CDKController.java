@@ -65,7 +65,7 @@ public class CDKController {
         String cdk = jsonObject.getStr("cdk");
         Long accountNo = jsonObject.getLong("accountNo");
         CDKRedeemVerifyVO vo = cdkService.redeemVerify(cdk, accountNo);
-        if(vo.getMsg().equals("OK")) {
+        if(vo.getState() == CDKRedeemState.OK) {
             return AjaxResponseUtils.success(vo);
         }
         return AjaxResponseUtils.fail(vo);
@@ -76,11 +76,11 @@ public class CDKController {
     public AjaxResponse redeem(@RequestBody JSONObject jsonObject) {
         String cdk = jsonObject.getStr("cdk");
         Long accountNo = jsonObject.getLong("accountNo");
-        CDKRedeemState state = cdkService.redeem(cdk, accountNo);
-        if(state == CDKRedeemState.OK) {
-            return AjaxResponseUtils.success(state.getMsg());
+        CDKRedeemVerifyVO vo = cdkService.redeem(cdk, accountNo);
+        if(vo.getState() == CDKRedeemState.OK) {
+            return AjaxResponseUtils.success(vo);
         }
-        return AjaxResponseUtils.fail(state.getMsg());
+        return AjaxResponseUtils.fail(vo);
     }
 
     @PostMapping("/history")
