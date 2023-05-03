@@ -446,7 +446,7 @@ table.render({
     elem: '#data-table'
     ,id: 'dataTable'
     // ,height: 500
-    ,toolbar: '#toolbar'
+    // ,toolbar: '#toolbar'
     ,defaultToolbar: [] //清空默认的三个工具栏按钮
     ,cols: [[ //表头
         {field: 'accountNo', title: '账号编号', sort: false, align: 'center', width: '7%', style: 'height:50px;',
@@ -576,38 +576,38 @@ $('#table-div .layui-btn').on('click', function(){
 });
 
 // 顶部工具栏事件
-table.on('toolbar(dataTable)', function(obj){
-    switch(obj.event){
-        case 'batchUpdateBoth' :
-            batchUpdateBoth();
-            break;
-    };
-});
+// table.on('toolbar(dataTable)', function(obj){
+//     switch(obj.event){
+//         case 'batchUpdateBoth' :
+//             batchUpdateBoth();
+//             break;
+//     };
+// });
 
-function batchUpdateBoth() {
-    app.util.ajax.post(app.util.api.getAPIUrl('valorant.storefront.batchUpdateBoth'),
-        null,
-        function (res) {
-            // console.log(res);
-            if(res.code === app.RESPONSE_CODE.SUCCESS) {
-                parent.layer.msg('更新数据成功。', {time: 2000});
-            } else {
-                parent.layer.msg('更新数据失败！', {time: 2000});
-            }
-        },
-        function (res) {
-            parent.layer.msg('请求失败！', {time: 2000});
-        },
-        function () {
-            this.layerIndex = layer.load(2, { shade: [0.2, '#ccc'] });
-        },
-        function () {
-            layer.close(this.layerIndex);
-        },
-        true,
-        8000000
-    );
-}
+// function batchUpdateBoth() {
+//     app.util.ajax.post(app.util.api.getAPIUrl('valorant.storefront.batchUpdateBoth'),
+//         null,
+//         function (res) {
+//             // console.log(res);
+//             if(res.code === app.RESPONSE_CODE.SUCCESS) {
+//                 parent.layer.msg('更新数据成功。', {time: 2000});
+//             } else {
+//                 parent.layer.msg('更新数据失败！', {time: 2000});
+//             }
+//         },
+//         function (res) {
+//             parent.layer.msg('请求失败！', {time: 2000});
+//         },
+//         function () {
+//             this.layerIndex = layer.load(2, { shade: [0.2, '#ccc'] });
+//         },
+//         function () {
+//             layer.close(this.layerIndex);
+//         },
+//         true,
+//         8000000
+//     );
+// }
 
 // 单元格内工具栏事件
 table.on('tool(dataTable)', function(obj) {
