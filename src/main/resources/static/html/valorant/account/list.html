@@ -3,8 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>game-register</title>
+    <title>valorant</title>
     <link href="/static/lib/layui-v2.7.6/css/layui.css" rel="stylesheet">
+    <link href="/static/css/layui-override.css" rel="stylesheet">
+    <style>
+        body {
+            width: 96%;
+            max-width: 2000px;
+            margin: 20px auto;
+        }
+    </style>
 </head>
 <body>
 <div id="table-div">
@@ -40,9 +48,9 @@
                     <select class="layui-select" name="isAuthFailure" id="isAuthFailure"></select>
                 </div>
             </div>
-
+            <br/>
             <div class="layui-inline">
-                <button type="button" class="layui-btn"  data-type="reload" lay-filter="data-search-btn" id="searchBtn"><i class="layui-icon"></i> 搜 索</button>
+                <button type="button" class="layui-btn btn-main"  data-type="reload" lay-filter="data-search-btn" id="searchBtn"><i class="layui-icon"></i> 搜 索</button>
             </div>
             <div class="layui-inline">
                 <button type="button" class="layui-btn layui-btn-primary"  data-type="clear" lay-filter="data-clear-btn" id="clearBtn">清 空</button>
@@ -54,13 +62,13 @@
 
 <script type="text/html" id="toolbar">
     <div class="layui-btn-container">
-        <button type="button" class="layui-btn" id="import">
+        <button type="button" class="layui-btn btn-main" id="import">
             <i class="layui-icon">&#xe67c;</i>批量导入账号
         </button>
-        <button type="button" class="layui-btn" id="importResult" onclick="downloadImportResult()">
+        <button type="button" class="layui-btn btn-main" id="importResult" onclick="downloadImportResult()">
             <i class="layui-icon">&#xe601;</i>获取上次批量导入结果
         </button>
-        <button class="layui-btn layui-btn-sm" lay-event="create">新增</button>
+        <button class="layui-btn btn-main layui-btn-sm" lay-event="create">新增</button>
         <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">批量删除</button>
     </div>
 </script>

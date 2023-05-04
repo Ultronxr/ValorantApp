@@ -4,7 +4,7 @@ $(function () {
 
 function loadAllSelect() {
     let typeHasEmail = [
-        {name: "不带初邮CDK（黄金版）", value: false},
+        {name: "未验证初邮CDK（黄金版）", value: false},
         {name: "带初邮CDK（完全版）", value: true}
     ];
     let typeReusable = [
@@ -18,7 +18,9 @@ function loadAllSelect() {
 table.render({
     elem: '#data-table'
     ,id: 'dataTable'
-    // ,height: 500
+    ,height: 700
+    ,even: true
+    ,size: 'lg'
     ,cols: [[ //表头
         {type: 'checkbox', fixed: 'left'}
         ,{field: 'cdkNo', title: 'CDK编号', width: '7%', sort: true, hide: false, align: 'center'}
@@ -28,7 +30,7 @@ table.render({
                 if(d.typeHasEmail != null && d.typeHasEmail === true) {
                     return '带初邮CDK（完全版）';
                 }
-                return '不带初邮CDK（黄金版）';
+                return '未验证初邮（黄金版）';
             }
         }
         ,{field: 'typeReusable', title: '是否可重复使用', sort: true, align: 'center',

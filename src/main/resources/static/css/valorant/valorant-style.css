@@ -1,0 +1,134 @@
+/* 类似瓦罗兰特风格的CSS */
+
+/* 按钮外围的包围 div ，用于安置包围线 */
+.btn-main-surround {
+    display: inline-block;
+    position: relative;
+    z-index: 10;
+    margin: 10px;
+}
+/* 按钮外围的包围线，实际上是两个上下放置的带边线的方框 */
+.btn-main-surround:before, .btn-main-surround:after {
+    content: '';
+    width: 110%;
+    height: 17px;
+    left: -4px;
+    border: 1px solid #798283;
+    position: absolute;
+    box-sizing: border-box;
+    -webkit-transition: height .3s ease-in-out;
+    transition: height .3s ease-in-out;
+}
+/* 上面的方框没底 */
+.btn-main-surround:before {
+    top: -4px;
+    border-bottom: none;
+}
+/* 下面的方框没顶 */
+.btn-main-surround:after {
+    bottom: -4px;
+    border-top: none;
+}
+/* hover 时修改高度 */
+.btn-main-surround:hover:before, :hover:after {
+    height: 30px;
+}
+
+/* 按钮主体 */
+.btn-main {
+    z-index: 11;
+    background-color: #ff4654;
+    font-weight: bold;
+    position: relative;
+    -webkit-mask: url(//game.gtimg.cn/images/val/act/a20230301act/pc/btn-mask.png);
+}
+/* 按钮主体的背景覆盖层（由红色覆盖为黑色） */
+.btn-main:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -10px;
+    z-index: 2;
+    width: 120%;
+    height: 100%;
+    background-color: #0f1923;
+    -webkit-transition: -webkit-transform .3s ease-in-out;
+    transition: transform .3s ease-in-out;
+    -webkit-transform: skew(-10deg) translateX(-100%);
+    transform: skew(-10deg) translateX(-100%);
+}
+/* hover 时触发背景覆盖层动画 */
+.btn-main:hover:before {
+    -webkit-transform: translateX(0) skew(-10deg);
+    transform: translateX(0) skew(-10deg);
+}
+
+/* 覆盖 layui-btn 的效果 */
+.layui-btn {
+    font-weight: bold;
+}
+.layui-btn:hover {
+    border-color: #0f1923;
+}
+
+/* 按钮文字 */
+.btn-main-text {
+    z-index: 12;
+    position: relative;
+}
+/* 按钮右下角的黑点 */
+.btn-main-text:after {
+    content: '';
+    position: absolute;
+    right: -19px;
+    bottom: -12px;
+    width: 6px;
+    height: 6px;
+    background: #000;
+    -webkit-transition: background .3s ease-in-out;
+    transition: background .3s ease-in-out;
+}
+.btn-main:hover .btn-main-text:after {
+    background: #fff;
+}
+
+/* 防止鼠标进入搜索栏时，:after多出一块高度 */
+.layui-form-item:after {
+    height: 0 !important;
+}
+/* 选中的元素的颜色（select等） */
+.layui-this {
+    background-color: #ff4654 !important;
+}
+/* 搜索栏标签样式1 */
+.label-style-1 {
+    font-weight: bold !important;
+    color: #3d3d3d !important;
+    border-color: #ff4654 !important;
+    border-width: 2px !important;
+    background-color: #ff4654 !important;
+}
+/* 搜索栏标签样式2 */
+.label-style-2 {
+    font-weight: bold !important;
+    color: #f3efea !important;
+    border-color: #51668b !important;
+    border-width: 2px !important;
+    background-color: #51668b !important;
+}
+/* 数据表格 */
+.layui-table-view {
+    border-color: #111721 #111721 #e85554 #e85554;
+    border-style: solid solid solid solid;
+    border-width: 4px 4px 4px 4px;
+    box-shadow: 4px -4px 5px rgb(204 204 204 / 84%);
+}
+/* 行内工具栏按钮 */
+.layui-table-view .layui-btn-xs {
+    background-color: #ff4654 !important;
+}
+/* 翻页按钮 */
+.layui-table-view .layui-laypage-em {
+    background-color: #ff4654 !important;
+}
+

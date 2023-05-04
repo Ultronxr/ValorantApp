@@ -4,18 +4,19 @@ $(function () {
 table.render({
     elem: '#data-table'
     ,id: 'dataTable'
-    // ,height: 500
+    ,height: 700
+    ,even: true
+    ,size: 'lg'
     ,cols: [[ //表头
-        {type: 'checkbox', fixed: 'left'}
-        ,{field: 'cdk', title: 'CDK', width:'30%', sort: false, hide: false, align: 'center'}
+        {field: 'cdk', title: 'CDK', width:'30%', sort: false, hide: false, align: 'center'}
         ,{field: 'accountNo', title: '拳头账号编号', width:'8%', sort: false, hide: false, align: 'center'}
-        ,{field: 'redeemTime', title: '兑换时间', width:'10%', sort: false, hide: false, align: 'center'}
-        ,{field: 'detail', title: '详细信息', width:'45%', sort: false, hide: false, align: 'center',
+        ,{field: 'redeemTime', title: '兑换时间', width:'12%', sort: false, hide: false, align: 'center'}
+        ,{field: 'detail', title: '详细信息', width:'50%', sort: false, hide: false, align: 'center',
             templet: function (d) {
                 return d.detail;
             }}
     ]]
-    ,toolbar: '#toolbar'
+    // ,toolbar: '#toolbar'
     ,defaultToolbar: [] //清空默认的三个工具栏按钮
     ,totalRow: false
     ,loading: true

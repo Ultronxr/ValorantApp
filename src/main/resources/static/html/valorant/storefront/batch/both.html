@@ -5,69 +5,101 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>valorant</title>
     <link href="/static/lib/layui-v2.7.6/css/layui.css" rel="stylesheet">
+    <link href="/static/css/valorant/valorant-style.css" rel="stylesheet">
+    <style>
+        body {
+            width: 96%;
+            max-width: 2000px;
+            margin: 20px auto;
+        }
+        .shop-logo {
+            position: relative;
+            display: inline;
+        }
+        .shop-logo img {
+            width: 120px;
+            height: 120px;
+            position: relative;
+            top: -50px;
+            left: 10px;
+            vertical-align: top;
+        }
+    </style>
 </head>
 <body>
 <div id="table-div">
     <form class="searchBar layui-form layui-form-pane" action="">
-        <div class="layui-form-item">
+        <div class="layui-form-item" style="margin-bottom: -20px;">
             <div class="layui-inline">
-                <label class="layui-form-label">每日皮肤1</label>
+                <label class="layui-form-label label-style-1">每日皮肤1</label>
                 <div class="layui-input-inline">
                     <input class="layui-input" name="skin1" id="skin1" autocomplete="off">
                 </div>
             </div>
             <div class="layui-inline">
-                <label class="layui-form-label">每日皮肤2</label>
+                <label class="layui-form-label label-style-1">每日皮肤2</label>
                 <div class="layui-input-inline">
                     <input class="layui-input" name="skin2" id="skin2" autocomplete="off">
                 </div>
             </div>
             <div class="layui-inline">
-                <label class="layui-form-label">每日皮肤3</label>
+                <label class="layui-form-label label-style-1">每日皮肤3</label>
                 <div class="layui-input-inline">
                     <input class="layui-input" name="skin3" id="skin3" autocomplete="off">
                 </div>
             </div>
             <div class="layui-inline">
-                <label class="layui-form-label">每日皮肤4</label>
+                <label class="layui-form-label label-style-1">每日皮肤4</label>
                 <div class="layui-input-inline">
                     <input class="layui-input" name="skin4" id="skin4" autocomplete="off">
                 </div>
             </div>
+            <!--<div class="shop-logo">-->
+            <!--    <img src="/static/assets/img/valorant/wwdw/shop_logo.png" alt="无畏电玩">-->
+            <!--</div>-->
             <br/>
             <div class="layui-inline">
-                <label class="layui-form-label">夜市皮肤1</label>
+                <label class="layui-form-label label-style-2">夜市皮肤1</label>
                 <div class="layui-input-inline">
                     <input class="layui-input" name="bonusSkin1" id="bonusSkin1" autocomplete="off">
                 </div>
             </div>
             <div class="layui-inline">
-                <label class="layui-form-label">夜市皮肤2</label>
+                <label class="layui-form-label label-style-2">夜市皮肤2</label>
                 <div class="layui-input-inline">
                     <input class="layui-input" name="bonusSkin2" id="bonusSkin2" autocomplete="off">
                 </div>
             </div>
             <div class="layui-inline">
-                <label class="layui-form-label">夜市皮肤3</label>
+                <label class="layui-form-label label-style-2">夜市皮肤3</label>
                 <div class="layui-input-inline">
                     <input class="layui-input" name="bonusSkin3" id="bonusSkin3" autocomplete="off">
                 </div>
             </div>
             <div class="layui-inline">
-                <label class="layui-form-label">初邮</label>
+                <label class="layui-form-label label-style-2">初邮</label>
                 <div class="layui-input-inline">
                     <select class="layui-select" name="hasEmail" id="hasEmail"></select>
                 </div>
             </div>
 
             <div class="layui-inline">
-                <button type="button" class="layui-btn"  data-type="reload" lay-filter="data-search-btn" id="searchBtn"><i class="layui-icon"></i> 搜 索</button>
-                <button type="button" class="layui-btn"  data-type="clear" lay-filter="data-search-btn" id="clearBtn"> 清 空</button>
+                <div class="btn-main-surround">
+                    <button type="button" class="layui-btn btn-main" data-type="reload" lay-filter="data-search-btn" id="searchBtn">
+                        <span class="btn-main-text"><i class="layui-icon"></i> 搜 索</span>
+                    </button>
+                </div>
+                <button type="button" class="layui-btn layui-btn-primary" data-type="clear" lay-filter="data-search-btn" id="clearBtn"> 清 空</button>
             </div>
-
+            <div class="shop-logo">
+                <img src="/static/assets/img/valorant/wwdw/shop_logo.png" alt="无畏电玩">
+            </div>
             <br/>
-            <div class="layui-inline" style="color: lightseagreen; font-size: 18px;">
-                列表初始号信息为实时数据,有心仪商店账号可直接下单自助提取！下单直通车：<a href="#" style="color: blue; text-decoration: underline;">无畏电玩</a>
+            <div class="layui-inline" style="color: #798283; font-size: 18px; margin-top: -60px;">
+                列表初始号信息为实时数据，有心仪商店账号可直接下单自助提取！下单直通车：
+                <a href="#" style="color: #ff4654; text-decoration: underline;">
+                    <img src="/static/assets/img/valorant/wwdw/shop_link.png" alt="无畏电玩" width="110px" height="25px">
+                </a>
             </div>
         </div>
     </form>

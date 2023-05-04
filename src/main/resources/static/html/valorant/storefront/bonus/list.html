@@ -5,6 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>valorant</title>
     <link href="/static/lib/layui-v2.7.6/css/layui.css" rel="stylesheet">
+    <link href="/static/css/layui-override.css" rel="stylesheet">
+    <style>
+        body {
+            width: 96%;
+            max-width: 2000px;
+            margin: 20px auto;
+        }
+        .layui-table-view .layui-table .layui-table-cell {
+            line-height: 25px !important;
+        }
+    </style>
 </head>
 <body>
 <div id="table-div">
@@ -24,7 +35,7 @@
             </div>
 
             <div class="layui-inline">
-                <button type="button" class="layui-btn"  data-type="reload" lay-filter="data-search-btn" id="searchBtn"><i class="layui-icon"></i> 搜 索</button>
+                <button type="button" class="layui-btn btn-main"  data-type="reload" lay-filter="data-search-btn" id="searchBtn"><i class="layui-icon"></i> 搜 索</button>
             </div>
         </div>
     </form>

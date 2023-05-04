@@ -234,13 +234,13 @@ public class CDKServiceImpl extends ServiceImpl<CDKMapper, CDK> implements CDKSe
         sb.append("账号编号：").append(account.getAccountNo()).append("<br/>\n")
                 .append("每日商店：").append(ArrayUtils.toString(storeFront.getDisplayNameList())).append("<br/>\n")
                 .append("夜市商店：").append(bonusOfferString).append("<br/>\n")
-                .append("账号版本：").append(account.getHasEmail() ? "完全版（带初邮）" : "黄金版（不带初邮）").append("<br/>\n")
-                .append("CDK版本：").append(cdk.getTypeHasEmail() ? "完全版（带初邮）" : "黄金版（不带初邮）").append("<br/>\n");
+                .append("账号版本：").append(account.getHasEmail() ? "完全版（带初邮）" : "黄金版（未验证初邮）").append("<br/>\n")
+                .append("CDK版本：").append(cdk.getTypeHasEmail() ? "完全版（带初邮）" : "黄金版（未验证初邮）").append("<br/>\n");
         if(withSecret) {
             sb.append("拳头账号：").append(account.getUsername()).append("<br/>\n")
                     .append("拳头账号密码：").append(account.getPassword()).append("<br/>\n")
-                    .append("初始邮箱：").append(account.getHasEmail() ? account.getEmail() : "不带初邮").append("<br/>\n")
-                    .append("初始邮箱密码：").append(account.getHasEmail() ? account.getEmailPwd() : "不带初邮").append("<br/>\n");
+                    .append("初始邮箱：").append(account.getHasEmail() ? account.getEmail() : "未验证初邮").append("<br/>\n")
+                    .append("初始邮箱密码：").append(account.getHasEmail() ? account.getEmailPwd() : "未验证初邮").append("<br/>\n");
         }
 
         return sb.toString();

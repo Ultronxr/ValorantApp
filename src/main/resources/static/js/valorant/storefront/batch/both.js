@@ -421,7 +421,7 @@ $(function () {
 
 function loadAllSelect() {
     let hasEmailSelectOptions = [
-        {name: "不带初邮", value: false},
+        {name: "未验证初邮", value: false},
         {name: "带初邮", value: true}
     ];
     loadSelectFromJson(hasEmailSelectOptions, $("#hasEmail"), "name", "value");
@@ -445,7 +445,10 @@ function renderDropdown(element, id) {
 table.render({
     elem: '#data-table'
     ,id: 'dataTable'
-    // ,height: 500
+    ,height: 700
+    // ,skin: 'line' //行边框风格 line row nob
+    ,even: true //开启隔行背景
+    ,size: 'lg' //小尺寸的表格 sm lg
     // ,toolbar: '#toolbar'
     ,defaultToolbar: [] //清空默认的三个工具栏按钮
     ,cols: [[ //表头
@@ -470,12 +473,12 @@ table.render({
                 }
                 return '夜市未开放';
             }}
-        ,{field: 'hasEmail', title: '初邮', sort: false, align: 'center', width: '8%', style: 'height:50px;',
+        ,{field: 'hasEmail', title: '初邮', sort: false, align: 'center', width: '6%', style: 'height:50px;',
             templet: function (d) {
                 if(d.hasEmail != null && d.hasEmail === true) {
                     return '带初邮';
                 }
-                return '不带初邮';
+                return '未验证初邮';
             }
         }
         ,{title:'操作', sort: false, align: 'center', width: '5%', fixed: 'right', toolbar: '#inlineToolbar'}
@@ -626,7 +629,9 @@ function layerOpenImg(rowData) {
     }
 
     layer.open({
-        title: '商店信息 编号：' + rowData.accountNo,
+        title: '商店信息 编号：' + rowData.accountNo
+            // + '<img src="/static/assets/img/shop_logo.png" width="50px" height="50px">'
+        ,
         type: 2,
         content: ['/static/html/valorant/storefront/batch/storefrontImg.html', 'no'],
         area: [layerWidth, layerHeight],

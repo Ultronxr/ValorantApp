@@ -52,13 +52,15 @@ function loadAllSelect() {
 table.render({
     elem: '#data-table'
     ,id: 'dataTable'
-    // ,height: 500
+    ,height: 700
+    ,even: true
+    ,size: 'lg'
     ,cols: [[ //表头
         {type: 'checkbox', fixed: 'left'}
-        ,{field: 'accountNo', title: '编号', width: '7%', sort: true, hide: false}
-        ,{field: 'userId', title: 'ID', sort: true, hide: false}
-        ,{field: 'username', title: '用户名', sort: true}
-        ,{field: 'hasEmail', title: '初邮', sort: true,
+        ,{field: 'accountNo', title: '编号', width: '7%', sort: true, hide: false, align: 'center'}
+        ,{field: 'userId', title: 'ID', sort: true, hide: false, align: 'center'}
+        ,{field: 'username', title: '用户名', sort: true, align: 'center'}
+        ,{field: 'hasEmail', title: '初邮', sort: true, align: 'center',
             templet: function (d) {
                 if(d.hasEmail != null && d.hasEmail === true) {
                     return d.email;
@@ -66,7 +68,7 @@ table.render({
                 return '未验证初邮';
             }
         }
-        ,{field: 'isAuthFailure', title: '登录验证', sort: false,
+        ,{field: 'isAuthFailure', title: '登录验证', sort: false, align: 'center',
             templet: function (d) {
                 if(d.isAuthFailure != null && d.isAuthFailure === true) {
                     return '用户名或密码错误';
@@ -74,7 +76,7 @@ table.render({
                 return '登录验证成功';
             }
         }
-        ,{title:'操作', width: 125, minWidth: 125, fixed: 'right', toolbar: '#inlineToolbar'}
+        ,{title:'操作', width: 125, minWidth: 125, fixed: 'right', toolbar: '#inlineToolbar', align: 'center'}
     ]]
     ,toolbar: '#toolbar'
     ,defaultToolbar: [] //清空默认的三个工具栏按钮

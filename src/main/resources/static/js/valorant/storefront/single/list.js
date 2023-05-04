@@ -18,7 +18,9 @@ function loadAllSelect() {
 table.render({
     elem: '#data-table'
     ,id: 'dataTable'
-    // ,height: 500
+    ,height: 700
+    ,even: true
+    ,size: 'lg'
     ,cols: [[ //表头
         {field: 'weaponSkin.displayName', title: '皮肤名称', sort: false, align: 'center', width: '10%', style: 'height:150px;',
             templet: '<div>{{=d.weaponSkin.displayName}}</div>'}

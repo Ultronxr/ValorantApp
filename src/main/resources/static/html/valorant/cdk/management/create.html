@@ -6,6 +6,7 @@
     <title>valorant</title>
     <link href="/static/lib/layui-v2.7.6/css/layui.css" rel="stylesheet">
     <link href="/static/css/valorant/account/create.css" rel="stylesheet">
+    <link href="/static/css/layui-override.css" rel="stylesheet">
     <style>
         .layui-form-label {
             width: 150px !important;
@@ -27,7 +28,7 @@
         <div class="layui-form-item">
             <label class="layui-form-label">是否带初邮<label class="emphasize-red">*</label></label>
             <div class="layui-input-inline">
-                <input type="radio" name="typeHasEmail" value="false" title="不带初邮（黄金版）" checked>
+                <input type="radio" name="typeHasEmail" value="false" title="未验证初邮（黄金版）" checked>
                 <input type="radio" name="typeHasEmail" value="true" title="带初邮（完全版）">
             </div>
         </div>
@@ -46,7 +47,7 @@
         </div>
         <div class="layui-form-item">
             <div class="layui-input-block">
-                <button class="layui-btn" lay-submit lay-filter="create">新增</button>
+                <button class="layui-btn btn-main" lay-submit lay-filter="create">新增</button>
                 <button class="layui-btn layui-btn-primary" id="cancel-btn">取消</button>
             </div>
         </div>

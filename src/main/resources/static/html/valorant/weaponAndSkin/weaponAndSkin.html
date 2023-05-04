@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>valorant</title>
     <link href="/static/lib/layui-v2.7.6/css/layui.css" rel="stylesheet">
+    <link href="/static/css/layui-override.css" rel="stylesheet">
     <style>
         body {
             width: 80%;
@@ -26,13 +27,13 @@
     <div>
         <p>游戏版本更新（出了新皮肤）之后，请点击此按钮更新游戏皮肤数据。（请勿短时间内重复多次点击按钮！）</p>
         <br/>
-        <button type="button" class="layui-btn" onclick="updateDB()"><i class="layui-icon"></i>更新游戏皮肤数据</button>
+        <button type="button" class="layui-btn btn-main" onclick="updateDB()"><i class="layui-icon"></i>更新游戏皮肤数据</button>
     </div>
     <br/><br/><br/><br/>
     <div>
         <p>每日商店和夜市数据每天上午8点自动更新，如果出现数据更新失败情况，请点击此按钮进行手动更新。（请勿短时间内重复多次点击按钮！）</p>
         <br/>
-        <button type="button" class="layui-btn" onclick="batchUpdateBoth()"><i class="layui-icon"></i>批量更新每日商店和夜市（两步验证账号无法自动更新）</button>
+        <button type="button" class="layui-btn btn-main" onclick="batchUpdateBoth()"><i class="layui-icon"></i>批量更新每日商店和夜市（两步验证账号无法自动更新）</button>
     </div>
 
 </div>

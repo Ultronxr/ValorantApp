@@ -5,7 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>valorant</title>
     <link href="/static/lib/layui-v2.7.6/css/layui.css" rel="stylesheet">
+    <link href="/static/css/layui-override.css" rel="stylesheet">
     <style>
+        body {
+            width: 96%;
+            max-width: 2000px;
+            margin: 20px auto;
+        }
         .layui-form-item {
             margin-top: 10px !important;
         }
@@ -50,7 +56,7 @@
             <!--</div>-->
 
             <div class="layui-inline">
-                <button type="button" class="layui-btn"  data-type="reload" lay-filter="data-search-btn" id="searchBtn"><i class="layui-icon"></i> 搜 索</button>
+                <button type="button" class="layui-btn btn-main"  data-type="reload" lay-filter="data-search-btn" id="searchBtn"><i class="layui-icon"></i> 搜 索</button>
             </div>
             <div class="layui-inline">
                 <button type="button" class="layui-btn layui-btn-primary"  data-type="clear" lay-filter="data-clear-btn" id="clearBtn">清 空</button>
@@ -62,15 +68,15 @@
 
 <script type="text/html" id="toolbar">
     <div class="layui-btn-container">
-        <button class="layui-btn layui-btn-sm" lay-event="create">新增CDK</button>
-        <button class="layui-btn layui-btn-sm" lay-event="editReuseRemainingTimesBatch">批量修改CDK可用次数</button>
+        <button class="layui-btn btn-main layui-btn-sm" lay-event="create">新增CDK</button>
+        <button class="layui-btn btn-main layui-btn-sm" lay-event="editReuseRemainingTimesBatch">批量修改CDK可用次数</button>
         <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">批量删除</button>
     </div>
 </script>
 
 <script type="text/html" id="inlineToolbar">
     <!--<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>-->
-    <a class="layui-btn layui-btn-xs" lay-event="editReuseRemainingTimes">修改可用次数</a>
+    <a class="layui-btn btn-main layui-btn-xs" lay-event="editReuseRemainingTimes">修改可用次数</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
 

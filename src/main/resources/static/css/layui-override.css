@@ -1,0 +1,54 @@
+/* 覆盖layui样式 */
+
+/* 选中的元素的颜色（select等） */
+.layui-this {
+    background-color: #ff4654 !important;
+}
+/* 搜索栏标签样式1 */
+.label-style-1 {
+    font-weight: bold !important;
+    color: #3d3d3d !important;
+    border-color: #ff4654 !important;
+    border-width: 2px !important;
+    background-color: #ff4654 !important;
+}
+/* 搜索栏标签样式2 */
+.label-style-2 {
+    font-weight: bold !important;
+    color: #f3efea !important;
+    border-color: #51668b !important;
+    border-width: 2px !important;
+    background-color: #51668b !important;
+}
+
+/* 覆盖 layui-btn 的效果 */
+.btn-main {
+    background-color: #ff4654 !important;
+    font-weight: bold !important;
+}
+.layui-btn:hover {
+    border-color: #0f1923;
+}
+
+/* 数据表格 */
+.layui-table-view {
+    /*border-color: #111721 #111721 #e85554 #e85554;*/
+    /*border-style: solid solid solid solid;*/
+    /*border-width: 4px 4px 4px 4px;*/
+    box-shadow: 4px -4px 5px rgb(204 204 204 / 84%);
+}
+/* 翻页按钮 */
+.layui-table-view .layui-laypage-em {
+    background-color: #ff4654 !important;
+}
+/* 表格行首复选框 */
+.layui-form-checked[lay-skin=primary] i {
+    border-color: #ff4654 !important;
+    background-color: #ff4654 !important;
+    color: #fff;
+}
+
+/* radio单选框选中、鼠标悬浮 */
+.layui-form-radio:hover *, .layui-form-radioed, .layui-form-radioed>i {
+    color: #ff4654 !important;
+}
