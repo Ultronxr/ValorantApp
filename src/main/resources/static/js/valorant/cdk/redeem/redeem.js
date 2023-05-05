@@ -24,11 +24,11 @@ form.on('submit(redeemVerify)', function(data) {
                     }
                 });
             } else {
-                layer.msg(res.data.state.msg, {time: 2000});
+                layer.msg(res.data.state.msg, {icon:2, time: 2000});
             }
         },
         function (res) {
-            layer.msg("请求失败！", {time: 2000});
+            layer.msg("请求失败！", {icon:2, time: 2000});
         },
         function () {
             // this.layerIndex = layer.load(2, { shade: [0.2, '#ccc'] });
@@ -54,11 +54,11 @@ function redeem(layerIndex) {
                     ,content: res.data.detail
                 });
             } else {
-                layer.msg(res.data.state.msg, {time: 2000});
+                layer.msg(res.data.state.msg, {icon:2, time: 2000});
             }
         },
         function (res) {
-            layer.msg("请求失败！", {time: 2000});
+            layer.msg("请求失败！", {icon:2, time: 2000});
         },
         function () {
             // this.layerIndex = layer.load(2, { shade: [0.2, '#ccc'] });
@@ -86,14 +86,14 @@ form.on('submit(history)', function(data) {
                     });
                     $("#history-list").html(historyListHtml);
                 } else {
-                    layer.msg('无数据！', {time: 2000});
+                    layer.msg('无数据！', {icon:2, time: 2000});
                 }
             } else {
-                layer.msg(res.msg, {time: 2000});
+                layer.msg(res.msg, {icon:2, time: 2000});
             }
         },
         function (res) {
-            layer.msg("请求失败！", {time: 2000});
+            layer.msg("请求失败！", {icon:2, time: 2000});
         },
         function () {
             // this.layerIndex = layer.load(2, { shade: [0.2, '#ccc'] });

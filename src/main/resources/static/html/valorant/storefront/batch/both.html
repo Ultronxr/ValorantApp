@@ -8,14 +8,15 @@
     <link href="/static/lib/layui-v2.7.6/css/layui.css" rel="stylesheet">
     <link href="/static/css/valorant/valorant-style.css" rel="stylesheet">
     <style>
-        /*html {*/
-        /*    !*background: url(//game.gtimg.cn/images/val/act/a20230301act/pc/bg6.jpg) 100% 0;*!*/
-        /*    background: url("/static/assets/img/valorant/RANT_Logo_V.jpg") 100% 0;*/
-        /*    background-size: 100% 100%;*/
-        /*}*/
+        html {
+            background-image: url("/static/assets/img/valorant/RANT_Logo_V.jpg");
+            background-repeat: no-repeat;
+            background-position: left top;
+            background-size: cover;
+        }
         body {
             width: 96%;
-            max-width: 2000px;
+            max-width: 2400px;
             margin: 10px auto;
         }
         .shop-logo {
@@ -41,6 +42,9 @@
             width: 1400px;
             height: 140px;
             margin-bottom: 10px;
+        }
+        .layui-table-view {
+            background-color: #fff;
         }
         .layui-table-body {
             overflow: overlay !important;

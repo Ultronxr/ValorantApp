@@ -8,8 +8,14 @@
     <link href="/static/lib/layui-v2.7.6/css/layui.css" rel="stylesheet">
     <link href="/static/css/valorant/valorant-style.css" rel="stylesheet">
     <style>
+        html {
+            background-image: url("/static/assets/img/valorant/RANT_Logo_V.jpg");
+            background-repeat: no-repeat;
+            background-position: left top;
+            background-size: cover;
+        }
         body {
-            width: 800px;
+            width: 98%;
             margin: auto;
         }
         .layui-nav {
@@ -43,8 +49,11 @@
             margin-bottom: 20px
         }
         #data-form {
-            width: 100%;
-            margin: 3% 3%;
+            position: relative;
+            /*display: inline-block;*/
+            background-color: #fff;
+            /*width: 100%;*/
+            margin: 2% 1%;
             padding: 40px 10px;
             border-style: solid;
             border-color: rgba(204, 204, 204, 0.4);
@@ -52,7 +61,7 @@
             box-shadow: -2px 2px 5px rgba(204, 204, 204, 0.4);
         }
         .layui-input-inline {
-            width: 60% !important;
+            width: 75% !important;
         }
         .emphasize-red {
             color: red;
@@ -61,64 +70,89 @@
             margin-top: 3%;
             margin-left: 5%;
         }
+        .left-poster {
+        }
+        .left-poster img {
+            position: relative;
+            width: 100%;
+            margin-top: 2%;
+            vertical-align: top;
+        }
+        .right-poster {
+        }
+        .right-poster img {
+            position: relative;
+            width: 100%;
+            margin-top: 2%;
+            vertical-align: top;
+        }
     </style>
 </head>
 <body>
-<div id="data-form">
-    <div id="title">
-        <b>无畏电玩-瓦罗兰特每日商店/夜市账号提取</b><br/>
-        账号编号请填写选号网站中的账号编号，选号网址：
-        <a href="/wwdw/sf"><img src="/static/assets/img/valorant/wwdw/shop_link.png" alt="无畏电玩" width="110px" height="25px"></a>
+<div class="layui-row layui-col-space10">
+    <div class="layui-col-md4 left-poster">
+        <img src="/static/assets/img/valorant/wwdw/poster/poster_resize.jpg" alt="无畏电玩海报">
     </div>
-    <hr>
-    <ul class="layui-nav" lay-filter="">
-        <li class="layui-nav-item layui-this"><a href="javascript:navChange1();">账号提取</a></li>
-        <li class="layui-nav-item"><a href="javascript:navChange2();">记录查询</a></li>
-    </ul>
-    <form class="layui-form" action="" id="redeem-form">
-        <div class="layui-form-item">
-            <label class="layui-form-label">账号编号<label class="emphasize-red">*</label></label>
-            <div class="layui-input-inline">
-                <input type="text" name="accountNo" required lay-verify="required" autocomplete="off" class="layui-input">
+    <div class="layui-col-md4">
+        <div id="data-form">
+            <div id="title">
+                <b>无畏电玩-瓦罗兰特每日商店/夜市账号提取</b><br/>
+                账号编号请填写选号网站中的账号编号，选号网址：
+                <a href="/wwdw/sf"><img src="/static/assets/img/valorant/wwdw/shop_link.png" alt="无畏电玩" width="110px" height="25px"></a>
             </div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">CDK<label class="emphasize-red">*</label></label>
-            <div class="layui-input-inline">
-                <input type="text" name="cdk" required lay-verify="required" autocomplete="off" class="layui-input">
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <div class="layui-input-block">
-                <div class="btn-main-surround">
-                    <button class="layui-btn btn-main" lay-submit lay-filter="redeemVerify">
-                        <span class="btn-main-text">提 取</span>
-                    </button>
+            <hr>
+            <ul class="layui-nav" lay-filter="">
+                <li class="layui-nav-item layui-this"><a href="javascript:navChange1();">账号提取</a></li>
+                <li class="layui-nav-item"><a href="javascript:navChange2();">记录查询</a></li>
+            </ul>
+            <form class="layui-form" action="" id="redeem-form">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">账号编号<label class="emphasize-red">*</label></label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="accountNo" required lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
                 </div>
-            </div>
-        </div>
-    </form>
-
-    <form class="layui-form" action="" id="history-form" style="display: none;">
-        <div class="layui-form-item">
-            <label class="layui-form-label">CDK<label class="emphasize-red">*</label></label>
-            <div class="layui-input-inline">
-                <input type="text" name="cdk" required lay-verify="required" autocomplete="off" class="layui-input">
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <div class="layui-input-block">
-                <div class="btn-main-surround">
-                    <button class="layui-btn btn-main" lay-submit lay-filter="history">
-                        <span class="btn-main-text">查 询</span>
-                    </button>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">CDK<label class="emphasize-red">*</label></label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="cdk" required lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
                 </div>
-            </div>
-        </div>
-    </form>
-</div>
-<div id="history-list">
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <div class="btn-main-surround">
+                            <button class="layui-btn btn-main" lay-submit lay-filter="redeemVerify">
+                                <span class="btn-main-text">提 取</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
 
+            <form class="layui-form" action="" id="history-form" style="display: none;">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">CDK<label class="emphasize-red">*</label></label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="cdk" required lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <div class="btn-main-surround">
+                            <button class="layui-btn btn-main" lay-submit lay-filter="history">
+                                <span class="btn-main-text">查 询</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div id="history-list"></div>
+        </div>
+    </div>
+    <div class="layui-col-md4 right-poster">
+        <img src="/static/assets/img/valorant/wwdw/poster/poster_2.jpg" alt="无畏电玩海报">
+    </div>
 </div>
 
 <script src="/static/lib/layui-v2.7.6/layui.js"></script>
