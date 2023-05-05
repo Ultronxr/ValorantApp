@@ -25,6 +25,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
+        <!--<maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>-->
+
         <spring-boot.version>2.7.6</spring-boot.version>
         <junit.version>4.13.2</junit.version>
         <aspectj.version>1.9.6</aspectj.version>
@@ -207,7 +209,7 @@
 
     <build>
         <!-- 指定 jar包名称 -->
-        <finalName>ValorantApp-${project.version}</finalName>
+        <finalName>${project.artifactId}-${project.version}-${timestamp.GMT8}</finalName>
 
         <!-- 资源文件配置 -->
         <resources>
@@ -236,6 +238,26 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <mainClass>cn.ultronxr.valorant.ValorantApplication</mainClass>
+                </configuration>
+            </plugin>
+
+            <!-- 打jar包添加GMT+8时间戳插件（maven默认的时间戳是UTC） -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.10</version>
+                <executions>
+                    <execution>
+                        <id>timestamp-property</id>
+                        <goals>
+                            <goal>timestamp-property</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <name>timestamp.GMT8</name>
+                    <pattern>yyyyMMddHHmm</pattern>
+                    <timeZone>GMT+8</timeZone>
                 </configuration>
             </plugin>
         </plugins>
