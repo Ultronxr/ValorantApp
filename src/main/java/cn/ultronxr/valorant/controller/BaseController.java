@@ -36,12 +36,12 @@ public class BaseController {
 
     @GetMapping("/")
     public String fakeIndex() {
-        return "misc/fakeIndex";
+        return "index";
     }
 
-    @GetMapping("/magnt/mgemidx")
+    @GetMapping("/magnt/mgemidx/XLlcGAAlOX4fBak8")
     public String management() {
-        return "index";
+        return "misc/fakeIndex";
     }
 
     @GetMapping("/wwdw/sf")

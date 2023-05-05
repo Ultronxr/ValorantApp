@@ -3,14 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>valorant</title>
+    <title>无畏电玩初始号</title>
+    <link rel="icon" href="/static/assets/img/valorant/wwdw/shop_logo.png">
     <link href="/static/lib/layui-v2.7.6/css/layui.css" rel="stylesheet">
     <link href="/static/css/valorant/valorant-style.css" rel="stylesheet">
     <style>
+        /*html {*/
+        /*    !*background: url(//game.gtimg.cn/images/val/act/a20230301act/pc/bg6.jpg) 100% 0;*!*/
+        /*    background: url("/static/assets/img/valorant/RANT_Logo_V.jpg") 100% 0;*/
+        /*    background-size: 100% 100%;*/
+        /*}*/
         body {
             width: 96%;
             max-width: 2000px;
-            margin: 20px auto;
+            margin: 10px auto;
         }
         .shop-logo {
             position: relative;
@@ -24,12 +30,27 @@
             left: 10px;
             vertical-align: top;
         }
+        .shop-link {
+            color: #798283;
+            font-size: 18px;
+        }
+        .shop-banner {
+            margin-bottom: -10px;
+        }
+        .shop-banner img {
+            width: 1400px;
+            height: 140px;
+            margin-bottom: 10px;
+        }
+        .layui-table-body {
+            overflow: overlay !important;
+        }
     </style>
 </head>
 <body>
 <div id="table-div">
     <form class="searchBar layui-form layui-form-pane" action="">
-        <div class="layui-form-item" style="margin-bottom: -20px;">
+        <div class="layui-form-item" style="margin-bottom: -60px;">
             <div class="layui-inline">
                 <label class="layui-form-label label-style-1">每日皮肤1</label>
                 <div class="layui-input-inline">
@@ -54,9 +75,6 @@
                     <input class="layui-input" name="skin4" id="skin4" autocomplete="off">
                 </div>
             </div>
-            <!--<div class="shop-logo">-->
-            <!--    <img src="/static/assets/img/valorant/wwdw/shop_logo.png" alt="无畏电玩">-->
-            <!--</div>-->
             <br/>
             <div class="layui-inline">
                 <label class="layui-form-label label-style-2">夜市皮肤1</label>
@@ -94,15 +112,19 @@
             <div class="shop-logo">
                 <img src="/static/assets/img/valorant/wwdw/shop_logo.png" alt="无畏电玩">
             </div>
-            <br/>
-            <div class="layui-inline" style="color: #798283; font-size: 18px; margin-top: -60px;">
-                列表初始号信息为实时数据，有心仪商店账号可直接下单自助提取！下单直通车：
-                <a href="#" style="color: #ff4654; text-decoration: underline;">
-                    <img src="/static/assets/img/valorant/wwdw/shop_link.png" alt="无畏电玩" width="110px" height="25px">
-                </a>
-            </div>
         </div>
     </form>
+    <div>
+        <div class="shop-link">
+            列表初始号信息为实时数据，有心仪商店账号可直接下单自助提取！下单直通车：
+            <a href="https://m.tb.cn/h.Uv4vYO7?tk=PySpdNjqfxE" target="_blank">
+                <img src="/static/assets/img/valorant/wwdw/shop_link.png" alt="无畏电玩" width="110px" height="25px">
+            </a>
+        </div>
+        <div class="shop-banner">
+            <img src="/static/assets/img/valorant/wwdw/banner.png" alt="无畏电玩">
+        </div>
+    </div>
     <table id="data-table" lay-filter="dataTable" class="layui-table" lay-skin="line"></table>
 </div>
 

@@ -473,7 +473,7 @@ table.render({
                 }
                 return '夜市未开放';
             }}
-        ,{field: 'hasEmail', title: '初邮', sort: false, align: 'center', width: '6%', style: 'height:50px;',
+        ,{field: 'hasEmail', title: '初邮', sort: false, align: 'center', width: '7%', style: 'height:50px;',
             templet: function (d) {
                 if(d.hasEmail != null && d.hasEmail === true) {
                     return '带初邮';
@@ -481,7 +481,7 @@ table.render({
                 return '未验证初邮';
             }
         }
-        ,{title:'操作', sort: false, align: 'center', width: '5%', fixed: 'right', toolbar: '#inlineToolbar'}
+        ,{title:'操作', sort: false, align: 'center', width: '5%', toolbar: '#inlineToolbar'}
     ]]
     ,totalRow: false
     ,loading: true
