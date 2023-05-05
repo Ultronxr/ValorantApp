@@ -2,6 +2,7 @@ package cn.ultronxr.valorant.api.impl;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSONArray;
+import cn.hutool.json.JSONException;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import cn.ultronxr.valorant.api.BaseAPI;
@@ -36,9 +37,15 @@ public class StoreFrontAPI extends BaseAPI {
 
     @Override
     public JSONObject parseData(String responseBody) throws APIUnauthorizedException {
-        JSONObject obj = JSONUtil.parseObj(responseBody, false);
-        if(obj.getInt("httpStatus", 200) == 400 && obj.getStr("errorCode", "OK").equals("BAD_CLAIMS")) {
-            throw new APIUnauthorizedException();
+        JSONObject obj = null;
+        try {
+            obj = JSONUtil.parseObj(responseBody, false);
+            if(obj.getInt("httpStatus", 200) == 400 && obj.getStr("errorCode", "OK").equals("BAD_CLAIMS")) {
+                throw new APIUnauthorizedException();
+            }
+        } catch (JSONException e) {
+            log.warn("API请求响应体json解析失败！", e);
+            log.warn("如下是本次请求的响应体：\n{}", responseBody);
         }
         return obj;
     }
