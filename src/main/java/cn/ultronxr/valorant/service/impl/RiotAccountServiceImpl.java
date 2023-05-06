@@ -27,6 +27,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static cn.ultronxr.valorant.bean.enums.RiotAccountCreateState.*;
 
@@ -79,6 +80,33 @@ public class RiotAccountServiceImpl extends ServiceImpl<RiotAccountMapper, RiotA
     }
 
     @Override
+    public RiotAccountCreateState createWithoutRSO(RiotAccount account) {
+        if(StringUtils.isBlank(account.getUsername()) || StringUtils.isBlank(account.getPassword())) {
+            log.info("拳头账号添加失败：{}", MISSING_REQUIRED_FIELD);
+            return MISSING_REQUIRED_FIELD;
+        }
+
+        RiotAccount accountInDB = this.getOne(new LambdaQueryWrapper<RiotAccount>().eq(RiotAccount::getUsername, account.getUsername()));
+        if(accountInDB != null) {
+            log.info("拳头账号添加失败：{}", DUPLICATE);
+            return DUPLICATE;
+        }
+
+        log.info("添加拳头账号：{}", account);
+        // 手动设置是否带初邮
+        account.setHasEmail(StringUtils.isNotEmpty(account.getEmail()));
+        account.setUserId("temp" + UUID.randomUUID().toString());
+        account.setIsAuthFailure(false);
+        account.setIsDel(false);
+        if(this.save(account)) {
+            log.info("拳头账号添加成功。username={}", account.getUsername());
+            return OK;
+        }
+        log.info("拳头账号添加失败：{}", AUTH_FAILURE);
+        return AUTH_FAILURE;
+    }
+
+    @Override
     public boolean importFile(MultipartFile file) {
         FileInputStream fileIS = null;
         try {
@@ -94,6 +122,10 @@ public class RiotAccountServiceImpl extends ServiceImpl<RiotAccountMapper, RiotA
             log.info("批量导入拳头账号，解析Excel数据成功。");
 
             File resultFile = new File("cache/files/", "拳头账号导入结果.xlsx");
+            if(resultFile.exists()) {
+                resultFile.delete();
+                resultFile = new File("cache/files/", "拳头账号导入结果.xlsx");
+            }
             ExcelWriter writer = ExcelUtil.getWriter(resultFile, "sheet1");
             try {
                 writer.merge(0, 0, 0, 3, "在下方填写账号信息。请勿修改本Excel模板的任何格式！", true);
@@ -104,18 +136,38 @@ public class RiotAccountServiceImpl extends ServiceImpl<RiotAccountMapper, RiotA
             List<String> headRow = Arrays.asList("拳头账号用户名", "拳头账号密码", "初始邮箱（若无留空）", "初始邮箱密码（若无留空）", "导入结果");
             writer.writeHeadRow(headRow);
             for (List<Object> row : data) {
+                int size = getRowTrueSize(row);
+                if(size == 0) {
+                    continue;
+                }
                 RiotAccount account = new RiotAccount();
                 account.setUsername((String) row.get(0));
-                account.setPassword((String) row.get(1));
-                account.setEmail((String) row.get(2));
-                account.setEmailPwd((String) row.get(3));
+                if(size > 1) {
+                    account.setPassword((String) row.get(1));
+                }
+                if(size > 2) {
+                    account.setEmail((String) row.get(2));
+                }
+                if(size > 3) {
+                    account.setEmailPwd((String) row.get(3));
+                }
 
-                RiotAccountCreateState state = this.create(account);
+                RiotAccountCreateState state = this.createWithoutRSO(account);
                 if (state != OK) {
+                    if(row.size() < 4) {
+                        int addCount = 4-row.size();
+                        for(int i = 1; i <= addCount; i++) {
+                            row.add("");
+                        }
+                    }
+                    if(row.size() > 4) {
+                        int removeCount = row.size()-4;
+                        for(int i = 1; i <= removeCount; i++) {
+                            row.remove(row.size() - 1);
+                        }
+                    }
                     row.add(state.getMsg());
                     writer.writeRow(row);
-                } else {
-                    Thread.sleep(2000);
                 }
             }
             writer.autoSizeColumnAll();
@@ -125,8 +177,6 @@ public class RiotAccountServiceImpl extends ServiceImpl<RiotAccountMapper, RiotA
         } catch (IOException e) {
             log.warn("批量导入拳头账号时，处理Excel数据失败！", e);
             return false;
-        } catch (InterruptedException e) {
-            log.warn("Thread.sleep(2000) 抛出异常！", e);
         } finally {
             try {
                 if(fileIS != null) {
@@ -137,6 +187,16 @@ public class RiotAccountServiceImpl extends ServiceImpl<RiotAccountMapper, RiotA
             }
         }
         return true;
+    }
+
+    private int getRowTrueSize(List<Object> row) {
+        int res = 0;
+        for (Object o : row) {
+            if (StringUtils.isNotBlank((String) o)) {
+                res++;
+            }
+        }
+        return res;
     }
 
     //@Override

@@ -20,6 +20,7 @@ public enum CDKRedeemState {
     ,CDK_VERSION_ERROR(20, "CDK版本错误！")
     ,CDK_USED(30, "一次性CDK已使用！")
     ,CDK_REUSE_REMAINING_TIMES_EXHAUSTED(40, "可重复使用CDK剩余可用次数耗尽！")
+    ,NO_STOREFRONT_RECORD(50, "没有每日商店或夜市数据！")
     ;
 
     private final int code;

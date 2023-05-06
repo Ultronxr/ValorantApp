@@ -149,8 +149,13 @@ public class CDKServiceImpl extends ServiceImpl<CDKMapper, CDK> implements CDKSe
             return verify;
         }
 
+        String verifyDetail = getCDKRedeemVerifyDetail(cdkObj, account, false);
+        if(StringUtils.isEmpty(verifyDetail)) {
+            verify.setState(NO_STOREFRONT_RECORD);
+            return verify;
+        }
         verify.setState(OK);
-        verify.setDetail(getCDKRedeemVerifyDetail(cdkObj, account, false));
+        verify.setDetail(verifyDetail);
         return verify;
     }
 
@@ -183,6 +188,11 @@ public class CDKServiceImpl extends ServiceImpl<CDKMapper, CDK> implements CDKSe
             log.info("尝试兑换CDK，兑换结果={}, cdk={}, 拳头账号编号accountNo={}", CDK_REUSE_REMAINING_TIMES_EXHAUSTED, cdk, accountNo);
             return new CDKRedeemVerifyVO(CDK_REUSE_REMAINING_TIMES_EXHAUSTED);
         }
+        String verifyDetail = getCDKRedeemVerifyDetail(cdkObj, account, true);
+        if(StringUtils.isEmpty(verifyDetail)) {
+            log.info("尝试兑换CDK，兑换结果={}, cdk={}, 拳头账号编号accountNo={}", NO_STOREFRONT_RECORD, cdk, accountNo);
+            return new CDKRedeemVerifyVO(NO_STOREFRONT_RECORD);
+        }
 
         if(!cdkObj.getTypeReusable()) {
             cdkObj.setReuseRemainingTimes(0);
@@ -199,7 +209,7 @@ public class CDKServiceImpl extends ServiceImpl<CDKMapper, CDK> implements CDKSe
         history.setCdk(cdkObj.getCdk());
         history.setAccountNo(accountNo);
         history.setRedeemTime(new Date());
-        history.setDetail(getCDKRedeemVerifyDetail(cdkObj, account, true));
+        history.setDetail(verifyDetail);
         cdkHistoryMapper.insert(history);
 
         log.info("尝试兑换CDK，兑换结果={}, cdk={}, 拳头账号编号accountNo={}", OK, cdk, accountNo);
@@ -217,6 +227,10 @@ public class CDKServiceImpl extends ServiceImpl<CDKMapper, CDK> implements CDKSe
      */
     private String getCDKRedeemVerifyDetail(CDK cdk, RiotAccount account, boolean withSecret) {
         BatchBothStoreFrontVO storeFront = sfService.queryBothByAccountId(null, account.getAccountNo());
+        if(null == storeFront) {
+            return null;
+        }
+
         StringBuilder bonusOfferString = new StringBuilder();
         if(null == storeFront.getBonusOffer()) {
             bonusOfferString = new StringBuilder("夜市未开放");

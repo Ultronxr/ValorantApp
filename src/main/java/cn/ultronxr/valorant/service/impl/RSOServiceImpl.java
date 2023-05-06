@@ -12,6 +12,7 @@ import cn.ultronxr.valorant.bean.mybatis.mapper.RiotAccountMapper;
 import cn.ultronxr.valorant.exception.*;
 import cn.ultronxr.valorant.service.RSOService;
 import cn.ultronxr.valorant.util.RSOUtils;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -168,12 +169,23 @@ public class RSOServiceImpl implements RSOService {
             log.warn("RSO验证失败：exception={}, userId={}, username={}, ", e.getMessage(), account.getUserId(), account.getUsername());
             return null;
         }
+        // 如果userId不一致，说明是excel导入未验证的账号，需要更新userId
+        if(!rso.getUserId().equals(account.getUserId())) {
+            account.setUserId(rso.getUserId());
+        }
         account.setAccessToken(rso.getAccessToken());
         account.setAccessTokenExpireAt(rso.getAccessTokenExpireAt());
         if(needRequestEntitlementsToken) {
             account.setEntitlementsToken(rso.getEntitlementsToken());
         }
-        accountMapper.updateById(account);
+        accountMapper.update(account,
+                new LambdaUpdateWrapper<RiotAccount>()
+                        .eq(RiotAccount::getAccountNo, account.getAccountNo())
+                        .set(RiotAccount::getUserId, account.getUserId())
+                        .set(RiotAccount::getAccessToken, account.getAccessToken())
+                        .set(RiotAccount::getAccessTokenExpireAt, account.getAccessTokenExpireAt())
+                        .set(needRequestEntitlementsToken, RiotAccount::getEntitlementsToken, account.getEntitlementsToken())
+        );
         return rso;
     }
 

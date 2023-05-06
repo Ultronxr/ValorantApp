@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=1500, initial-scale=1.0">
     <title>无畏电玩初始号</title>
     <link rel="icon" href="/static/assets/img/valorant/wwdw/shop_logo.png">
     <link href="/static/lib/layui-v2.7.6/css/layui.css" rel="stylesheet">
     <link href="/static/css/valorant/valorant-style.css" rel="stylesheet">
     <style>
         html {
+            min-width: 1500px;
             background-image: url("/static/assets/img/valorant/RANT_Logo_V.jpg");
             background-repeat: no-repeat;
             background-position: left top;
@@ -17,19 +18,14 @@
         body {
             width: 96%;
             max-width: 2400px;
+            min-width: 1500px;
             margin: 10px auto;
         }
-        .shop-logo {
-            position: relative;
-            display: inline;
+        #table-div {
+            min-width: 1400px;
         }
-        .shop-logo img {
-            width: 120px;
-            height: 120px;
-            position: relative;
-            top: -50px;
-            left: 10px;
-            vertical-align: top;
+        .layui-inline {
+            display: inline-block !important;
         }
         .shop-link {
             color: #798283;
@@ -39,8 +35,11 @@
             margin-bottom: -10px;
         }
         .shop-banner img {
-            width: 1400px;
-            height: 140px;
+            /*width: 1400px;*/
+            /*height: 140px;*/
+            width: 90%;
+            max-width: 1400px;
+            max-height: 140px;
             margin-bottom: 10px;
         }
         .layui-table-view {
@@ -49,12 +48,22 @@
         .layui-table-body {
             overflow: overlay !important;
         }
+        .layui-layer-iframe .layui-layer-title {
+            height: 65px !important;
+        }
+        .layui-layer-iframe .shop-logo {
+            position: absolute;
+            z-index: 100;
+            width: 105px;
+            height: 110px;
+            left: 650px;
+        }
     </style>
 </head>
 <body>
 <div id="table-div">
     <form class="searchBar layui-form layui-form-pane" action="">
-        <div class="layui-form-item" style="margin-bottom: -60px;">
+        <div class="layui-form-item" style="margin-bottom: 0;">
             <div class="layui-inline">
                 <label class="layui-form-label label-style-1">每日皮肤1</label>
                 <div class="layui-input-inline">
@@ -112,9 +121,6 @@
                     </button>
                 </div>
                 <button type="button" class="layui-btn layui-btn-primary" data-type="clear" lay-filter="data-search-btn" id="clearBtn"> 清 空</button>
-            </div>
-            <div class="shop-logo">
-                <img src="/static/assets/img/valorant/wwdw/shop_logo.png" alt="无畏电玩">
             </div>
         </div>
     </form>

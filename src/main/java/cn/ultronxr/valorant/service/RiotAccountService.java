@@ -16,6 +16,13 @@ public interface RiotAccountService extends IService<RiotAccount> {
 
     RiotAccountCreateState create(RiotAccount account);
 
+    /**
+     * 创建拳头账号时不进行登录验证（用于Excel导入的情况）
+     * @param account
+     * @return
+     */
+    RiotAccountCreateState createWithoutRSO(RiotAccount account);
+
     boolean importFile(MultipartFile file);
 
     //boolean update(RiotAccount account);

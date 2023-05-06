@@ -16,6 +16,9 @@ var selectData = [
                         title: "掠夺印象 暴徒",
                         id: "掠夺印象 暴徒"
                     }, {
+                        title: "混沌序幕 暴徒",
+                        id: "混沌序幕 暴徒"
+                    }, {
                         title: "异星霸主 暴徒",
                         id: "异星霸主 暴徒"
                     }, {
@@ -33,6 +36,12 @@ var selectData = [
                     }, {
                         title: "恶鬼 暴徒",
                         id: "恶鬼 暴徒"
+                    }, {
+                        title: "光之哨兵 暴徒",
+                        id: "光之哨兵 暴徒"
+                    }, {
+                        title: "弃王遗思 暴徒",
+                        id: "弃王遗思 暴徒"
                     }, {
                         title: "电幻普普 暴徒",
                         id: "电幻普普 暴徒"
@@ -80,9 +89,21 @@ var selectData = [
                         title: "咻咻X 幻象",
                         id: "咻咻X 幻象"
                     }, {
+                        title: "殒落诅咒 幻象",
+                        id: "殒落诅咒 幻象"
+                    }, {
+                        title: "电幻普普 幻象",
+                        id: "电幻普普 幻象"
+                    }, {
+                        title: "RGX 11z Pro 幻象",
+                        id: "RGX 11z Pro 幻象"
+                    }, {
+                        title: "虚无时界 幻象",
+                        id: "虚无时界 幻象"
+                    }, {
                         title: "辐能危机001 幻象",
                         id: "辐能危机001 幻象"
-                    }
+                    },
                 ]
             },
             {
@@ -300,6 +321,9 @@ var selectData = [
                 title: "RGX 11z Pro 直刀",
                 id: "RGX 11z Pro 直刀"
             }, {
+                title: "声波刃",
+                id: "声波刃"
+            }, {
                 title: "掠夺印象 爪刀",
                 id: "掠夺印象 爪刀"
             }, {
@@ -315,6 +339,9 @@ var selectData = [
                 title: "黑市 蝴蝶刀",
                 id: "黑市 蝴蝶刀"
             }, {
+                title: "异星猎人 小刀",
+                id: "异星猎人 小刀"
+            }, {
                 title: "盖亚之怒",
                 id: "盖亚之怒"
             }, {
@@ -326,6 +353,12 @@ var selectData = [
             }, {
                 title: "太极扇",
                 id: "太极扇"
+            }, {
+                title: "鎏金帝王 长剑",
+                id: "鎏金帝王 长剑"
+            }, {
+                title: "至尊龙燄 匕首",
+                id: "至尊龙燄 匕首"
             }, {
                 title: "殒落王者断刃",
                 id: "殒落王者断刃"
@@ -413,8 +446,8 @@ $(function () {
     renderDropdown('#skin3', 'skin3');
     renderDropdown('#skin4', 'skin4');
     renderDropdown('#bonusSkin1', 'bonusSkin1');
-    renderDropdown('#bonusSkin2', 'skin2');
-    renderDropdown('#bonusSkin3', 'skin3');
+    renderDropdown('#bonusSkin2', 'bonusSkin2');
+    renderDropdown('#bonusSkin3', 'bonusSkin3');
 
     loadAllSelect();
 });
@@ -620,22 +653,33 @@ table.on('tool(dataTable)', function(obj) {
     }
 });
 
+var bodyWidth = $('body').width(),
+    bodyHeight = $('body').height(),
+    htmlWidth = $('html').width(),
+    htmlHeight = $('html').height();
+console.log('bodyWidth='+bodyWidth + ' bodyHeight='+bodyHeight + ' htmlWidth='+htmlWidth + ' htmlHeight='+htmlHeight);
+
 function layerOpenImg(rowData) {
-    let layerWidth = '1500px',
-        layerHeight = '670px';
+    let layerWidth = '1500',
+        layerHeight = '680';
     // 无夜市数据时，缩短弹窗高度
     if(rowData.bonusOffer == null) {
-        layerHeight = '340px';
+        layerHeight = '350';
     }
+
+    // 手动计算弹窗位置，使其始终保持屏幕中央
+    let layerLeftOffset = (0.5 - 1500/2/htmlWidth)* htmlWidth,
+        layerTopOffset = (0.5 - layerHeight/2/bodyHeight) * bodyHeight;
 
     layer.open({
         title: '商店信息 编号：' + rowData.accountNo
-            // + '<img src="/static/assets/img/shop_logo.png" width="50px" height="50px">'
+            + '<img class="shop-logo" src="/static/assets/img/valorant/wwdw/shop_logo.png">'
         ,
         type: 2,
         content: ['/static/html/valorant/storefront/batch/storefrontImg.html', 'no'],
-        area: [layerWidth, layerHeight],
+        area: [layerWidth+'px', layerHeight+'px'],
         shadeClose: true,
+        offset: [layerTopOffset+'px', layerLeftOffset+'px'],
         success: function (layero, index) {
             // 执行子页面的函数
             let iframe = window[layero.find('iframe')[0]['name']];

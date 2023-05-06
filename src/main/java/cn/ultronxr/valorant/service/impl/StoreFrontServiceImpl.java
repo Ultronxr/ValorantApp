@@ -99,6 +99,7 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
 
         JSONObject jObj = requestAPI(rso);
         if(null != jObj) {
+            userId = jObj.getStr("userId");
             list = sfAPI.getSingleItemOffers(jObj, userId);
             this.saveOrUpdateBatchByMultiId(list);
 
@@ -165,6 +166,9 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
             }
         }
         log.info("StoreFront API 请求成功。");
+        if(jObj != null) {
+            jObj.set("userId", rso.getUserId());
+        }
         return jObj;
     }
 
@@ -366,7 +370,7 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
         if(list != null && list.size() > 1){
             list.get(0).setBonusOffer(list.get(1));
         }
-        return list != null ? list.get(0) : null;
+        return list != null && list.size() > 0 ? list.get(0) : null;
     }
 
 }
