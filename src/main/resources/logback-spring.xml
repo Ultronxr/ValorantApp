@@ -20,7 +20,7 @@
         <!--</filter>-->
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>logs/ValorantApp.%d.%i.log</fileNamePattern>
-            <maxHistory>60</maxHistory>
+            <maxHistory>30</maxHistory>
             <totalSizeCap>2GB</totalSizeCap>
             <maxFileSize>10MB</maxFileSize>
         </rollingPolicy>
@@ -39,7 +39,7 @@
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>logs/ValorantApp_error.%d.%i.log</fileNamePattern>
-            <maxHistory>60</maxHistory>
+            <maxHistory>30</maxHistory>
             <totalSizeCap>2GB</totalSizeCap>
             <maxFileSize>10MB</maxFileSize>
         </rollingPolicy>
@@ -70,14 +70,14 @@
     </root>
 
     <!-- ALL TRACE DEBUG INFO WARN ERROR OFF -->
-    <logger name="cn.ultronxr" level="DEBUG" additivity="false">
+    <logger name="cn.ultronxr" level="INFO" additivity="false">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="FILE" />
         <appender-ref ref="FILE_ERROR" />
     </logger>
 
-    <logger name="cn.ultronxr.valorant.bean.mybatis.mapper" level="DEBUG" additivity="false">
-        <appender-ref ref="FILE_SQL" />
-    </logger>
+    <!--<logger name="cn.ultronxr.valorant.bean.mybatis.mapper" level="DEBUG" additivity="false">-->
+    <!--    <appender-ref ref="FILE_SQL" />-->
+    <!--</logger>-->
 
 </configuration>
