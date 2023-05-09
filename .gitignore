@@ -62,5 +62,6 @@ mybatisGeneratorConfig.xml
 /exe/output/*
 !/exe/output/ValorantApp_jar.exe4j
 !/exe/output/ValorantApp_Setup.iss
+!/exe/output/ValorantApp_Distributed_Setup.iss
 
 /exe/application*.yml
