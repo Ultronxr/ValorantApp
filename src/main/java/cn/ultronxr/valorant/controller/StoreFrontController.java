@@ -45,7 +45,7 @@ public class StoreFrontController {
     @PostMapping("/batchUpdateBoth")
     @ResponseBody
     public AjaxResponse batchUpdateBoth() {
-        if(sfService.batchUpdateBoth()) {
+        if(sfService.batchUpdateBoth(false)) {
             return AjaxResponseUtils.success();
         }
         return AjaxResponseUtils.fail();

@@ -26,3 +26,10 @@ spring:
         username: ${secret.prod.spring.datasource.druid.web.username}
         password: ${secret.prod.spring.datasource.druid.web.password}
         resetEnable: false
+
+  redis:
+    redisson:
+      singleServerConfig:
+        # 连接redis的地址和密码
+        address: ${secret.prod.spring.redis.redisson.singleServerConfig.address}
+        password: ${secret.prod.spring.redis.redisson.singleServerConfig.password}

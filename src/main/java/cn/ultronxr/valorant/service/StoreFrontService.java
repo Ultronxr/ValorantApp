@@ -49,12 +49,18 @@ public interface StoreFrontService extends IMppService<StoreFront> {
      */
     List<StoreFrontVO> toVO(List<StoreFront> storeFrontList);
 
-    void batchUpdateAccountToken();
+    /**
+     * 预更新账号的 RSO token（access token 与 entitlements token），token有效期一小时
+     */
+    void preUpdateAccountToken();
 
     /**
      * 批量更新所有账号的每日商店+夜市
+     * @param isDistributed 是否分布式更新<br/>
+     *                      true - 开启分布式更新（SQL获取拳头账号记录时会进行 LIMIT 处理）；<br/>
+     *                      false - 非分布式更新（SQL获取拳头账号记录时全量获取）
      */
-    boolean batchUpdateBoth();
+    boolean batchUpdateBoth(boolean isDistributed);
 
     /**
      * 查询所有账号的每日商店+夜市

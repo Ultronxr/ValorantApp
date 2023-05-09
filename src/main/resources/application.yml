@@ -12,6 +12,10 @@ spring:
     resources:
       static-locations: classpath:/static/,classpath:/templates/
 
+  redis:
+    redisson:
+      file: classpath:config/redisson.yml
+
 server:
   port: 9600
   servlet:
@@ -50,3 +54,22 @@ management:
       enabled: false
     health:
       show-details: always
+
+valorant:
+  datanode:
+    # redis zset key
+    redis-key: valorant_datanode_zset
+    # 主数据节点的名称
+    main-datanode-id: datanode_main
+    # 定时任务cron：清空datanode、添加datanode
+    cron:
+      clear-datanode: "0 50 6 * * ? "
+      add-datanode: "0 0 7 * * ? "
+  storefront:
+    # 事先更新拳头账号token的数据量（每个数据节点）
+    pre-update-account-token:
+      count-per-datanode: 650
+    # 定时任务cron：事先更新账号token、批量更新每日商店+夜市
+    cron:
+      pre-update-account-token: "0 5 7 * * ? "
+      batch-update-both: "0 0 8 * * ? "
