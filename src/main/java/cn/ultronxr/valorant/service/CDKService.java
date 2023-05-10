@@ -68,7 +68,7 @@ public interface CDKService extends IService<CDK> {
      * @param cdkHistoryDTO 查询参数
      * @return 分页后的CDK兑换历史记录
      */
-    Page<CDKHistory> queryCDKHistory(CDKHistoryDTO cdkHistoryDTO);
+    Page<CDKHistory> queryCDKHistory(CDKHistoryDTO cdkHistoryDTO, boolean isDesensitization);
 
     /**
      * 查询CDK兑换历史记录

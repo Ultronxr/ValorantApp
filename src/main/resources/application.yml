@@ -63,7 +63,7 @@ valorant:
     main-datanode-id: datanode_main
     # 定时任务cron：清空datanode、添加datanode
     cron:
-      clear-datanode: "0 50 6 * * ? "
+      clear-datanode: "0 55 6 * * ? "
       add-datanode: "0 0 7 * * ? "
   storefront:
     # 事先更新拳头账号token的数据量（每个数据节点）

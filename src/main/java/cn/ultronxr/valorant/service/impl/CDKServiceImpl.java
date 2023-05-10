@@ -122,7 +122,15 @@ public class CDKServiceImpl extends ServiceImpl<CDKMapper, CDK> implements CDKSe
                 .eq(cdkDTO.getIsUsed() != null, CDK::getIsUsed, cdkDTO.getIsUsed())
                 .orderByDesc(CDK::getCdkNo);
 
-        return this.page(page, wrapper);
+        Page<CDK> result = this.page(page, wrapper);
+        // 脱敏
+        if(null != result.getRecords() && result.getRecords().size() > 0) {
+            for(CDK record : result.getRecords()) {
+                String cdk = record.getCdk();
+                record.setCdk(cdk.substring(0, cdk.length()/3) + "******");
+            }
+        }
+        return result;
     }
 
     @Override
@@ -261,20 +269,34 @@ public class CDKServiceImpl extends ServiceImpl<CDKMapper, CDK> implements CDKSe
     }
 
     @Override
-    public Page<CDKHistory> queryCDKHistory(CDKHistoryDTO cdkHistoryDTO) {
+    public Page<CDKHistory> queryCDKHistory(CDKHistoryDTO cdkHistoryDTO, boolean isDesensitization) {
         Page<CDKHistory> page = Page.of(cdkHistoryDTO.getCurrent(), cdkHistoryDTO.getSize());
         LambdaQueryWrapper<CDKHistory> wrapper = Wrappers.lambdaQuery();
         wrapper.eq(StringUtils.isNotEmpty(cdkHistoryDTO.getCdk()), CDKHistory::getCdk, cdkHistoryDTO.getCdk())
                 .eq(cdkHistoryDTO.getAccountNo() != null, CDKHistory::getAccountNo, cdkHistoryDTO.getAccountNo())
                 .orderByDesc(CDKHistory::getRedeemTime);
+        Page<CDKHistory> result = cdkHistoryMapper.selectPage(page, wrapper);
+        // 脱敏
+        if(isDesensitization) {
+            if(null != result.getRecords() && result.getRecords().size() > 0) {
+                for(CDKHistory record : result.getRecords()) {
+                    String cdk = record.getCdk();
+                    record.setCdk(cdk.substring(0, cdk.length()/3) + "******");
+                    String detail = record.getDetail();
+                    detail = detail.replaceAll("拳头账号密码：.*<br/>\n初始邮箱：", "拳头账号密码：******<br/>\n初始邮箱：");
+                    detail = detail.replaceAll("初始邮箱密码：.*<br/>\n", "初始邮箱密码：******<br/>\n");
+                    record.setDetail(detail);
 
-        return cdkHistoryMapper.selectPage(page, wrapper);
+                }
+            }
+        }
+        return result;
     }
 
     @Override
     public CDKHistoryAndMoreCDKInfoVO queryCDKHistoryAndMoreCDKInfo(CDKHistoryDTO cdkHistoryDTO) {
         CDKHistoryAndMoreCDKInfoVO vo = new CDKHistoryAndMoreCDKInfoVO();
-        vo.setHistory(queryCDKHistory(cdkHistoryDTO));
+        vo.setHistory(queryCDKHistory(cdkHistoryDTO, false));
         CDK cdk = cdkMapper.selectById(cdkHistoryDTO.getCdk());
         if(null != cdk) {
             vo.setReuseRemainingTimes(cdk.getReuseRemainingTimes());

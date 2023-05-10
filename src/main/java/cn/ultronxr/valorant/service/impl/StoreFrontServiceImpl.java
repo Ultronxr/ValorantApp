@@ -294,11 +294,6 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
     }
 
     public boolean batchUpdateBoth(boolean isDistributed) {
-        long accountCount = accountMapper.selectCount(
-                new LambdaQueryWrapper<RiotAccount>()
-                        .eq(RiotAccount::getIsDel, false)
-                        .eq(RiotAccount::getIsAuthFailure, false)
-        );
         long dataNodeIndex = 0 , dataNodeTotal = 1;
         if(isDistributed) {
             dataNodeIndex = dataNodeManager.getIndex();
@@ -307,7 +302,17 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
         // 预更新了RSO token的账号
         long preSqlLimitCount = priorUpdateAccountTokenCountPerDataNode,
                 preSqlLimitIndex = dataNodeIndex*preSqlLimitCount;
+        Date now1 = new Date();
         // 未预更新RSO token的账号
+        long accountCount = accountMapper.selectCount(
+                new LambdaQueryWrapper<RiotAccount>()
+                        .eq(RiotAccount::getIsDel, false)
+                        .eq(RiotAccount::getIsAuthFailure, false)
+                        .and(condition -> condition
+                                .le(RiotAccount::getAccessTokenExpireAt, now1)
+                                .or().isNull(RiotAccount::getAccessTokenExpireAt)
+                        )
+        );
         long sqlLimitCount = accountCount / dataNodeTotal,
                 sqlLimitIndex = dataNodeIndex * sqlLimitCount;
 
@@ -320,14 +325,13 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
         }
 
         String date = DateUtil.today();
-        Date now = new Date();
         // 获取预更新了RSO token的账号，直接多线程并行查商店，不用考虑拳头账号登录API速率上限
         List<Object> preAccountUserIdList = accountMapper.selectObjs(
                 new LambdaQueryWrapper<RiotAccount>()
                         .select(RiotAccount::getUserId)
                         .eq(RiotAccount::getIsDel, false)
                         .eq(RiotAccount::getIsAuthFailure, false)
-                        .gt(RiotAccount::getAccessTokenExpireAt, now)
+                        .gt(RiotAccount::getAccessTokenExpireAt, now1)
                         .orderByAsc(RiotAccount::getAccountNo)
                         .last(isDistributed, "LIMIT " + preSqlLimitIndex + "," + preSqlLimitCount)
         );
@@ -335,6 +339,7 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
             singleItemOffersWithSleep((String) userId, date, 0);
         });
 
+        Date now2 = new Date();
         // 获取未预更新RSO token的账号
         List<Object> accountUserIdList = accountMapper.selectObjs(
                 new LambdaQueryWrapper<RiotAccount>()
@@ -342,7 +347,7 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
                         .eq(RiotAccount::getIsDel, false)
                         .eq(RiotAccount::getIsAuthFailure, false)
                         .and(condition -> condition
-                                .le(RiotAccount::getAccessTokenExpireAt, now)
+                                .le(RiotAccount::getAccessTokenExpireAt, now2)
                                 .or().isNull(RiotAccount::getAccessTokenExpireAt)
                         )
                         .orderByAsc(RiotAccount::getAccountNo)
