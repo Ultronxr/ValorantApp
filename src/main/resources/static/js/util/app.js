@@ -43,6 +43,7 @@ const app = {
                 redeemVerify: '/redeemVerify',
                 redeem: '/redeem',
                 history: '/history',
+                historyAndMoreCDKInfo: '/historyAndMoreCDKInfo',
             }
         },
     },

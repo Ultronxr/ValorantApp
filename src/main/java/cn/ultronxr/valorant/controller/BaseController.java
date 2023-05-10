@@ -49,6 +49,11 @@ public class BaseController {
         return "valorant/storefront/batch/both";
     }
 
+    @GetMapping("/wwdw/xh")
+    public String storefront2() {
+        return "valorant/storefront/batch/both2";
+    }
+
     @GetMapping("/wwdw/cdk")
     public String cdkRedeem() {
         return "valorant/cdk/redeem/redeem";

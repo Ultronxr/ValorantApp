@@ -6,6 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.time.ZoneId;
 import java.util.TimeZone;
 
 /**
@@ -26,8 +27,8 @@ import java.util.TimeZone;
 public class ValorantApplication {
 
     public static void main(String[] args) {
-        TimeZone.setDefault(TimeZone.getTimeZone("GMT+8"));
         SpringApplication.run(ValorantApplication.class, args);
+        TimeZone.setDefault(TimeZone.getTimeZone(ZoneId.of("GMT+8")));
     }
 
 }

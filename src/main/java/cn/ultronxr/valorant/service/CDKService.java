@@ -2,8 +2,8 @@ package cn.ultronxr.valorant.service;
 
 import cn.ultronxr.valorant.bean.DTO.CDKDTO;
 import cn.ultronxr.valorant.bean.DTO.CDKHistoryDTO;
+import cn.ultronxr.valorant.bean.VO.CDKHistoryAndMoreCDKInfoVO;
 import cn.ultronxr.valorant.bean.VO.CDKRedeemVerifyVO;
-import cn.ultronxr.valorant.bean.enums.CDKRedeemState;
 import cn.ultronxr.valorant.bean.mybatis.bean.CDK;
 import cn.ultronxr.valorant.bean.mybatis.bean.CDKHistory;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -69,5 +69,12 @@ public interface CDKService extends IService<CDK> {
      * @return 分页后的CDK兑换历史记录
      */
     Page<CDKHistory> queryCDKHistory(CDKHistoryDTO cdkHistoryDTO);
+
+    /**
+     * 查询CDK兑换历史记录
+     * @param cdkHistoryDTO 查询参数
+     * @return 分页后的CDK兑换历史记录，加上CDK当前可用次数
+     */
+    CDKHistoryAndMoreCDKInfoVO queryCDKHistoryAndMoreCDKInfo(CDKHistoryDTO cdkHistoryDTO);
 
 }

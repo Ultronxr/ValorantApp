@@ -89,4 +89,10 @@ public class CDKController {
         return AjaxResponseUtils.success(cdkService.queryCDKHistory(cdkHistoryDTO));
     }
 
+    @PostMapping("/historyAndMoreCDKInfo")
+    @ResponseBody
+    public AjaxResponse historyAndMoreCDKInfo(@RequestBody CDKHistoryDTO cdkHistoryDTO) {
+        return AjaxResponseUtils.success(cdkService.queryCDKHistoryAndMoreCDKInfo(cdkHistoryDTO));
+    }
+
 }

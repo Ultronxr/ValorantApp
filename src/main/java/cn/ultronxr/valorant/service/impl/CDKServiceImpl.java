@@ -5,8 +5,8 @@ import cn.ultronxr.common.util.ArrayUtils;
 import cn.ultronxr.valorant.bean.DTO.CDKDTO;
 import cn.ultronxr.valorant.bean.DTO.CDKHistoryDTO;
 import cn.ultronxr.valorant.bean.VO.BatchBothStoreFrontVO;
+import cn.ultronxr.valorant.bean.VO.CDKHistoryAndMoreCDKInfoVO;
 import cn.ultronxr.valorant.bean.VO.CDKRedeemVerifyVO;
-import cn.ultronxr.valorant.bean.enums.CDKRedeemState;
 import cn.ultronxr.valorant.bean.mybatis.bean.CDK;
 import cn.ultronxr.valorant.bean.mybatis.bean.CDKHistory;
 import cn.ultronxr.valorant.bean.mybatis.bean.RiotAccount;
@@ -269,6 +269,17 @@ public class CDKServiceImpl extends ServiceImpl<CDKMapper, CDK> implements CDKSe
                 .orderByDesc(CDKHistory::getRedeemTime);
 
         return cdkHistoryMapper.selectPage(page, wrapper);
+    }
+
+    @Override
+    public CDKHistoryAndMoreCDKInfoVO queryCDKHistoryAndMoreCDKInfo(CDKHistoryDTO cdkHistoryDTO) {
+        CDKHistoryAndMoreCDKInfoVO vo = new CDKHistoryAndMoreCDKInfoVO();
+        vo.setHistory(queryCDKHistory(cdkHistoryDTO));
+        CDK cdk = cdkMapper.selectById(cdkHistoryDTO.getCdk());
+        if(null != cdk) {
+            vo.setReuseRemainingTimes(cdk.getReuseRemainingTimes());
+        }
+        return vo;
     }
 
 }

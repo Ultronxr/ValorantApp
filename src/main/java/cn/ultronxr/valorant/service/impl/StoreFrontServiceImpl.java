@@ -299,8 +299,11 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
                         .eq(RiotAccount::getIsDel, false)
                         .eq(RiotAccount::getIsAuthFailure, false)
         );
-        long dataNodeIndex = dataNodeManager.getIndex(),
-                dataNodeTotal = dataNodeManager.getTotal();
+        long dataNodeIndex = 0 , dataNodeTotal = 1;
+        if(isDistributed) {
+            dataNodeIndex = dataNodeManager.getIndex();
+            dataNodeTotal = dataNodeManager.getTotal();
+        }
         // 预更新了RSO token的账号
         long preSqlLimitCount = priorUpdateAccountTokenCountPerDataNode,
                 preSqlLimitIndex = dataNodeIndex*preSqlLimitCount;
