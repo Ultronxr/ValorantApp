@@ -16,10 +16,14 @@ import java.util.TimeZone;
  */
 @SpringBootApplication(scanBasePackages = {
         "cn.ultronxr.common",
-        "cn.ultronxr.valorant",
+        "cn.ultronxr.framework",
         "cn.ultronxr.distributed",
+        "cn.ultronxr.valorant",
 })
 @MapperScan(basePackages = {
+        "cn.ultronxr.common.bean.mybatis.mapper",
+        "cn.ultronxr.framework.bean.mybatis.mapper",
+        "cn.ultronxr.distributed.bean.mybatis.mapper",
         "cn.ultronxr.valorant.bean.mybatis.mapper",
 })
 @EnableMPP

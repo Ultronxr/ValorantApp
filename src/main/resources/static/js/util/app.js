@@ -1,8 +1,6 @@
 const app = {
     // 业务响应代码（cn.ultronxr.common.bean.ResponseCode）
     RESPONSE_CODE: {
-        UNAUTHORIZED: -1,
-        REFRESH_AUTH_TOKEN: 0,
         SUCCESS: 200,
         FAIL: 500
     },
@@ -10,7 +8,11 @@ const app = {
     // 后端接口地址
     API: {
         url: '',
-        'valorant': {
+        system: {
+            url: '/system',
+            adminAuth: '/adminAuth',
+        },
+        valorant: {
             url: '/valorant',
             weaponAndSkin: {
                 url: '/weaponAndSkinAPI',
@@ -39,6 +41,7 @@ const app = {
                 create: '/create',
                 updateReuseRemainingTimes: '/updateReuseRemainingTimes',
                 query: '/query',
+                export: '/export',
                 delete: '/delete',
                 redeemVerify: '/redeemVerify',
                 redeem: '/redeem',

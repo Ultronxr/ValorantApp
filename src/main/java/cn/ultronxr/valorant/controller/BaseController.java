@@ -15,7 +15,7 @@ public class BaseController {
 
     /**
      * 处理 HTTP错误代码 的 controller，跳转到对应的错误页面<br/>
-     * {@link cn.ultronxr.valorant.config.WebErrorPageConfig}
+     * {@link cn.ultronxr.framework.config.WebErrorPageConfig}
      */
     @GetMapping("error/{errorCode}")
     public String errorPage(@PathVariable Integer errorCode) {

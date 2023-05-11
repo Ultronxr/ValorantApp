@@ -7,12 +7,12 @@
         <result column="has_email" jdbcType="TINYINT" property="hasEmail" />
         <result column="is_bonus" jdbcType="TINYINT" property="isBonus" />
         <result column="date" jdbcType="VARCHAR" property="date" />
-        <result column="cost_list" jdbcType="VARCHAR" property="costList" typeHandler="cn.ultronxr.valorant.typeHandler.IntegerJsonArrayTypeHandler" />
-        <result column="discount_percent_list" jdbcType="VARCHAR" property="discountPercentList" typeHandler="cn.ultronxr.valorant.typeHandler.IntegerJsonArrayTypeHandler" />
-        <result column="discount_cost_list" jdbcType="VARCHAR" property="discountCostList" typeHandler="cn.ultronxr.valorant.typeHandler.IntegerJsonArrayTypeHandler" />
-        <result column="display_name_list" jdbcType="VARCHAR" property="displayNameList" typeHandler="cn.ultronxr.valorant.typeHandler.StringJsonArrayTypeHandler" />
-        <result column="display_icon_list" jdbcType="VARCHAR" property="displayIconList" typeHandler="cn.ultronxr.valorant.typeHandler.StringJsonArrayTypeHandler" />
-        <result column="content_tier_list" jdbcType="VARCHAR" property="contentTierList" typeHandler="cn.ultronxr.valorant.typeHandler.StringJsonArrayTypeHandler" />
+        <result column="cost_list" jdbcType="VARCHAR" property="costList" typeHandler="cn.ultronxr.framework.typeHandler.IntegerJsonArrayTypeHandler" />
+        <result column="discount_percent_list" jdbcType="VARCHAR" property="discountPercentList" typeHandler="cn.ultronxr.framework.typeHandler.IntegerJsonArrayTypeHandler" />
+        <result column="discount_cost_list" jdbcType="VARCHAR" property="discountCostList" typeHandler="cn.ultronxr.framework.typeHandler.IntegerJsonArrayTypeHandler" />
+        <result column="display_name_list" jdbcType="VARCHAR" property="displayNameList" typeHandler="cn.ultronxr.framework.typeHandler.StringJsonArrayTypeHandler" />
+        <result column="display_icon_list" jdbcType="VARCHAR" property="displayIconList" typeHandler="cn.ultronxr.framework.typeHandler.StringJsonArrayTypeHandler" />
+        <result column="content_tier_list" jdbcType="VARCHAR" property="contentTierList" typeHandler="cn.ultronxr.framework.typeHandler.StringJsonArrayTypeHandler" />
     </resultMap>
 
     <select id="batchQueryBoth" parameterType="java.lang.Object" resultMap="ResultMapBatchBoth">

@@ -1,10 +1,13 @@
-package cn.ultronxr.valorant.config;
+package cn.ultronxr.framework.config;
 
+import cn.ultronxr.framework.interceptor.AdminAuthInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -15,23 +18,21 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebMvcConfigurerAdaptor implements WebMvcConfigurer {
 
+    @Autowired
+    private AdminAuthInterceptor adminAuthInterceptor;
 
-    //@Override
-    //public void addInterceptors(InterceptorRegistry registry) {
-    //    // 注册拦截器
-    //    registry.addInterceptor(authInterceptor())
-    //            // 不需要拦截的路径
-    //            .excludePathPatterns("/error/**")
-    //            .excludePathPatterns("/", "/login", "/index")
-    //            .excludePathPatterns("/ajaxLogin")
-    //            // 需要拦截的路径
-    //            .addPathPatterns("/**");
-    //}
-    //
-    //@Bean
-    //public AuthInterceptor authInterceptor(){
-    //    return new AuthInterceptor();
-    //}
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        // 注册拦截器
+        registry.addInterceptor(adminAuthInterceptor)
+                // 不需要拦截的路径
+                .excludePathPatterns("/error/**")
+                .excludePathPatterns("/", "/index")
+                .excludePathPatterns("/system/adminAuth")
+                // 需要拦截的路径
+                .addPathPatterns("/**");
+    }
 
     @Bean
     public CorsFilter corsFilter() {

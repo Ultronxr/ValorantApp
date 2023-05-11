@@ -1,4 +1,4 @@
-package cn.ultronxr.valorant.typeHandler;
+package cn.ultronxr.framework.typeHandler;
 
 import cn.hutool.json.JSONUtil;
 import com.alibaba.druid.support.json.JSONUtils;

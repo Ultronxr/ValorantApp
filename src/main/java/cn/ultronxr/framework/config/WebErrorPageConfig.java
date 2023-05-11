@@ -1,4 +1,4 @@
-package cn.ultronxr.valorant.config;
+package cn.ultronxr.framework.config;
 
 import org.springframework.boot.web.server.ErrorPage;
 import org.springframework.boot.web.server.ErrorPageRegistrar;

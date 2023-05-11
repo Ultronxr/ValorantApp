@@ -1,4 +1,4 @@
-package cn.ultronxr.valorant.config;
+package cn.ultronxr.framework.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;

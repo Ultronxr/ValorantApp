@@ -105,3 +105,14 @@ CREATE TABLE valorant_cdk_history (
     `detail`         VARCHAR(3000)    DEFAULT NULL    COMMENT '其他信息',
     PRIMARY KEY(`cdk`, `account_no`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT 'valorant 模块 - CDKey使用记录';
+
+CREATE TABLE system_account (
+    `uuid`           VARCHAR(100)    NOT NULL              COMMENT 'UUID',
+    `username`       VARCHAR(100)    NOT NULL              COMMENT '用户名',
+    `password`       VARCHAR(100)    NOT NULL              COMMENT '密码',
+    `token`          VARCHAR(500)    NOT NULL              COMMENT 'token',
+    `create_time`    DATETIME        NOT NULL              COMMENT '创建时间',
+    `is_del`         TINYINT(1)      NOT NULL DEFAULT 0    COMMENT '是否删除：1-true; 0-false',
+    PRIMARY KEY(`uuid`),
+    UNIQUE KEY(`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT '系统账号（管理员账号）记录表';

@@ -1,4 +1,4 @@
-package cn.ultronxr.valorant.config;
+package cn.ultronxr.framework.config;
 
 import com.alibaba.druid.support.http.StatViewServlet;
 import com.alibaba.druid.support.http.WebStatFilter;

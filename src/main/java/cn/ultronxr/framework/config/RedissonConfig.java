@@ -1,4 +1,4 @@
-package cn.ultronxr.valorant.config;
+package cn.ultronxr.framework.config;
 
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
