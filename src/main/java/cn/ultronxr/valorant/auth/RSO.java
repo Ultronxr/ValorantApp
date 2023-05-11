@@ -55,6 +55,9 @@ public class RSO {
     }
 
     public void updateToken(RiotAccount riotAccount) {
+        if(null == riotAccount) {
+            return;
+        }
         this.accessToken = riotAccount.getAccessToken();
         this.accessTokenExpireAt = riotAccount.getAccessTokenExpireAt();
         this.entitlementsToken = riotAccount.getEntitlementsToken();

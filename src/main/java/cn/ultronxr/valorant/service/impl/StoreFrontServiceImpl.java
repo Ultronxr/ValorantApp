@@ -104,6 +104,10 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
         log.info("数据库没有对应的每日商店数据，尝试请求API获取：userId={} , date={}", userId, date);
 
         RSO rso = rsoService.fromAccount(userId);
+        if(null == rso) {
+            log.warn("不存在该账号对应的RSO，不请求API！userId={}", userId);
+            return;
+        }
         boolean skipSleep = !rso.isAccessTokenExpired();
 
         JSONObject jObj = requestAPI(rso);
@@ -299,24 +303,18 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
             dataNodeIndex = dataNodeManager.getIndex();
             dataNodeTotal = dataNodeManager.getTotal();
         }
-        // 预更新了RSO token的账号
-        long preSqlLimitCount = priorUpdateAccountTokenCountPerDataNode,
+        String date = DateUtil.today();
+        Date now = new Date();
+        // 预更新了token的账号。预更新时使用固定数量，查询时却不，因为预更新之后可能出现登录验证失败的账号
+        long preAccountCount = accountMapper.selectCountForPreUpdatedTokenAccount(now);
+        long preSqlLimitCount = preAccountCount / dataNodeTotal,
                 preSqlLimitIndex = dataNodeIndex*preSqlLimitCount;
-        Date now1 = new Date();
-        // 未预更新RSO token的账号
-        long accountCount = accountMapper.selectCount(
-                new LambdaQueryWrapper<RiotAccount>()
-                        .eq(RiotAccount::getIsDel, false)
-                        .eq(RiotAccount::getIsAuthFailure, false)
-                        .and(condition -> condition
-                                .le(RiotAccount::getAccessTokenExpireAt, now1)
-                                .or().isNull(RiotAccount::getAccessTokenExpireAt)
-                        )
-        );
+        // 未预更新token的账号
+        long accountCount = accountMapper.selectCountForNotPreUpdatedTokenAccount(now);
         long sqlLimitCount = accountCount / dataNodeTotal,
                 sqlLimitIndex = dataNodeIndex * sqlLimitCount;
 
-        log.info("开始批量更新每日商店+夜市数据。数据节点总数：{}，当前数据节点index：{}，当前数据节点ID：{}", dataNodeTotal, dataNodeIndex, dataNodeManager.getDataNodeId());
+        log.info("开始批量更新每日商店+夜市数据。date={}，数据节点总数={}，当前数据节点index={}，当前数据节点ID={}", date, dataNodeTotal, dataNodeIndex, dataNodeManager.getDataNodeId());
         log.info("数据量（预更新了RSO token的账号）：SQL LIMIT {},{}", preSqlLimitIndex, preSqlLimitCount);
         if(isDistributed) {
             log.info("数据量（未预更新RSO token的账号）：SQL LIMIT {},{}", sqlLimitIndex, sqlLimitCount);
@@ -324,38 +322,16 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
             log.info("数据量（未预更新RSO token的账号）：全量 {}。", accountCount);
         }
 
-        String date = DateUtil.today();
-        // 获取预更新了RSO token的账号，直接多线程并行查商店，不用考虑拳头账号登录API速率上限
-        List<Object> preAccountUserIdList = accountMapper.selectObjs(
-                new LambdaQueryWrapper<RiotAccount>()
-                        .select(RiotAccount::getUserId)
-                        .eq(RiotAccount::getIsDel, false)
-                        .eq(RiotAccount::getIsAuthFailure, false)
-                        .gt(RiotAccount::getAccessTokenExpireAt, now1)
-                        .orderByAsc(RiotAccount::getAccountNo)
-                        .last(isDistributed, "LIMIT " + preSqlLimitIndex + "," + preSqlLimitCount)
-        );
+        // 获取预更新了token的账号，直接多线程并发查商店，不用考虑拳头账号登录API速率上限
+        List<Object> preAccountUserIdList = accountMapper.selectIdListForPreUpdatedTokenAccount(now, isDistributed, preSqlLimitIndex, preSqlLimitCount);
         preAccountUserIdList.parallelStream().forEach(userId -> {
             singleItemOffersWithSleep((String) userId, date, 0);
         });
 
-        // TODO 2023/05/11 09:55:02 设置了now2批量更新结束后是缺数据的，明天尝试使用now1更新
-        //Date now2 = new Date();
-        // 获取未预更新RSO token的账号
-        List<Object> accountUserIdList = accountMapper.selectObjs(
-                new LambdaQueryWrapper<RiotAccount>()
-                        .select(RiotAccount::getUserId)
-                        .eq(RiotAccount::getIsDel, false)
-                        .eq(RiotAccount::getIsAuthFailure, false)
-                        .and(condition -> condition
-                                .le(RiotAccount::getAccessTokenExpireAt, now1)
-                                .or().isNull(RiotAccount::getAccessTokenExpireAt)
-                        )
-                        .orderByAsc(RiotAccount::getAccountNo)
-                        .last(isDistributed, "LIMIT " + sqlLimitIndex + "," + sqlLimitCount)
-        );
+        // 获取未预更新token的账号
+        List<Object> accountUserIdList = accountMapper.selectIdListForNotPreUpdatedTokenAccount(now, isDistributed, sqlLimitIndex, sqlLimitCount);
         accountUserIdList.forEach(userId -> {
-            // 拳头API速率限制：100 requests every 2 minutes
+            // 拳头RSO API认证速率限制：100 requests every 2 minutes
             // 处理一个账号数据需要请求4-6次API（包括RSO认证），2分钟的请求上限为20个账号，即6秒处理一个账号
             // 实测处理一个账号数据请求时间为1.5秒左右，添加 sleep
             singleItemOffersWithSleep((String) userId, date, 1.5f);

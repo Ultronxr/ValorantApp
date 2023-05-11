@@ -210,7 +210,7 @@ public class RSOServiceImpl implements RSOService {
     @Override
     public RSO fromAccount(String userId) {
         RiotAccount account = accountMapper.selectById(userId);
-        return fromAccount(account);
+        return null == account ? null : fromAccount(account);
     }
 
 }
