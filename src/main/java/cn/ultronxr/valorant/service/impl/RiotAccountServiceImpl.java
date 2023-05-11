@@ -141,15 +141,15 @@ public class RiotAccountServiceImpl extends ServiceImpl<RiotAccountMapper, RiotA
                     continue;
                 }
                 RiotAccount account = new RiotAccount();
-                account.setUsername((String) row.get(0));
+                account.setUsername(String.valueOf(row.get(0)));
                 if(size > 1) {
-                    account.setPassword((String) row.get(1));
+                    account.setPassword(String.valueOf(row.get(1)));
                 }
                 if(size > 2) {
-                    account.setEmail((String) row.get(2));
+                    account.setEmail(String.valueOf(row.get(2)));
                 }
                 if(size > 3) {
-                    account.setEmailPwd((String) row.get(3));
+                    account.setEmailPwd(String.valueOf(row.get(3)));
                 }
 
                 RiotAccountCreateState state = this.createWithoutRSO(account);
@@ -192,7 +192,7 @@ public class RiotAccountServiceImpl extends ServiceImpl<RiotAccountMapper, RiotA
     private int getRowTrueSize(List<Object> row) {
         int res = 0;
         for (Object o : row) {
-            if (StringUtils.isNotBlank((String) o)) {
+            if (StringUtils.isNotBlank(String.valueOf(o))) {
                 res++;
             }
         }
