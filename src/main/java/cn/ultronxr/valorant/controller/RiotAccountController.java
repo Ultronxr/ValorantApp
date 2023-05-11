@@ -3,6 +3,7 @@ package cn.ultronxr.valorant.controller;
 import cn.hutool.http.HttpRequest;
 import cn.ultronxr.common.bean.AjaxResponse;
 import cn.ultronxr.common.util.AjaxResponseUtils;
+import cn.ultronxr.framework.annotation.AdminAuthRequired;
 import cn.ultronxr.valorant.bean.DTO.RiotAccountDTO;
 import cn.ultronxr.valorant.bean.enums.RiotAccountCreateState;
 import cn.ultronxr.valorant.bean.mybatis.bean.RiotAccount;
@@ -87,6 +88,7 @@ public class RiotAccountController {
                 .body(resource);
     }
 
+    @AdminAuthRequired
     @DeleteMapping("/delete")
     @ResponseBody
     public AjaxResponse delete(@RequestParam String[] idList) {

@@ -339,7 +339,8 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
             singleItemOffersWithSleep((String) userId, date, 0);
         });
 
-        Date now2 = new Date();
+        // TODO 2023/05/11 09:55:02 设置了now2批量更新结束后是缺数据的，明天尝试使用now1更新
+        //Date now2 = new Date();
         // 获取未预更新RSO token的账号
         List<Object> accountUserIdList = accountMapper.selectObjs(
                 new LambdaQueryWrapper<RiotAccount>()
@@ -347,7 +348,7 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
                         .eq(RiotAccount::getIsDel, false)
                         .eq(RiotAccount::getIsAuthFailure, false)
                         .and(condition -> condition
-                                .le(RiotAccount::getAccessTokenExpireAt, now2)
+                                .le(RiotAccount::getAccessTokenExpireAt, now1)
                                 .or().isNull(RiotAccount::getAccessTokenExpireAt)
                         )
                         .orderByAsc(RiotAccount::getAccountNo)

@@ -1,6 +1,8 @@
 package cn.ultronxr.valorant.service.impl;
 
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.poi.excel.ExcelUtil;
+import cn.hutool.poi.excel.ExcelWriter;
 import cn.ultronxr.common.util.ArrayUtils;
 import cn.ultronxr.valorant.bean.DTO.CDKDTO;
 import cn.ultronxr.valorant.bean.DTO.CDKHistoryDTO;
@@ -25,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -109,8 +112,37 @@ public class CDKServiceImpl extends ServiceImpl<CDKMapper, CDK> implements CDKSe
         return this.updateBatchById(toBeUpdatedList);
     }
 
+    public void exportCDK() {
+        File resultFile = new File("cache/files/", "CDK导出.xlsx");
+        if(resultFile.exists()) {
+            resultFile.delete();
+            resultFile = new File("cache/files/", "CDK导出.xlsx");
+        }
+        ExcelWriter writer = ExcelUtil.getWriter(resultFile, "sheet1");
+        List<String> headRow = Arrays.asList("CDK编号", "CDK", "是否带初邮", "是否可重复使用", "剩余可使用次数");
+        writer.writeHeadRow(headRow);
+
+        CDKDTO dto = new CDKDTO();
+        dto.setCurrent(1);
+        dto.setSize(9999999);
+        List<CDK> list = queryCDK(dto, false).getRecords();
+
+        for (CDK cdk : list) {
+            List<String> row = new ArrayList<>(5);
+            row.add(String.valueOf(cdk.getCdkNo()));
+            row.add(cdk.getCdk());
+            row.add(cdk.getTypeHasEmail() ? "带初邮CDK（完全版）" : "未验证初邮（黄金版）");
+            row.add(cdk.getTypeReusable() ? "可重复使用CDK" : "一次性CDK");
+            row.add(String.valueOf(cdk.getReuseRemainingTimes()));
+            writer.writeRow(row);
+        }
+        writer.autoSizeColumnAll();
+        writer.flush();
+        writer.close();
+    }
+
     @Override
-    public Page<CDK> queryCDK(CDKDTO cdkDTO) {
+    public Page<CDK> queryCDK(CDKDTO cdkDTO, boolean isDesensitization) {
         Page<CDK> page = Page.of(cdkDTO.getCurrent(), cdkDTO.getSize());
         LambdaQueryWrapper<CDK> wrapper = Wrappers.lambdaQuery();
         wrapper.eq(StringUtils.isNotEmpty(cdkDTO.getCdk()), CDK::getCdk, cdkDTO.getCdk())
@@ -124,10 +156,12 @@ public class CDKServiceImpl extends ServiceImpl<CDKMapper, CDK> implements CDKSe
 
         Page<CDK> result = this.page(page, wrapper);
         // 脱敏
-        if(null != result.getRecords() && result.getRecords().size() > 0) {
-            for(CDK record : result.getRecords()) {
-                String cdk = record.getCdk();
-                record.setCdk(cdk.substring(0, cdk.length()/3) + "******");
+        if(isDesensitization) {
+            if(null != result.getRecords() && result.getRecords().size() > 0) {
+                for(CDK record : result.getRecords()) {
+                    String cdk = record.getCdk();
+                    record.setCdk(cdk.substring(0, cdk.length()/3) + "******");
+                }
             }
         }
         return result;
@@ -146,6 +180,10 @@ public class CDKServiceImpl extends ServiceImpl<CDKMapper, CDK> implements CDKSe
     @Override
     public CDKRedeemVerifyVO redeemVerify(String cdk, Long accountNo) {
         CDKRedeemVerifyVO verify = new CDKRedeemVerifyVO();
+        if(StringUtils.isBlank(cdk) || cdk.trim().length() != DEFAULT_CDK_LENGTH) {
+            verify.setState(CDK_INVALID);
+            return verify;
+        }
         CDK cdkObj = this.getById(cdk);
         RiotAccount account = riotAccountMapper.selectOne(new LambdaQueryWrapper<RiotAccount>().eq(RiotAccount::getAccountNo, accountNo));
         if(null == cdkObj) {
@@ -170,6 +208,9 @@ public class CDKServiceImpl extends ServiceImpl<CDKMapper, CDK> implements CDKSe
     @Transactional(rollbackFor = Exception.class)
     @Override
     public CDKRedeemVerifyVO redeem(String cdk, Long accountNo) {
+        if(StringUtils.isBlank(cdk) || cdk.trim().length() != DEFAULT_CDK_LENGTH) {
+            return new CDKRedeemVerifyVO(CDK_INVALID);
+        }
         CDK cdkObj = this.getById(cdk);
         RiotAccount account = riotAccountMapper.selectOne(new LambdaQueryWrapper<RiotAccount>().eq(RiotAccount::getAccountNo, accountNo));
         if(null == cdkObj) {

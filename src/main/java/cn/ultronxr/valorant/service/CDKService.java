@@ -37,7 +37,12 @@ public interface CDKService extends IService<CDK> {
      * @param cdkDTO 查询参数
      * @return 分页后的CDK列表
      */
-    Page<CDK> queryCDK(CDKDTO cdkDTO);
+    Page<CDK> queryCDK(CDKDTO cdkDTO, boolean isDesensitization);
+
+    /**
+     * 导出完整的所有CDK（未脱敏）
+     */
+    void exportCDK();
 
     /**
      * 删除CDK

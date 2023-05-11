@@ -70,6 +70,9 @@
     <div class="layui-btn-container">
         <button class="layui-btn btn-main layui-btn-sm" lay-event="create">新增CDK</button>
         <button class="layui-btn btn-main layui-btn-sm" lay-event="editReuseRemainingTimesBatch">批量修改CDK可用次数</button>
+        <button type="button" class="layui-btn btn-main" id="export" onclick="exportCDK()">
+            <i class="layui-icon">&#xe601;</i>导出全部CDK（未脱敏）
+        </button>
         <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">批量删除</button>
     </div>
 </script>

@@ -14,6 +14,7 @@ import java.util.Map;
 @Getter
 public enum CDKRedeemState {
     OK(1, "兑换成功。")
+    ,CDK_INVALID(9, "CDK不合法（格式错误）！")
     ,CDK_NOT_EXIST(10, "CDK不存在！")
     ,ACCOUNT_NOT_EXIST(11, "拳头账号不存在！")
     ,ACCOUNT_ALREADY_REDEEMED(12, "拳头账号已被兑换！")

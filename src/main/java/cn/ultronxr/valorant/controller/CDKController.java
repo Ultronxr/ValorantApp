@@ -3,6 +3,7 @@ package cn.ultronxr.valorant.controller;
 import cn.hutool.json.JSONObject;
 import cn.ultronxr.common.bean.AjaxResponse;
 import cn.ultronxr.common.util.AjaxResponseUtils;
+import cn.ultronxr.framework.annotation.AdminAuthRequired;
 import cn.ultronxr.valorant.bean.DTO.CDKDTO;
 import cn.ultronxr.valorant.bean.DTO.CDKHistoryDTO;
 import cn.ultronxr.valorant.bean.VO.CDKRedeemVerifyVO;
@@ -10,8 +11,14 @@ import cn.ultronxr.valorant.bean.enums.CDKRedeemState;
 import cn.ultronxr.valorant.service.CDKService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.File;
+import java.nio.file.Files;
 
 /**
  * @author Ultronxr
@@ -33,6 +40,7 @@ public class CDKController {
         return AjaxResponseUtils.success(cdkService.create(cdkDTO));
     }
 
+    @AdminAuthRequired
     @PostMapping("/updateReuseRemainingTimes")
     @ResponseBody
     public AjaxResponse updateReuseRemainingTimes(@RequestBody JSONObject jsonObject) {
@@ -47,9 +55,22 @@ public class CDKController {
     @PostMapping("/query")
     @ResponseBody
     public AjaxResponse query(@RequestBody CDKDTO cdkDTO) {
-        return AjaxResponseUtils.success(cdkService.queryCDK(cdkDTO));
+        return AjaxResponseUtils.success(cdkService.queryCDK(cdkDTO, true));
     }
 
+    @AdminAuthRequired
+    @RequestMapping("/export")
+    public ResponseEntity<ByteArrayResource> export() throws Exception {
+        cdkService.exportCDK();
+        byte[] bytes = Files.readAllBytes(new File("cache/files/CDK导出.xlsx").toPath());
+        ByteArrayResource resource = new ByteArrayResource(bytes);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header("Content-disposition", "attachment; filename=CDK导出.xlsx")
+                .body(resource);
+    }
+
+    @AdminAuthRequired
     @DeleteMapping("/delete")
     @ResponseBody
     public AjaxResponse delete(@RequestParam Long[] cdkNoList) {
