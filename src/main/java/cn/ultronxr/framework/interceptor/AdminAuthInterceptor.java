@@ -62,6 +62,8 @@ public class AdminAuthInterceptor implements HandlerInterceptor {
             // token正确放行
             return true;
         }
+        log.warn("请求需要管理员权限的方法但被拒绝：{}#{}，来自客户端：{}",
+                handlerMethod.getMethod().getDeclaringClass().getName(), handlerMethod.getMethod().getName(), request.getRemoteAddr());
         return needAdminAuthResponse(response);
     }
 

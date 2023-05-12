@@ -180,7 +180,7 @@ public class CDKServiceImpl extends ServiceImpl<CDKMapper, CDK> implements CDKSe
     @Override
     public CDKRedeemVerifyVO redeemVerify(String cdk, Long accountNo) {
         CDKRedeemVerifyVO verify = new CDKRedeemVerifyVO();
-        if(StringUtils.isBlank(cdk) || cdk.trim().length() != DEFAULT_CDK_LENGTH) {
+        if(!validateCDK(cdk)) {
             verify.setState(CDK_INVALID);
             return verify;
         }
@@ -208,7 +208,7 @@ public class CDKServiceImpl extends ServiceImpl<CDKMapper, CDK> implements CDKSe
     @Transactional(rollbackFor = Exception.class)
     @Override
     public CDKRedeemVerifyVO redeem(String cdk, Long accountNo) {
-        if(StringUtils.isBlank(cdk) || cdk.trim().length() != DEFAULT_CDK_LENGTH) {
+        if(!validateCDK(cdk)) {
             return new CDKRedeemVerifyVO(CDK_INVALID);
         }
         CDK cdkObj = this.getById(cdk);
@@ -337,12 +337,20 @@ public class CDKServiceImpl extends ServiceImpl<CDKMapper, CDK> implements CDKSe
     @Override
     public CDKHistoryAndMoreCDKInfoVO queryCDKHistoryAndMoreCDKInfo(CDKHistoryDTO cdkHistoryDTO) {
         CDKHistoryAndMoreCDKInfoVO vo = new CDKHistoryAndMoreCDKInfoVO();
+        if(!validateCDK(cdkHistoryDTO.getCdk())) {
+            vo.setHistory(null);
+            return vo;
+        }
         vo.setHistory(queryCDKHistory(cdkHistoryDTO, false));
         CDK cdk = cdkMapper.selectById(cdkHistoryDTO.getCdk());
         if(null != cdk) {
             vo.setReuseRemainingTimes(cdk.getReuseRemainingTimes());
         }
         return vo;
+    }
+
+    private boolean validateCDK(String cdk) {
+        return StringUtils.isNotBlank(cdk) && cdk.trim().length() == DEFAULT_CDK_LENGTH;
     }
 
 }

@@ -34,6 +34,7 @@ public class CDKController {
     private CDKService cdkService;
 
 
+    @AdminAuthRequired
     @PostMapping("/create")
     @ResponseBody
     public AjaxResponse create(@RequestBody CDKDTO cdkDTO) {
@@ -52,6 +53,7 @@ public class CDKController {
         return AjaxResponseUtils.fail();
     }
 
+    @AdminAuthRequired
     @PostMapping("/query")
     @ResponseBody
     public AjaxResponse query(@RequestBody CDKDTO cdkDTO) {
@@ -104,6 +106,7 @@ public class CDKController {
         return AjaxResponseUtils.fail(vo);
     }
 
+    @AdminAuthRequired
     @PostMapping("/history")
     @ResponseBody
     public AjaxResponse history(@RequestBody CDKHistoryDTO cdkHistoryDTO) {

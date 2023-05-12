@@ -83,11 +83,17 @@ table.render({
             "data": res.data.records
         };
     }
+    ,error: function (res) {
+        if(res.status === 401) {
+            layer.msg("未授权！", {icon: 2, time: 3000});
+        }
+    }
 });
 
 // 刷新表格，不包含任何条件，恢复到初始状态
 function refreshTable() {
     table.reloadData('dataTable', {
+        page: { current: 1 }, //重新从第 1 页开始
         where: {} // 清空搜索条件内容
     });
 }
@@ -96,9 +102,9 @@ function refreshTable() {
 var active = {
     reload: function(){
         table.reloadData('dataTable', {
-            // page: {
-            //     curr: 1 //重新从第 1 页开始
-            // },
+            page: {
+                current: 1 //重新从第 1 页开始
+            },
             where: { //设定异步数据接口的额外参数
                 cdkNo: $("#cdkNo").val(),
                 cdk: $("#cdk").val(),
@@ -130,12 +136,16 @@ function deleteRows(toBeDeletedIdList) {
         function (res) {
             // console.log(res);
             if(res.code === app.RESPONSE_CODE.SUCCESS) {
-                layer.msg('删除成功。', {time: 2000});
+                layer.msg('删除成功。', {icon: 1, time: 2000});
                 refreshTable();
             }
         },
         function (res) {
-            layer.msg('删除失败！', {icon:2, time: 2000});
+            if(res.status === 401) {
+                layer.msg('未授权！', {icon:2, time: 2000});
+            } else {
+                layer.msg('请求失败！', {icon:2, time: 2000});
+            }
             refreshTable();
         }
     );
@@ -148,12 +158,16 @@ function updateRowsReuseRemainingTimes(toBeUpdatedCDKNoList, reuseRemainingTimes
         function (res) {
             // console.log(res);
             if(res.code === app.RESPONSE_CODE.SUCCESS) {
-                layer.msg('修改成功。', {time: 2000});
+                layer.msg('修改成功。', {icon: 1, time: 2000});
                 refreshTable();
             }
         },
         function (res) {
-            layer.msg('修改失败！', {icon:2, time: 2000});
+            if(res.status === 401) {
+                layer.msg('未授权！', {icon:2, time: 2000});
+            } else {
+                layer.msg('请求失败！', {icon:2, time: 2000});
+            }
             refreshTable();
         }
     );
@@ -177,7 +191,7 @@ table.on('toolbar(dataTable)', function(obj){
             let checkedRows = checkStatus.data;
             // console.log(checkedRows);
             if(checkedRows.length === 0) {
-                layer.msg('未选中任何一行！', {time: 2000});
+                layer.msg('未选中任何一行！', {icon: 2, time: 2000});
             } else {
                 let toBeUpdatedIdList = [];
                 for(let row of checkedRows) {
@@ -207,7 +221,7 @@ table.on('toolbar(dataTable)', function(obj){
             let checkedRows = checkStatus.data;
             // console.log(checkedRows);
             if(checkedRows.length === 0) {
-                layer.msg('未选中任何一行！', {time: 2000});
+                layer.msg('未选中任何一行！', {icon: 2, time: 2000});
             } else {
                 layer.confirm('你选中了 ' + checkedRows.length + ' 行，确认删除？', {icon: 3, title:'提示'}, function (index) {
                     let toBeDeletedIdList = [];
@@ -279,7 +293,7 @@ function exportCDK () {
     xhr.onload = function () {
         // 请求完成
         if(this.status === 401) {
-            layer.msg("需要管理员权限！", {icon: 2, time: 3000});
+            layer.msg("未授权！", {icon: 2, time: 3000});
             return;
         }
         if (this.status === 200) {

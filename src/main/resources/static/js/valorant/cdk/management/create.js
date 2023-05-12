@@ -7,15 +7,19 @@ form.on('submit(create)', function(data) {
         function (res) {
             // console.log(res);
             if(res.code === app.RESPONSE_CODE.SUCCESS) {
-                parent.layer.msg('新增CDK数量：' + res.data, {time: 3000});
+                parent.layer.msg('新增CDK数量：' + res.data, {icon: 1, time: 3000});
                 closeLayerWindow();
                 parent.refreshTable();
             } else {
-                parent.layer.msg(res.msg, {time: 2000});
+                parent.layer.msg(res.msg, {icon: 2, time: 2000});
             }
         },
         function (res) {
-            parent.layer.msg("请求失败！", {time: 2000});
+            if(res.status === 401) {
+                parent.layer.msg("未授权！", {icon: 2, time: 2000});
+            } else {
+                parent.layer.msg("请求失败！", {icon: 2, time: 2000});
+            }
         },
         function () {
             this.layerIndex = layer.load(2, { shade: [0.2, '#ccc'] });

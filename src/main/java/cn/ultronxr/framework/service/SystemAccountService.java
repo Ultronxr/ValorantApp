@@ -14,10 +14,11 @@ public interface SystemAccountService extends IService<SystemAccount> {
 
     /**
      * 校验登录请求的密码是否合法
+     * @param username 待校验的 登录用户名
      * @param password 待校验的 登录密码
      * @return true - 合法；false - 不合法
      */
-    boolean validatePassword(String password);
+    boolean validateSystemAccount(String username, String password);
 
     /**
      * 登录成功签发 cookie

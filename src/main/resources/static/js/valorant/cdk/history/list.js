@@ -8,8 +8,20 @@ table.render({
     ,even: true
     ,size: 'lg'
     ,cols: [[ //表头
-        {field: 'cdk', title: 'CDK', width:'30%', sort: false, hide: false, align: 'center'}
-        ,{field: 'accountNo', title: '拳头账号编号', width:'8%', sort: false, hide: false, align: 'center'}
+        {field: 'cdk', title: 'CDK', width:'30%', sort: false, hide: false, align: 'center',
+            templet: function (d) {
+                if(d.cdk === 'hEoopH3dak95EhOF******') {
+                    return '<div style="color: red">' + d.cdk + '</div>';
+                }
+                return d.cdk;
+            }}
+        ,{field: 'accountNo', title: '拳头账号编号', width:'8%', sort: false, hide: false, align: 'center',
+            templet: function (d) {
+                if(d.accountNo >= 11006 && d.accountNo <= 16145) {
+                    return '<div style="color: red">' + d.accountNo + '</div>';
+                }
+                return d.accountNo;
+            }}
         ,{field: 'redeemTime', title: '兑换时间', width:'12%', sort: false, hide: false, align: 'center'}
         ,{field: 'detail', title: '详细信息', width:'50%', sort: false, hide: false, align: 'center',
             templet: function (d) {
@@ -55,11 +67,17 @@ table.render({
             "data": res.data.records
         };
     }
+    ,error: function (res) {
+        if(res.status === 401) {
+            layer.msg("未授权！", {icon: 2, time: 3000});
+        }
+    }
 });
 
 // 刷新表格，不包含任何条件，恢复到初始状态
 function refreshTable() {
     table.reloadData('dataTable', {
+        page: { current: 1 }, //重新从第 1 页开始
         where: {} // 清空搜索条件内容
     });
 }
@@ -68,9 +86,9 @@ function refreshTable() {
 var active = {
     reload: function(){
         table.reloadData('dataTable', {
-            // page: {
-            //     curr: 1 //重新从第 1 页开始
-            // },
+            page: {
+                current: 1 //重新从第 1 页开始
+            },
             where: { //设定异步数据接口的额外参数
                 cdk: $("#cdk").val(),
                 accountNo: $("#accountNo").val(),

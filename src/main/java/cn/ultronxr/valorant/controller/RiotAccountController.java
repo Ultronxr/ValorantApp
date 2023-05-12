@@ -41,6 +41,7 @@ public class RiotAccountController {
     private RSOService rsoService;
 
 
+    @AdminAuthRequired
     @PostMapping("/multiFactor")
     @ResponseBody
     public AjaxResponse multiFactor(@RequestBody RiotAccount account) {
@@ -59,6 +60,7 @@ public class RiotAccountController {
         return AjaxResponseUtils.fail();
     }
 
+    @AdminAuthRequired
     @PostMapping("/create")
     @ResponseBody
     public AjaxResponse create(@RequestBody RiotAccount account) {
@@ -69,6 +71,7 @@ public class RiotAccountController {
         return AjaxResponseUtils.fail(state.getMsg());
     }
 
+    @AdminAuthRequired
     @PostMapping("/import")
     @ResponseBody
     public AjaxResponse importFile(@RequestParam("file") MultipartFile file) {
@@ -78,6 +81,7 @@ public class RiotAccountController {
         return AjaxResponseUtils.fail();
     }
 
+    @AdminAuthRequired
     @RequestMapping("/importResult")
     public ResponseEntity<ByteArrayResource> importFileResult() throws Exception {
         byte[] bytes = Files.readAllBytes(new File("cache/files/拳头账号导入结果.xlsx").toPath());
@@ -107,12 +111,14 @@ public class RiotAccountController {
     //    return AjaxResponseUtils.fail("拳头账户验证失败！");
     //}
 
+    @AdminAuthRequired
     @PostMapping("/query")
     @ResponseBody
     public AjaxResponse query(@RequestBody RiotAccountDTO accountDTO) {
         return AjaxResponseUtils.success(accountService.queryAccount(accountDTO));
     }
 
+    @AdminAuthRequired
     @GetMapping("/select")
     @ResponseBody
     public AjaxResponse select() {

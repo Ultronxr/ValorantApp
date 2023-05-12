@@ -80,6 +80,7 @@ function redeem(layerIndex) {
 
 // 复制兑换成功的内容到剪切板
 function copyRedeemInfoToClipboard(redeemInfo, layero) {
+    redeemInfo = redeemInfo.substring(redeemInfo.indexOf("拳头账号"));
     redeemInfo = redeemInfo.replaceAll("<br/>", "");
 
     if(navigator.clipboard && window.isSecureContext) {
@@ -144,18 +145,18 @@ form.on('submit(history)', function(data) {
     $("#history-list").html("");
     requestData = data.field;
     requestData["current"] = 1;
-    requestData["size"] = 99999;
+    requestData["size"] = 999999;
     app.util.ajax.post(app.util.api.getAPIUrl('valorant.cdk.historyAndMoreCDKInfo'),
         JSON.stringify(requestData),
         function (res) {
             // console.log(res);
             if(res.code === app.RESPONSE_CODE.SUCCESS) {
-                let records = res.data.history.records;
-                if(records != null && records.length > 0) {
+                let history = res.data.history;
+                if(history != null && history.records != null && history.records.length > 0) {
                     let historyListHtml = '当前CDK剩余可用次数：' + res.data.reuseRemainingTimes + '<br/><br/>';
-                    records.forEach(function (value) {
+                    history.records.forEach(function (value) {
                         historyListHtml += value.detail;
-                        historyListHtml += "兑换时间：" + value.redeemTime + "<br/><br/>"
+                        historyListHtml += "兑换时间：" + value.redeemTime + "<br/><br/>";
                     });
                     $("#history-list").html(historyListHtml);
                 } else {

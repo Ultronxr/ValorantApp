@@ -27,17 +27,19 @@ public class AdminAuthServiceImpl extends ServiceImpl<SystemAccountMapper, Syste
     /** 登录成功后签发的 cookie name */
     private static final String COOKIE_NAME = "X-ADMIN-AUTH";
 
-    private static final Integer COOKIE_EXPIRE_SECONDS = 3*24*60*60;
+    private static final Integer COOKIE_EXPIRE_SECONDS = 1*24*60*60;
 
 
     @Override
-    public boolean validatePassword(String password) {
-        log.info("尝试校验登录密码：{}", password);
-        if(StringUtils.isBlank(password) || password.trim().length() != ADMIN_PASSWORD_LENGTH) {
+    public boolean validateSystemAccount(String username, String password) {
+        log.info("尝试校验登录账号：username={}, password={}", username, password);
+        username = username.trim();
+        password = password.trim();
+        if(StringUtils.isBlank(username) || StringUtils.isBlank(password) || password.length() != ADMIN_PASSWORD_LENGTH) {
             return false;
         }
-        String correctPwd = getBaseMapper().selectById(ADMIN_UUID).getPassword();
-        return correctPwd.equals(password);
+        SystemAccount account = getBaseMapper().selectById(ADMIN_UUID);
+        return account.getUsername().equals(username) && account.getPassword().equals(password);
     }
 
     @Override

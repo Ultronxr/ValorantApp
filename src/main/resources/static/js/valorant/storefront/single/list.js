@@ -90,15 +90,15 @@ table.render({
         date: $("#date").val(),
     }
     ,page: false //分页
-    ,before: function(req) {
-        let authToken = app.util.token.auth.get();
-        if(app.util.string.isNotEmpty(authToken)) {
-            req.headers["Authorization"] = "Bearer " + authToken;
-        }
-    }
+    // ,before: function(req) {
+    //     let authToken = app.util.token.auth.get();
+    //     if(app.util.string.isNotEmpty(authToken)) {
+    //         req.headers["Authorization"] = "Bearer " + authToken;
+    //     }
+    // }
     ,request: {
-        // pageName: 'page' //页码的参数名称，默认：page
-        // ,limitName: 'limit' //每页数据量的参数名，默认：limit
+        pageName: 'current' //页码的参数名称，默认：page
+        ,limitName: 'size' //每页数据量的参数名，默认：limit
     }
     ,response: {
         statusName: 'code' //规定数据状态的字段名称，默认：code
@@ -121,6 +121,7 @@ table.render({
 // 刷新表格，不包含任何条件，恢复到初始状态
 function refreshTable() {
     table.reloadData('dataTable', {
+        page: { current: 1 }, //重新从第 1 页开始
         where: {} // 清空搜索条件内容
     });
 }
@@ -129,9 +130,9 @@ function refreshTable() {
 var active = {
     reload: function(){
         table.reloadData('dataTable', {
-            // page: {
-            //     curr: 1 //重新从第 1 页开始
-            // },
+            page: {
+                current: 1 //重新从第 1 页开始
+            },
             where: { //设定异步数据接口的额外参数
                 userId: $("#userId").val(),
                 date: $("#date").val(),

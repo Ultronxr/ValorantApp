@@ -567,6 +567,7 @@ table.render({
 // 刷新表格，不包含任何条件，恢复到初始状态
 function refreshTable() {
     table.reloadData('dataTable', {
+        page: { current: 1 }, //重新从第 1 页开始
         where: {} // 清空搜索条件内容
     });
 }
@@ -575,9 +576,9 @@ function refreshTable() {
 var active = {
     reload: function(){
         table.reloadData('dataTable', {
-            // page: {
-            //     curr: 1 //重新从第 1 页开始
-            // },
+            page: {
+                current: 1 //重新从第 1 页开始
+            },
             where: { //设定异步数据接口的额外参数
                 skin1: $('#skin1').val(),
                 skin2: $('#skin2').val(),
@@ -599,9 +600,7 @@ var active = {
         $('#bonusSkin2').val('');
         $('#bonusSkin3').val('');
         $('#hasEmail').val('');
-        table.reloadData('dataTable', {
-            where: {}
-        });
+        refreshTable();
     },
 };
 

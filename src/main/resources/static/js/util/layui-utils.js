@@ -36,7 +36,7 @@ function loadSelect(url, targetSelect, selectName, selectValue, async, callback,
         function () {
             let msg = targetSelect.selector + ' select 数据加载失败！';
             console.log(msg)
-            layer.msg(msg, {time: 2000});
+            layer.msg(msg, {icon:2, time: 2000});
         },
         async
     );

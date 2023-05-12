@@ -2,6 +2,7 @@ package cn.ultronxr.valorant.controller;
 
 import cn.ultronxr.common.bean.AjaxResponse;
 import cn.ultronxr.common.util.AjaxResponseUtils;
+import cn.ultronxr.framework.annotation.AdminAuthRequired;
 import cn.ultronxr.valorant.bean.DTO.BatchQueryBothDTO;
 import cn.ultronxr.valorant.service.StoreFrontService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,24 +25,25 @@ public class StoreFrontController {
     private StoreFrontService sfService;
 
 
-    @GetMapping("/singleItemOffers")
-    @ResponseBody
-    public AjaxResponse singleItemOffers(String userId, String date) {
-        if(StringUtils.isEmpty(userId) || StringUtils.isEmpty(date)) {
-            return AjaxResponseUtils.success();
-        }
-        return AjaxResponseUtils.success(sfService.toVO(sfService.singleItemOffers(userId, date)));
-    }
+    //@GetMapping("/singleItemOffers")
+    //@ResponseBody
+    //public AjaxResponse singleItemOffers(String userId, String date) {
+    //    if(StringUtils.isEmpty(userId) || StringUtils.isEmpty(date)) {
+    //        return AjaxResponseUtils.success();
+    //    }
+    //    return AjaxResponseUtils.success(sfService.toVO(sfService.singleItemOffers(userId, date)));
+    //}
+    //
+    //@GetMapping("/bonusOffers")
+    //@ResponseBody
+    //public AjaxResponse bonusOffers(String userId, String date) {
+    //    if(StringUtils.isEmpty(userId) || StringUtils.isEmpty(date)) {
+    //        return AjaxResponseUtils.success();
+    //    }
+    //    return AjaxResponseUtils.success(sfService.toVO(sfService.bonusOffers(userId, date)));
+    //}
 
-    @GetMapping("/bonusOffers")
-    @ResponseBody
-    public AjaxResponse bonusOffers(String userId, String date) {
-        if(StringUtils.isEmpty(userId) || StringUtils.isEmpty(date)) {
-            return AjaxResponseUtils.success();
-        }
-        return AjaxResponseUtils.success(sfService.toVO(sfService.bonusOffers(userId, date)));
-    }
-
+    @AdminAuthRequired
     @PostMapping("/batchUpdateBoth")
     @ResponseBody
     public AjaxResponse batchUpdateBoth() {
