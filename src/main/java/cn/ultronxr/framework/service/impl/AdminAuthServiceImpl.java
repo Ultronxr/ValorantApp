@@ -32,14 +32,15 @@ public class AdminAuthServiceImpl extends ServiceImpl<SystemAccountMapper, Syste
 
     @Override
     public boolean validateSystemAccount(String username, String password) {
-        log.info("尝试校验登录账号：username={}, password={}", username, password);
         username = username.trim();
         password = password.trim();
         if(StringUtils.isBlank(username) || StringUtils.isBlank(password) || password.length() != ADMIN_PASSWORD_LENGTH) {
             return false;
         }
         SystemAccount account = getBaseMapper().selectById(ADMIN_UUID);
-        return account.getUsername().equals(username) && account.getPassword().equals(password);
+        boolean result = account.getUsername().equals(username) && account.getPassword().equals(password);
+        log.info("尝试校验登录账号：result={}, username={}, password={}", result, username, password);
+        return result;
     }
 
     @Override

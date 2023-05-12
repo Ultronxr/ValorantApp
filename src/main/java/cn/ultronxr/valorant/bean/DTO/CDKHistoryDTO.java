@@ -14,6 +14,8 @@ public class CDKHistoryDTO {
 
     private Long accountNo;
 
+    private String date;
+
     private Integer current = 1;
 
     private Integer size = 100;

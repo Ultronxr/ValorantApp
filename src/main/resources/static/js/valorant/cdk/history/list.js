@@ -1,4 +1,12 @@
+var laydate;
+layui.define(function(){
+    laydate = layui.laydate;
+});
+
 $(function () {
+    laydate.render({
+        elem: '#date'
+    });
 });
 
 table.render({
@@ -10,7 +18,7 @@ table.render({
     ,cols: [[ //表头
         {field: 'cdk', title: 'CDK', width:'30%', sort: false, hide: false, align: 'center',
             templet: function (d) {
-                if(d.cdk === 'hEoopH3dak95EhOF******') {
+                if(d.cdk.startsWith('hEoopH3dak95EhOF') || d.cdk.startsWith('fiaRabIpGWo0uzWY')) {
                     return '<div style="color: red">' + d.cdk + '</div>';
                 }
                 return d.cdk;
@@ -92,12 +100,14 @@ var active = {
             where: { //设定异步数据接口的额外参数
                 cdk: $("#cdk").val(),
                 accountNo: $("#accountNo").val(),
+                date: $("#date").val(),
             }
         });
     },
     clear: function () {
         $("#cdk").val("");
         $("#accountNo").val("");
+        $("#date").val("");
         refreshTable();
     }
 };

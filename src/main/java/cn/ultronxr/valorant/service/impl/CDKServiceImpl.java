@@ -17,6 +17,7 @@ import cn.ultronxr.valorant.bean.mybatis.mapper.CDKMapper;
 import cn.ultronxr.valorant.bean.mybatis.mapper.RiotAccountMapper;
 import cn.ultronxr.valorant.service.CDKService;
 import cn.ultronxr.valorant.service.StoreFrontService;
+import cn.ultronxr.valorant.util.ValorantDateUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -152,6 +153,7 @@ public class CDKServiceImpl extends ServiceImpl<CDKMapper, CDK> implements CDKSe
                 // 如果直接用CDK编号 或 CDK内容进行查询，那么即使 isUsed=true 的CDK也能被查出来
                 .eq(cdkDTO.getIsUsed() == null && StringUtils.isEmpty(cdkDTO.getCdk()) && cdkDTO.getCdkNo() == null, CDK::getIsUsed, false)
                 .eq(cdkDTO.getIsUsed() != null, CDK::getIsUsed, cdkDTO.getIsUsed())
+                .orderByDesc(CDK::getTypeReusable)
                 .orderByDesc(CDK::getCdkNo);
 
         Page<CDK> result = this.page(page, wrapper);
@@ -311,10 +313,17 @@ public class CDKServiceImpl extends ServiceImpl<CDKMapper, CDK> implements CDKSe
 
     @Override
     public Page<CDKHistory> queryCDKHistory(CDKHistoryDTO cdkHistoryDTO, boolean isDesensitization) {
+        Date[] dates = new Date[2];
+        if(StringUtils.isNotBlank(cdkHistoryDTO.getDate())) {
+            dates = ValorantDateUtils.getDateTimeBaseOn8AM(cdkHistoryDTO.getDate(), false);
+        }
+
         Page<CDKHistory> page = Page.of(cdkHistoryDTO.getCurrent(), cdkHistoryDTO.getSize());
         LambdaQueryWrapper<CDKHistory> wrapper = Wrappers.lambdaQuery();
         wrapper.eq(StringUtils.isNotEmpty(cdkHistoryDTO.getCdk()), CDKHistory::getCdk, cdkHistoryDTO.getCdk())
                 .eq(cdkHistoryDTO.getAccountNo() != null, CDKHistory::getAccountNo, cdkHistoryDTO.getAccountNo())
+                .ge(StringUtils.isNotBlank(cdkHistoryDTO.getDate()), CDKHistory::getRedeemTime, dates[0])
+                .lt(StringUtils.isNotBlank(cdkHistoryDTO.getDate()), CDKHistory::getRedeemTime, dates[1])
                 .orderByDesc(CDKHistory::getRedeemTime);
         Page<CDKHistory> result = cdkHistoryMapper.selectPage(page, wrapper);
         // 脱敏

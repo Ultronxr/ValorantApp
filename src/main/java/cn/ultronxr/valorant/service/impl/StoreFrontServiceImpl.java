@@ -1,7 +1,5 @@
 package cn.ultronxr.valorant.service.impl;
 
-import cn.hutool.core.date.DateField;
-import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSONObject;
 import cn.ultronxr.distributed.datanode.DataNodeManager;
@@ -18,6 +16,7 @@ import cn.ultronxr.valorant.exception.APIUnauthorizedException;
 import cn.ultronxr.valorant.service.RSOService;
 import cn.ultronxr.valorant.service.StoreFrontService;
 import cn.ultronxr.valorant.service.WeaponSkinService;
+import cn.ultronxr.valorant.util.ValorantDateUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -26,7 +25,6 @@ import com.github.jeffreyning.mybatisplus.service.MppServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -74,7 +72,7 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
 
         // 如果数据库中没有数据且过了今天8点，则请求API获取，并插入数据库
         // 注意：已经过去的日期是无法再通过接口获取数据的，如果当天没有存入数据库，那么只能返回空结果！
-        if((null == list || list.isEmpty()) && isDateValid(date)) {
+        if((null == list || list.isEmpty()) && ValorantDateUtils.isDateValid(date)) {
             log.info("数据库没有对应的每日商店数据，尝试请求API获取：userId={} , date={}", userId, date);
             RSO rso = rsoService.fromAccount(userId);
             JSONObject jObj = requestAPI(rso);
@@ -97,7 +95,7 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
     public void singleItemOffersWithSleep(@NotNull String userId, @NotNull String date, float sleepSeconds) {
         log.info("获取每日商店数据（WithSleep）：userId={} , date={}", userId, date);
         List<StoreFront> list = queryDB(userId, date, false);
-        if(CollectionUtils.isNotEmpty(list) || !isDateValid(date)) {
+        if(CollectionUtils.isNotEmpty(list) || !ValorantDateUtils.isDateValid(date)) {
             return;
         }
 
@@ -141,7 +139,7 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
         List<StoreFront> list = queryDB(userId, date, true);
 
         // 如果数据库中没有数据，则请求API获取，并插入数据库
-        if((null == list || list.isEmpty()) && isDateValid(date)) {
+        if((null == list || list.isEmpty()) && ValorantDateUtils.isDateValid(date)) {
             log.info("数据库没有对应的夜市数据，尝试请求API获取：userId={} , date={}", userId, date);
             RSO rso = rsoService.fromAccount(userId);
             JSONObject jObj = requestAPI(rso);
@@ -202,8 +200,8 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
 
     private List<StoreFront> queryDB(String userId, String date, boolean isBonus) {
         // 早上8点前查询，返回的是前一天的数据
-        if(!isNowAfterToday8AM()) {
-            date = addDays(date, -1);
+        if(!ValorantDateUtils.isNowAfterToday8AM()) {
+            date = ValorantDateUtils.addDays(date, -1);
         }
         LambdaQueryWrapper<StoreFront> wrapper = Wrappers.lambdaQuery();
         wrapper.orderByAsc(StoreFront::getOfferId)
@@ -212,51 +210,6 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
                 .eq(!isBonus, StoreFront::getDate, date)
                 .gt(isBonus, StoreFront::getDate, date);
         return sfMapper.selectList(wrapper);
-    }
-
-    /**
-     * 检查日期是否合法，合法的条件：<br/>
-     *      先把 date ==> dateTime
-     *      今天8点 < dateTime < 明天8点
-     * @param date 前端传入的查询日期
-     * @return 是否合法
-     */
-    private static boolean isDateValid(String date) {
-        DateTime now = DateUtil.date();
-        DateTime dateTime = DateUtil.parse(date)
-                .setField(DateField.HOUR_OF_DAY, now.getField(DateField.HOUR_OF_DAY))
-                .setField(DateField.MINUTE, now.getField(DateField.MINUTE))
-                .setField(DateField.SECOND, now.getField(DateField.SECOND))
-                .setField(DateField.MILLISECOND, now.getField(DateField.MILLISECOND));
-        DateTime today8AM = DateUtil.date()
-                .setField(DateField.HOUR_OF_DAY, 8)
-                .setField(DateField.MINUTE, 0)
-                .setField(DateField.SECOND, 0)
-                .setField(DateField.MILLISECOND, 0);
-        DateTime tomorrow8AM = DateUtil.date(
-                DateUtils.addDays(DateUtil.date(today8AM).toJdkDate(), 1)
-        );
-        boolean valid = DateUtil.compare(today8AM, dateTime) < 0
-                && DateUtil.compare(dateTime, tomorrow8AM) < 0;
-        //log.info("dateTime={}, today8AM={}, tomorrow8AM={}", dateTime.toString(), today8AM.toString(), tomorrow8AM.toString());
-        //log.info("valid={}", valid);
-        return valid;
-    }
-
-    private static boolean isNowAfterToday8AM() {
-        DateTime now = DateUtil.date();
-        DateTime today8AM = DateUtil.date()
-                .setField(DateField.HOUR_OF_DAY, 8)
-                .setField(DateField.MINUTE, 0)
-                .setField(DateField.SECOND, 0)
-                .setField(DateField.MILLISECOND, 0);
-        return DateUtil.compare(now, today8AM) >= 0;
-    }
-
-    private static String addDays(String date, int amount) {
-        Date dateObj = DateUtil.parseDate(date);
-        dateObj = DateUtils.addDays(dateObj, amount);
-        return DateUtil.date(dateObj).toDateStr();
     }
 
     @Scheduled(cron = "${valorant.storefront.cron.pre-update-account-token}")
@@ -345,8 +298,8 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
         if(StringUtils.isEmpty(batchQueryBothDTO.getDate())) {
             batchQueryBothDTO.setDate(DateUtil.today());
         }
-        if(!isNowAfterToday8AM()) {
-            batchQueryBothDTO.setDate(addDays(batchQueryBothDTO.getDate(), -1));
+        if(!ValorantDateUtils.isNowAfterToday8AM()) {
+            batchQueryBothDTO.setDate(ValorantDateUtils.addDays(batchQueryBothDTO.getDate(), -1));
         }
 
         boolean isNightShopClosed = sfMapper.isNightShopClosed(batchQueryBothDTO.getDate());
@@ -383,8 +336,8 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
     @Override
     public BatchBothStoreFrontVO queryBothByAccountId(String userId, Long accountNo) {
         String date = DateUtil.today();
-        if(!isNowAfterToday8AM()) {
-            date = addDays(date, -1);
+        if(!ValorantDateUtils.isNowAfterToday8AM()) {
+            date = ValorantDateUtils.addDays(date, -1);
         }
         List<BatchBothStoreFrontVO> list = sfMapper.queryBothByAccountId(userId, accountNo, date);
         // 把每日商店和夜市合并为一条
