@@ -28,6 +28,8 @@ public class BatchQueryBothDTO {
 
     private Boolean hasEmail;
 
+    private Long accountNo;
+
     private Integer current = 1;
 
     private Integer size = 100;

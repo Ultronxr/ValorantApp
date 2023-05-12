@@ -532,6 +532,7 @@ table.render({
         bonusSkin2: $('#bonusSkin2').val(),
         bonusSkin3: $('#bonusSkin3').val(),
         hasEmail: $('#hasEmail').val(),
+        accountNo: $('#accountNo').val(),
     }
     ,page: true //分页
     ,limit: 100
@@ -588,6 +589,7 @@ var active = {
                 bonusSkin2: $('#bonusSkin2').val(),
                 bonusSkin3: $('#bonusSkin3').val(),
                 hasEmail: $('#hasEmail').val(),
+                accountNo: $('#accountNo').val(),
             }
         });
     },
@@ -600,6 +602,7 @@ var active = {
         $('#bonusSkin2').val('');
         $('#bonusSkin3').val('');
         $('#hasEmail').val('');
+        $('#accountNo').val('');
         refreshTable();
     },
 };
@@ -659,21 +662,25 @@ var bodyWidth = $('body').width(),
 console.log('bodyWidth='+bodyWidth + ' bodyHeight='+bodyHeight + ' htmlWidth='+htmlWidth + ' htmlHeight='+htmlHeight);
 
 function layerOpenImg(rowData) {
-    let layerWidth = '1500',
-        layerHeight = '680';
-    // 无夜市数据时，缩短弹窗高度
+    // 商标
+    let imgHtml = '<img class="shop-logo-bonus" src="/static/assets/img/valorant/wwdw/shop_logo.png">';
+
+    let layerWidth = '1205',
+        layerHeight = '685';
+    // 无夜市数据时，缩短弹窗宽度，调整商标位置
     if(rowData.bonusOffer == null) {
-        layerHeight = '350';
+        layerWidth = '490';
+        console.log(imgHtml)
+        imgHtml = imgHtml.replace("shop-logo-bonus", "shop-logo");
+        console.log(imgHtml)
     }
 
     // 手动计算弹窗位置，使其始终保持屏幕中央
-    let layerLeftOffset = (0.5 - 1500/2/htmlWidth)* htmlWidth,
+    let layerLeftOffset = (0.5 - layerWidth/2/htmlWidth)* htmlWidth,
         layerTopOffset = (0.5 - layerHeight/2/bodyHeight) * bodyHeight;
 
     layer.open({
-        title: '商店信息 编号：' + rowData.accountNo
-            + '<img class="shop-logo" src="/static/assets/img/valorant/wwdw/shop_logo.png">'
-        ,
+        title: '商店信息 编号：' + rowData.accountNo + imgHtml,
         type: 2,
         content: ['/static/html/valorant/storefront/batch/storefrontImg.html', 'no'],
         area: [layerWidth+'px', layerHeight+'px'],

@@ -33,6 +33,9 @@
             <if test="batchQueryBothDTO.hasEmail != null">
                 AND account.has_email = #{batchQueryBothDTO.hasEmail}
             </if>
+            <if test="batchQueryBothDTO.accountNo != null">
+                AND account.account_no = #{batchQueryBothDTO.accountNo}
+            </if>
             AND store.date >= #{batchQueryBothDTO.date}
             AND store.user_id IN
                 (SELECT single.user_id FROM (
@@ -109,6 +112,9 @@
             AND account.is_del = 0
             <if test="batchQueryBothDTO.hasEmail != null">
                 AND account.has_email = #{batchQueryBothDTO.hasEmail}
+            </if>
+            <if test="batchQueryBothDTO.accountNo != null">
+                AND account.account_no = #{batchQueryBothDTO.accountNo}
             </if>
             AND store.date = #{batchQueryBothDTO.date}
             AND store.user_id IN

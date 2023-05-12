@@ -117,3 +117,36 @@ ul {
     right: 6px;
     bottom: 6px;
 }
+
+.img-div {
+    padding: 10px 5px;
+    color: #fff;
+    background-color: #111922;
+}
+.img-list li {
+    display: inline-table;
+}
+#img-list {
+    width: 480px;
+    height: 600px;
+    display: inline-block;
+}
+#img-list-bonus {
+    width: 710px;
+    height: 600px;
+    display: inline-block;
+}
+.img-div .title {
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    left: 212px;
+    z-index: 90;
+}
+.img-div .title-bonus {
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    right: 340px;
+    z-index: 90;
+}

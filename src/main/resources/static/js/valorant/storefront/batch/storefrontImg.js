@@ -37,7 +37,8 @@ function renderSingle() {
 
 function renderBonus() {
     if(ROW_DATA.bonusOffer == null) {
-        $('#img-list-bonus').html('无夜市数据');
+        $('.title-bonus').remove();
+        // $('#img-list-bonus').html('无夜市数据');
         return;
     }
 
