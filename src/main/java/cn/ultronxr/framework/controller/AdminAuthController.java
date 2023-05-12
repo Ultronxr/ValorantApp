@@ -35,7 +35,7 @@ public class AdminAuthController {
     @ResponseBody
     public AjaxResponse adminAuth(@RequestBody SystemAccountDto systemAccountDto, HttpServletRequest request, HttpServletResponse response) {
         if(systemAccountService.validateSystemAccount(systemAccountDto.getUsername(), systemAccountDto.getPassword())) {
-            Cookie cookie = systemAccountService.issueAuthCookie();
+            Cookie cookie = systemAccountService.issueAuthCookie(systemAccountDto.getUsername().trim());
             response.addCookie(cookie);
             return AjaxResponseUtils.success("管理员登录成功。");
         }

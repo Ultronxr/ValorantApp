@@ -22,8 +22,9 @@ public interface SystemAccountService extends IService<SystemAccount> {
 
     /**
      * 登录成功签发 cookie
+     * @param username 登录成功的用户名
      */
-    Cookie issueAuthCookie();
+    Cookie issueAuthCookie(String username);
 
     /**
      * 获取 cookie name

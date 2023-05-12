@@ -73,3 +73,7 @@ valorant:
     cron:
       pre-update-account-token: "0 8 7 * * ? "
       batch-update-both: "0 0 8 * * ? "
+
+adminAuth:
+  cookieName: X-AUTH-TOKEN
+  adminPasswordLength: 50

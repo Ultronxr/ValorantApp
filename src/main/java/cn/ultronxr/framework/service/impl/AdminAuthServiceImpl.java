@@ -1,12 +1,17 @@
 package cn.ultronxr.framework.service.impl;
 
-import cn.hutool.core.codec.Base64;
 import cn.ultronxr.framework.bean.mybatis.bean.SystemAccount;
 import cn.ultronxr.framework.bean.mybatis.mapper.SystemAccountMapper;
+import cn.ultronxr.framework.jwt.JJWTConfig;
+import cn.ultronxr.framework.jwt.JJWTService;
+import cn.ultronxr.framework.jwt.JWSParseResult;
 import cn.ultronxr.framework.service.SystemAccountService;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.Cookie;
@@ -20,42 +25,51 @@ import javax.servlet.http.Cookie;
 @Slf4j
 public class AdminAuthServiceImpl extends ServiceImpl<SystemAccountMapper, SystemAccount> implements SystemAccountService {
 
-    private static final String ADMIN_UUID = "ce7142302079b20a9e45851ec43cc21d";
-
-    private static final Integer ADMIN_PASSWORD_LENGTH = 50;
-
     /** 登录成功后签发的 cookie name */
-    private static final String COOKIE_NAME = "X-ADMIN-AUTH";
+    @Value("${adminAuth.cookieName}")
+    private String cookieName;
 
-    private static final Integer COOKIE_EXPIRE_SECONDS = 1*24*60*60;
+    @Value("${adminAuth.adminPasswordLength}")
+    private Integer adminPasswordLength;
+
+    @Autowired
+    private JJWTConfig jjwtConfig;
+
+    @Autowired
+    private JJWTService jjwtService;
 
 
     @Override
     public boolean validateSystemAccount(String username, String password) {
         username = username.trim();
         password = password.trim();
-        if(StringUtils.isBlank(username) || StringUtils.isBlank(password) || password.length() != ADMIN_PASSWORD_LENGTH) {
+        if(StringUtils.isBlank(username) || StringUtils.isBlank(password) || password.length() != adminPasswordLength) {
             return false;
         }
-        SystemAccount account = getBaseMapper().selectById(ADMIN_UUID);
-        boolean result = account.getUsername().equals(username) && account.getPassword().equals(password);
+        SystemAccount account = getBaseMapper().selectOne(
+                new LambdaQueryWrapper<SystemAccount>()
+                        .eq(SystemAccount::getUsername, username)
+        );
+        boolean result = null != account
+                && account.getUsername().equals(username)
+                && account.getPassword().equals(password);
         log.info("尝试校验登录账号：result={}, username={}, password={}", result, username, password);
         return result;
     }
 
     @Override
-    public Cookie issueAuthCookie() {
-        String token = getBaseMapper().selectById(ADMIN_UUID).getToken();
-        Cookie cookie = new Cookie(COOKIE_NAME, Base64.encode(token));
+    public Cookie issueAuthCookie(String username) {
+        String token = jjwtService.generate(username);
+        Cookie cookie = new Cookie(cookieName, token);
         cookie.setPath("/");
-        cookie.setMaxAge(COOKIE_EXPIRE_SECONDS);
+        cookie.setMaxAge((int) jjwtConfig.authTokenExpireSeconds());
         cookie.setHttpOnly(true);
         return cookie;
     }
 
     @Override
     public String getCookieName() {
-        return COOKIE_NAME;
+        return cookieName;
     }
 
     @Override
@@ -63,8 +77,20 @@ public class AdminAuthServiceImpl extends ServiceImpl<SystemAccountMapper, Syste
         if(StringUtils.isBlank(token)) {
             return false;
         }
-        String correctToken = Base64.encode(getBaseMapper().selectById(ADMIN_UUID).getToken());
-        return correctToken.equals(token.trim());
+        JWSParseResult result = jjwtService.validateToken(token);
+        if(!result.isValidation()) {
+            log.info("JWS token username = {} | 验证结果 = {} | 信息 = {}", result.getUsername() ,result.isValidation(), result.getMsg());
+            return false;
+        }
+        boolean userExists = this.getBaseMapper().exists(
+                new LambdaQueryWrapper<SystemAccount>()
+                        .eq(SystemAccount::getUsername, result.getUsername())
+                        .eq(SystemAccount::getIsDel, false)
+        );
+        if(!userExists) {
+            log.warn("JWS token 验证通过，但其中的用户不存在或已删除！subject/username={}", result.getUsername());
+        }
+        return userExists;
     }
 
 }

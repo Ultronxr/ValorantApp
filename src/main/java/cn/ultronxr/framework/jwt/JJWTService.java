@@ -1,0 +1,152 @@
+package cn.ultronxr.framework.jwt;
+
+import cn.hutool.core.date.CalendarUtil;
+import cn.hutool.core.lang.UUID;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.stream.Collectors;
+
+/**
+ * @author Ultronxr
+ * @date 2023/05/12 16:22:53
+ * @description JJWT 签发 token 的实现<br/>
+ *              参见：<a href="https://jwt.io/">jwt.io</a><br/>
+ *              注意 JWT(Json Web Token) 与 JWS(JSON Web Signature) 的区别：<br/>
+ *              JWT 是一个规范，JWS 是 JWT 的一种实现方式。<br/><br/>
+ *              JWS 一个完整 token 的格式：<br/>
+ *              头部（明文），表明token类型和算法 Header: {@code base64UrlEncode(header)}<br/>
+ *              .<br/>
+ *              载荷（明文），包含各种claims声明 PayLoad: {@code base64UrlEncode(payload)}<br/>
+ *              .<br/>
+ *              签名（密文），验证数据完整性 Signature: {@code HMACSHA512(base64UrlEncode(header)+"."+base64UrlEncode(payload), secretKey)}<br/>
+ */
+@Service
+@Slf4j
+public class JJWTService {
+
+    @Autowired
+    private JJWTConfig jjwtConfig;
+
+    private SecretKey SECRET_KEY;
+
+    private final HashMap<String, Object> HEADER = new HashMap<>();
+
+
+    @PostConstruct
+    private void init() {
+        HEADER.put("alg", "HS512");
+        HEADER.put("typ", "JWT");
+
+        SECRET_KEY = Keys.hmacShaKeyFor(jjwtConfig.getSecret().getBytes(StandardCharsets.UTF_8));
+        // Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    }
+
+    /**
+     * 为用户签发一个新的 JWS token （有效时长为配置的默认值）
+     *
+     * @param username 登录用户名
+     * @return  签发的 token 字符串
+     */
+    public String generate(String username) {
+        return generate(username, jjwtConfig.authTokenExpireMilliSeconds());
+    }
+
+    /**
+     * 为用户签发一个新的 JWS token
+     *
+     * @param username                登录用户名
+     * @param tokenExpireMilliSeconds 指定该 JWT 的有效时长（毫秒）
+     * @return  签发的 token 字符串
+     */
+    public String generate(String username, long tokenExpireMilliSeconds) {
+        Date now = CalendarUtil.calendar().getTime(),
+                expire = new Date(now.getTime() + tokenExpireMilliSeconds);
+        //HashMap<String, Object> claims = new HashMap<>();
+        //claims.put("username", username);
+
+        JwtBuilder jwtBuilder = Jwts.builder()
+                // === Header ===
+                .setHeader(HEADER)
+                // === Payload ===
+                // 自定义声明
+                // 注：如果使用 setClaims(HashMap<>) 方法，会覆盖所有之前的声明，所以应该放在最开头执行，然后再设置标准声明；不想要这样的话，可以选择使用 claim(String, Object) 方法
+                //.setClaims(claims)
+                // 标准声明 jti: JWT 的唯一身份标识，主要用来作为一次性token，从而回避重放攻击
+                .setId(UUID.randomUUID().toString())
+                // 标准声明 iss: JWT 签发者
+                .setIssuer(jjwtConfig.getIssuer())
+                // 标准声明 sub: JWT 的主体用户
+                .setSubject(username)
+                // 标准声明 aud: JWT 的接收方
+                //.setAudience(username)
+                // 标准声明 iat: JWT 签发时间
+                .setIssuedAt(now)
+                // 标准声明 exp: JWT 过期时间，必须要大于签发时间
+                .setExpiration(expire)
+                // 标准声明 nbf: 在什么时间之前，该 JWT 都是不可用的
+                .setNotBefore(now)
+                // === Signature ===
+                // JWT 的签发方式
+                .signWith(SECRET_KEY);
+
+        return jwtBuilder.compact();
+    }
+
+    /**
+     * 验证并解析 JWS token
+     *
+     * @param token JWS token
+     * @return {@code Jws} 对象，包含 Header、Body (PayLoad)、Signature 三部分
+     */
+    public Jws<Claims> parse(String token)
+            throws ExpiredJwtException, UnsupportedJwtException, MalformedJwtException, SignatureException, IllegalArgumentException
+    {
+        return Jwts.parserBuilder()
+                .setSigningKey(SECRET_KEY)
+                .build()
+                .parseClaimsJws(token);
+    }
+
+    /**
+     * 验证一个 JWS token 是否合法，并解析
+     *
+     * @param token JWS token
+     * @return 返回一个 {@link JWSParseResult} 对象
+     */
+    public JWSParseResult validateToken(String token) {
+        JWSParseResult result = new JWSParseResult();
+        try {
+            result.setJws(this.parse(token));
+            result.setValidation(true);
+        } catch (Exception e) {
+            //result.setJws(null);
+            result.setValidation(false);
+            if(e instanceof UnsupportedJwtException) {
+                result.setMsg("JWS 类型不匹配（不是一个正确包含声明与签名的JWS）");
+            } else if(e instanceof MalformedJwtException) {
+                result.setMsg("JWS 字符串格式不正确");
+            } else if(e instanceof SignatureException) {
+                result.setMsg("JWS 签名验证失败");
+            } else if(e instanceof ExpiredJwtException) {
+                result.setMsg("JWS 已过期");
+            } else if(e instanceof IllegalArgumentException) {
+                result.setMsg("JWS 不能为空");
+            } else {
+                result.setMsg("其他异常");
+            }
+        }
+        //log.info("JWS token username = {} | 验证结果 = {} | 信息 = {}", result.getUsername() ,result.isValidation(), result.getMsg());
+        return result;
+    }
+
+}

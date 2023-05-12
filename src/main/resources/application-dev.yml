@@ -33,3 +33,9 @@ spring:
         # 连接redis的地址和密码
         address: ${secret.dev.spring.redis.redisson.singleServerConfig.address}
         password: ${secret.dev.spring.redis.redisson.singleServerConfig.password}
+
+jjwt:
+  issuer: valorant-admin
+  secret: ${secret.dev.jjwt.secret}
+  expireMinutes:
+    authToken: 1440
