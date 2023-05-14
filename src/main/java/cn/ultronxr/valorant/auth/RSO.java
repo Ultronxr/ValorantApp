@@ -29,19 +29,29 @@ public class RSO {
     /** 用户 ID （登录验证成功后可以获取） */
     private String userId;
 
+    /** 验证成功后的 cookie （可以用来下次免密登录） */
+    private String cookie;
+
     /** 拳头客户端平台 */
     private String riotClientPlatform = "ew0KCSJwbGF0Zm9ybVR5cGUiOiAiUEMiLA0KCSJwbGF0Zm9ybU9TIjogIldpbmRvd3MiLA0KCSJwbGF0Zm9ybU9TVmVyc2lvbiI6ICIxMC4wLjE5MDQyLjEuMjU2LjY0Yml0IiwNCgkicGxhdGZvcm1DaGlwc2V0IjogIlVua25vd24iDQp9";
 
     /** 拳头客户端版本 */
     private String riotClientVersion = "release-06.03-shipping-6-830687";
 
+    /** 拳头客户端构建版本 默认值 */
+    private static final String DEFAULT_RIOT_CLIENT_BUILD = "63.0.9.4909983.4789131";
+
     /** 拳头客户端构建版本 */
-    private String riotClientBuild = "63.0.9.4909983.4789131";
+    private String riotClientBuild = DEFAULT_RIOT_CLIENT_BUILD;
 
     private static final String RIOT_CLIENT_AGENT_PREFIX = "RiotClient/";
     private static final String RIOT_CLIENT_AGENT_SUFFIX = " rso-auth (Windows;10;;Professional, x64)";
-    /** 拳头客户端代理环境 */
-    private String riotClientAgent = RIOT_CLIENT_AGENT_PREFIX + riotClientBuild + RIOT_CLIENT_AGENT_SUFFIX;
+
+    /** 拳头客户端 agent 默认值 */
+    public static final String DEFAULT_RIOT_CLIENT_AGENT = RIOT_CLIENT_AGENT_PREFIX + DEFAULT_RIOT_CLIENT_BUILD + RIOT_CLIENT_AGENT_SUFFIX;
+
+    /** 拳头客户端 agent */
+    private String riotClientAgent = DEFAULT_RIOT_CLIENT_AGENT;
 
 
     private void updateRiotClientAgent() {

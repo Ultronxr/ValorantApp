@@ -253,6 +253,7 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
     public boolean batchUpdateBoth(boolean isDistributed) {
         long dataNodeIndex = 0 , dataNodeTotal = 1;
         if(isDistributed) {
+            dataNodeManager.addDataNode();
             dataNodeIndex = dataNodeManager.getIndex();
             dataNodeTotal = dataNodeManager.getTotal();
         }
@@ -276,18 +277,28 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
         }
 
         // 获取预更新了token的账号，直接多线程并发查商店，不用考虑拳头账号登录API速率上限
-        List<Object> preAccountUserIdList = accountMapper.selectIdListForPreUpdatedTokenAccount(now, isDistributed, preSqlLimitIndex, preSqlLimitCount);
-        preAccountUserIdList.parallelStream().forEach(userId -> {
-            singleItemOffersWithSleep((String) userId, date, 0);
-        });
+        if(preSqlLimitCount > 0) {
+            List<String> preAccountUserIdList = accountMapper.selectIdListForPreUpdatedTokenAccount(now, isDistributed, preSqlLimitIndex, preSqlLimitCount);
+            preAccountUserIdList.parallelStream().forEach(userId -> {
+                try {
+                    singleItemOffersWithSleep(userId, date, 0);
+                } catch (Exception e) {
+                    log.warn("更新预更新了token账号的每日商店+夜市数据时抛出异常！", e);
+                }
+            });
+        }
 
         // 获取未预更新token的账号
-        List<Object> accountUserIdList = accountMapper.selectIdListForNotPreUpdatedTokenAccount(now, isDistributed, sqlLimitIndex, sqlLimitCount);
+        List<String> accountUserIdList = accountMapper.selectIdListForNotPreUpdatedTokenAccount(now, isDistributed, sqlLimitIndex, sqlLimitCount);
         accountUserIdList.forEach(userId -> {
             // 拳头RSO API认证速率限制：100 requests every 2 minutes
             // 处理一个账号数据需要请求4-6次API（包括RSO认证），2分钟的请求上限为20个账号，即6秒处理一个账号
             // 实测处理一个账号数据请求时间为1.5秒左右，添加 sleep
-            singleItemOffersWithSleep((String) userId, date, 1.5f);
+            try {
+                singleItemOffersWithSleep(userId, date, 1.5f);
+            } catch (Exception e) {
+                log.warn("更新未预更新token账号的每日商店+夜市数据时抛出异常！", e);
+            }
         });
         return true;
     }

@@ -3,6 +3,10 @@ package cn.ultronxr.distributed.datanode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -16,7 +20,7 @@ import javax.annotation.PostConstruct;
  */
 @Component
 @Slf4j
-public class DataNodeManager {
+public class DataNodeManager implements ApplicationRunner {
 
     @Autowired
     private RedisTemplate<Object, Object> redisTemplate;
@@ -46,7 +50,7 @@ public class DataNodeManager {
      * 清空 datanode （早上6点由 main datanode 执行）
      */
     @Scheduled(cron = "${valorant.datanode.cron.clear-datanode}")
-    protected void clearDataNode() {
+    public void clearDataNode() {
         if(dataNodeId.equals(mainDataNodeId)) {
             Boolean res = redisTemplate.delete(REDIS_KEY);
             if(null != res && res) {
@@ -59,7 +63,7 @@ public class DataNodeManager {
      * 插入 nodeId （早上7点统一写入ID）
      */
     @Scheduled(cron = "${valorant.datanode.cron.add-datanode}")
-    protected void addDataNode() {
+    public void addDataNode() {
         Boolean res = redisTemplate.opsForZSet().add(REDIS_KEY, dataNodeId, 1);
         if(null != res && res) {
             log.info("向 ZSet 中添加 dataNodeId={}", dataNodeId);
@@ -82,6 +86,13 @@ public class DataNodeManager {
 
     public String getDataNodeId() {
         return dataNodeId;
+    }
+
+    @Order(Ordered.LOWEST_PRECEDENCE)
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+        addDataNode();
+        log.info("项目启动时自动注册 datanode 完成。");
     }
 
 }

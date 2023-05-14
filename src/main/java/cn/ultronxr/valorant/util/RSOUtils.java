@@ -25,11 +25,13 @@ public class RSOUtils {
 
     public static final String AUTH_URL = "https://auth.riotgames.com/api/v1/authorization";
 
+    public static final String RE_AUTH_URL = "https://auth.riotgames.com/authorize?redirect_uri=http://localhost/redirect&client_id=riot-client&response_type=token%20id_token&nonce=1";
+
     public static final String ENTITLEMENTS_URL = "https://entitlements.auth.riotgames.com/api/token/v1";
 
     private static final Map<String, String> HEADER = new HashMap<>() {{
         put("Accept-Encoding", "deflate, gzip, zstd");
-        put("User-Agent", new RSO().getRiotClientAgent());
+        put("User-Agent", RSO.DEFAULT_RIOT_CLIENT_AGENT);
         put("Cache-Control", "no-cache");
         put("Accept", "application/json");
         put("Content-Type", "application/json");
@@ -51,7 +53,7 @@ public class RSOUtils {
         put("type", "auth");
         put("language", "en_US");
         put("region", null);
-        put("remember", false);
+        put("remember", true);
         put("username", "{username}");
         put("password", "{password}");
     }};

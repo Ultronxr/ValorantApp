@@ -20,6 +20,7 @@ CREATE TABLE valorant_riot_account (
     `access_token_expire_at`    DATETIME         DEFAULT NULL               COMMENT 'accessToken过期时间',
     `entitlements_token`        VARCHAR(3000)    DEFAULT NULL               COMMENT 'API用户验证token（从拳头RSO接口中获取）',
     `multi_factor`              VARCHAR(3000)    DEFAULT NULL               COMMENT '两步验证信息',
+    `cookie`                    VARCHAR(3000)    DEFAULT NULL               COMMENT '用于下次免密登录的cookie',
     `is_verified`               TINYINT(1)       DEFAULT NULL               COMMENT '该账户信息是否通过验证：1-true; 0-false',
     `is_auth_failure`           TINYINT(1)       NOT NULL DEFAULT 0         COMMENT '是否RSO验证失败（账号或密码错误，批量更新时会跳过验证失败的账号）。0-验证成功；1-验证失败',
     `is_del`                    TINYINT(1)       NOT NULL DEFAULT 0         COMMENT '是否删除：1-true; 0-false',
@@ -34,6 +35,7 @@ ALTER TABLE valorant_riot_account CHANGE `social_tag` `email_pwd` VARCHAR(500)  
 ALTER TABLE valorant_riot_account ADD `has_email`    TINYINT(1)    NOT NULL DEFAULT 0    COMMENT '是否带初邮。0-未验证初邮；1-带初邮' AFTER `password`;
 ALTER TABLE valorant_riot_account ADD `is_auth_failure`    TINYINT(1)    NOT NULL DEFAULT 0    COMMENT '是否RSO验证失败（账号或密码错误，批量更新时会跳过验证失败的账号）。0-验证成功；1-验证失败' AFTER `is_verified`;
 ALTER TABLE valorant_riot_account ADD `access_token_expire_at`    DATETIME    DEFAULT NULL    COMMENT 'accessToken过期时间' AFTER `access_token`;
+ALTER TABLE valorant_riot_account ADD `cookie`    VARCHAR(3000)    DEFAULT NULL    COMMENT '用于下次免密登录的cookie' AFTER `multi_factor`;
 
 CREATE TABLE valorant_weapon (
     `uuid`                 VARCHAR(100)    NOT NULL         COMMENT '对象ID，主键',

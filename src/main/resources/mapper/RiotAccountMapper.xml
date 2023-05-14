@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ultronxr.valorant.bean.mybatis.mapper.RiotAccountMapper">
+
+    <select id="selectCountForPreUpdatedTokenAccount" parameterType="java.util.Date" resultType="java.lang.Long">
+        SELECT
+            COUNT(account_no)
+        FROM
+            valorant_riot_account
+        WHERE
+            is_del = 0
+            AND is_auth_failure = 0
+            AND access_token_expire_at <![CDATA[ > ]]> #{date}
+            AND
+                user_id NOT IN
+                ( SELECT DISTINCT user_id
+                  FROM valorant_store_front
+                  WHERE date = DATE_FORMAT(#{date}, '%Y-%m-%d') )
+    </select>
+
+    <select id="selectCountForNotPreUpdatedTokenAccount" parameterType="java.util.Date" resultType="java.lang.Long">
+        SELECT
+            COUNT(account_no)
+        FROM
+            valorant_riot_account
+        WHERE
+            is_del = 0
+          AND is_auth_failure = 0
+          AND (
+            access_token_expire_at <![CDATA[ <= ]]> #{date}
+                OR access_token_expire_at IS NULL
+            )
+          AND
+                user_id NOT IN
+                ( SELECT DISTINCT user_id
+                  FROM valorant_store_front
+                  WHERE date = DATE_FORMAT(#{date}, '%Y-%m-%d') )
+    </select>
+
+    <select id="selectIdListForPreUpdatedTokenAccount" parameterType="java.lang.Object" resultType="java.lang.String">
+        SELECT
+            user_id
+        FROM
+            valorant_riot_account
+        WHERE
+            is_del = 0
+          AND is_auth_failure = 0
+          AND access_token_expire_at <![CDATA[ > ]]> #{date}
+          AND
+                user_id NOT IN
+                ( SELECT DISTINCT user_id
+                  FROM valorant_store_front
+                  WHERE date = DATE_FORMAT(#{date}, '%Y-%m-%d') )
+        ORDER BY account_no ASC
+        <if test="isDistributed == true">
+            LIMIT #{sqlLimitIndex},#{sqlLimitCount}
+        </if>
+    </select>
+
+    <select id="selectIdListForNotPreUpdatedTokenAccount" parameterType="java.lang.Object" resultType="java.lang.String">
+        SELECT
+            user_id
+        FROM
+            valorant_riot_account
+        WHERE
+            is_del = 0
+          AND is_auth_failure = 0
+          AND (
+                    access_token_expire_at <![CDATA[ <= ]]> #{date}
+                OR access_token_expire_at IS NULL
+            )
+          AND
+                user_id NOT IN
+                ( SELECT DISTINCT user_id
+                  FROM valorant_store_front
+                  WHERE date = DATE_FORMAT(#{date}, '%Y-%m-%d') )
+        ORDER BY account_no ASC
+        <if test="isDistributed == true">
+            LIMIT #{sqlLimitIndex},#{sqlLimitCount}
+        </if>
+    </select>
+
+</mapper>

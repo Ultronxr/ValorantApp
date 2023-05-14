@@ -39,6 +39,8 @@ public class RiotAccount {
 
     private String multiFactor;
 
+    private String cookie;
+
     private Boolean isVerified;
 
     private Boolean isAuthFailure;

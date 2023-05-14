@@ -47,6 +47,17 @@ public class RSOServiceImpl implements RSOService {
             log.info("清空cookie");
         }
 
+        // TODO 2023/05/13 16:50:59 入参添加 cookie 参数，检查cookie是否过期，如果没有过期优先使用cookie进行免密登录
+        //String cookie = "__cf_bm=UARV6qco530OW9XbyJJtHed2KWC71DMEn03J57ugX5U-1683962421-0-ATev+RyOFU2/atzB8lOgqsxsmC+4ZWV9phzQs4Dg3uc5zisISx4ymRxbdyw+hJJJeAQpsTfL22rg1ZOxCXxUqgk=; tdid=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg5YjBjODk1LWEzMTgtNDQ3ZC05MzE4LTJjMzdmNzZkZmNiYiIsIm5vbmNlIjoiRnkwUFBqcnNUOE09IiwiaWF0IjoxNjgzOTYyNDIxfQ.km_vMpl3dFUpGLPSbTwrtMnQlmZ767hkN67LT63Ijco; clid=ap1; csid=0Ej-jAhSyOLs7R6i6_FzRw.dddY7o_34UzXGYu9WCzs7w; ssid=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzc2lkIjoiMEVqLWpBaFN5T0xzN1I2aTZfRnpSdy5kZGRZN29fMzRVelhHWXU5V0N6czd3Iiwic3ViIjoiNmUxZTBmNTQtMDQwZS01OGNkLTk1ZjQtNzdiODA2Y2VmOTA4IiwibG9naW5Ub2tlbiI6IjU2MDU2ZDdiLTY3NzYtNGI2YS1hZWRiLWQxY2QwYmE0NjhjOCIsInNlcmllc1Rva2VuIjoiMDI3NGZjYzgtYjI0YS00MDBjLThkMDQtNTg5NzcyMjdhMTdmIiwiaWF0IjoxNjgzOTYyNDIxfQ.OA-m_IOQbfMxyhchCe2W56CMSgUfXgvUxyVfWWv3SlU; sub=6e1e0f54-040e-58cd-95f4-77b806cef908";
+        //request.setUrl(RSOUtils.RE_AUTH_URL)
+        //        .method(Method.GET)
+        //        .headerMap(RSOUtils.getHeader(), true)
+        //        .header("Cookie", cookie);
+        //HttpResponse response = request.execute();
+        //if(response.getStatus() == 303 && response.headers().containsKey("location")) {
+        //    // 解析reauth 免密获取的token
+        //}
+
         request.setUrl(RSOUtils.AUTH_URL)
                 .method(Method.POST)
                 .headerMap(RSOUtils.getHeader(), true)
@@ -108,6 +119,7 @@ public class RSOServiceImpl implements RSOService {
         // 解析结果
         RSO rso = new RSO();
         rso = RSOUtils.parseAccessToken(resObj, rso);
+        rso.setCookie(response.getCookieStr());
 
         // 如果不需要获取 entitlements token ，那么在此中断，返回RSO
         if(!needRequestEntitlementsToken) {
