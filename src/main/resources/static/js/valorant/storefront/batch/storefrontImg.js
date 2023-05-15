@@ -27,9 +27,13 @@ function renderSingle() {
             '                    <span>'+ cost +'</span>\n' +
             '                    <img class="level-icon" src="/static/assets/img/valorant/storefront/contentTierIcon/tier'+ simpleTier +'.png">\n' +
             '                </div>\n' +
-            '                <img class="skin-img" src="'+ skinImg +'" alt="">\n' +
-            '                <div class="img-bottom">'+ displayName +'</div>\n' +
-            '            </div>\n' +
+            '                <img class="skin-img" src="'+ skinImg +'" alt="">\n';
+        if(i%2 === 1 && (ROW_DATA.bonusOffer == null || ROW_DATA.bonusOffer.displayNameList.length === 0)) {
+            html += '                <div class="img-bottom img-bottom-right">'+ displayName +'</div>\n';
+        } else {
+            html += '                <div class="img-bottom">'+ displayName +'</div>\n';
+        }
+        html += '            </div>\n' +
             '        </li>';
     }
     $('#img-list').html(html);

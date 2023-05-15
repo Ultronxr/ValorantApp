@@ -150,3 +150,15 @@ ul {
     right: 340px;
     z-index: 90;
 }
+.img-list li {
+    width: 235px;
+}
+.img-box{
+    width: 100%;
+}
+.img-bottom-right {
+    text-align: right !important;
+}
+.skin-img {
+    max-width: 190px !important;
+}
