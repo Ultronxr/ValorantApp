@@ -127,8 +127,8 @@ public class DataNodeManager implements ApplicationRunner {
     public void publishUpdateMission() {
         String missionName = "batchUpdateBoth";
         RTopic rtopic = getRTopic();
-        rtopic.publish(missionName);
-        log.info("主数据节点向 redis topic channel 发布更新任务，channel={}, msg={}", rtopic.getChannelNames(), missionName);
+        long clientsNumber = rtopic.publish(missionName);
+        log.info("主数据节点向 redis topic channel 发布更新任务，channel={}, msg={}, clientsNumber={}", rtopic.getChannelNames(), missionName, clientsNumber);
     }
 
 }
