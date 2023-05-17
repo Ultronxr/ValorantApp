@@ -4,6 +4,7 @@ import cn.ultronxr.common.util.AjaxResponseUtils;
 import cn.ultronxr.framework.annotation.AdminAuthRequired;
 import cn.ultronxr.framework.service.SystemAccountService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
@@ -62,8 +63,12 @@ public class AdminAuthInterceptor implements HandlerInterceptor {
             // token正确放行
             return true;
         }
+
+        // nginx 反代时添加的请求头（proxy_set_header X-Real-IP $remote_addr;）
+        String nginxProxyXRealIP = request.getHeader("X-Real-IP");
+        String address = StringUtils.isNotEmpty(nginxProxyXRealIP) ? nginxProxyXRealIP : request.getRemoteAddr();
         log.warn("请求需要管理员权限的方法但被拒绝：{}#{}，来自客户端：{}",
-                handlerMethod.getMethod().getDeclaringClass().getName(), handlerMethod.getMethod().getName(), request.getRemoteAddr());
+                handlerMethod.getMethod().getDeclaringClass().getName(), handlerMethod.getMethod().getName(), address);
         return needAdminAuthResponse(response);
     }
 
