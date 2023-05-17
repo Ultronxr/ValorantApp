@@ -61,9 +61,13 @@ valorant:
     redis-zset-key: valorant_datanode_zset
     # redis topic channel 的名称，该 channel 用于主数据节点发布数据更新任务、子数据节点订阅数据更新任务
     # 详细流程：管理员在网页（部署在主数据节点上）点击更新按钮，主数据节点自己开始更新数据的同时向 topic channel 发布更新任务，子数据节点订阅获取到更新任务，也跟着开始更新数据
-    redis-topic-channel: valorant_topic_channel_batchUpdateBoth
+    redis-topic-channel: valorant_topic_channel
     # 主数据节点的名称
     main-datanode-id: datanode_main
+    # 主数据节点的权重（更大的权重会在 zset 中的 rank 递增排名更靠后，revrank 递减排名更靠前）
+    main-datanode-score: 999
+    # 其他/默认数据节点的权重
+    default-datanode-score: 1
     # 定时任务cron：清空datanode、添加datanode
     cron:
       clear-datanode: "0 55 6 * * ? "

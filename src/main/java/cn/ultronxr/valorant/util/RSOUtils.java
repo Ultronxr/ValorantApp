@@ -79,7 +79,7 @@ public class RSOUtils {
         byte[] bytes = RandomUtil.randomBytes(16);
         String nonce = Base64.encode(bytes);
         PING_BODY.put("nonce", nonce);
-        log.info("RSO ping步骤 请求头 生成随机因子 nonce = {}", nonce);
+        //log.info("RSO ping步骤 请求头 生成随机因子 nonce = {}", nonce);
         return PING_BODY;
     }
 

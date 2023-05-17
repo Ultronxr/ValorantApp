@@ -262,11 +262,21 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
         // 预更新了token的账号。预更新时使用固定数量，查询时却不，因为预更新之后可能出现登录验证失败的账号
         long preAccountCount = accountMapper.selectCountForPreUpdatedTokenAccount(now);
         long preSqlLimitCount = preAccountCount / dataNodeTotal,
-                preSqlLimitIndex = dataNodeIndex*preSqlLimitCount;
+                preSqlLimitIndex = dataNodeIndex * preSqlLimitCount;
+        long preRemainder = preAccountCount % dataNodeTotal;
+        // 修复BUG 2023/05/17 账号数量除数据节点 的余数部分，每次都被错误地丢弃。现在这余数部分账号将会由最后一个数据节点处理
+        if(preRemainder != 0 && dataNodeManager.getIndex() == dataNodeManager.getTotal()-1) {
+            preSqlLimitCount += preRemainder;
+        }
         // 未预更新token的账号
         long accountCount = accountMapper.selectCountForNotPreUpdatedTokenAccount(now);
         long sqlLimitCount = accountCount / dataNodeTotal,
                 sqlLimitIndex = dataNodeIndex * sqlLimitCount;
+        // 修复BUG 2023/05/17 账号数量除数据节点 的余数部分，每次都被错误地丢弃。现在这余数部分账号将会由最后一个数据节点处理
+        long remainder = accountCount % dataNodeTotal;
+        if(remainder != 0 && dataNodeManager.getIndex() == dataNodeManager.getTotal()-1) {
+            sqlLimitCount += remainder;
+        }
 
         log.info("开始批量更新每日商店+夜市数据。date={}，数据节点总数={}，当前数据节点index={}，当前数据节点ID={}", date, dataNodeTotal, dataNodeIndex, dataNodeManager.getDataNodeId());
         log.info("数据量（预更新了RSO token的账号）：SQL LIMIT {},{}", preSqlLimitIndex, preSqlLimitCount);

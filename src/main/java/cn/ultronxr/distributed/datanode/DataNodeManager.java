@@ -1,15 +1,14 @@
 package cn.ultronxr.distributed.datanode;
 
+import cn.hutool.core.util.RandomUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RTopic;
 import org.redisson.api.RedissonClient;
 import org.redisson.client.codec.StringCodec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -23,7 +22,7 @@ import javax.annotation.PostConstruct;
  */
 @Component
 @Slf4j
-public class DataNodeManager implements ApplicationRunner {
+public class DataNodeManager {
 
     @Autowired
     private RedissonClient redissonClient;
@@ -43,8 +42,19 @@ public class DataNodeManager implements ApplicationRunner {
     @Value("${valorant.datanode.main-datanode-id}")
     private String mainDataNodeId;
 
+    /** 主数据节点权重 */
+    @Value("${valorant.datanode.main-datanode-score}")
+    private Float mainDataNodeScore;
+
+    /** 其他/默认数据节点权重 */
+    @Value("${valorant.datanode.default-datanode-score}")
+    private Float defaultDataNodeScore;
+
     /** 当前数据节点ID */
     private String dataNodeId;
+
+    /** 当前数据节点权重（更大的权重会在 zset 中的 rank 递增排名更靠后，revrank 递减排名更靠前） */
+    private Float dataNodeScore;
 
 
     /**
@@ -52,8 +62,18 @@ public class DataNodeManager implements ApplicationRunner {
      */
     @PostConstruct
     protected void initSystemProperty() {
-        dataNodeId = System.getProperty("dataNodeId");
-        log.info("从启动参数中取值：dataNodeId={}", dataNodeId);
+        String id = System.getProperty("dataNodeId");
+        dataNodeId = StringUtils.isNotEmpty(id) ? id : "datanode_" + RandomUtil.randomString(10);
+
+        String score = System.getProperty("dataNodeScore");
+        if(StringUtils.isNotEmpty(score)) {
+            dataNodeScore = Float.valueOf(score);
+        } else if(isMainDataNode()) {
+            dataNodeScore = mainDataNodeScore;
+        } else {
+            dataNodeScore = defaultDataNodeScore;
+        }
+        log.info("从启动参数中取值：dataNodeId={}, dataNodeScore={}", dataNodeId, dataNodeScore);
     }
 
     /**
@@ -74,9 +94,19 @@ public class DataNodeManager implements ApplicationRunner {
      */
     @Scheduled(cron = "${valorant.datanode.cron.add-datanode}")
     public void addDataNode() {
-        Boolean res = redisTemplate.opsForZSet().add(redisZsetKey, dataNodeId, 1);
+        Boolean res = redisTemplate.opsForZSet().add(redisZsetKey, dataNodeId, dataNodeScore);
         if(null != res && res) {
             log.info("向 ZSet 中添加 dataNodeId={}", dataNodeId);
+        }
+    }
+
+    /**
+     * 从 redis zset 中移除 nodeId
+     */
+    public void removeDataNode() {
+        Long res = redisTemplate.opsForZSet().remove(redisZsetKey, dataNodeId);
+        if(null != res && res > 0) {
+            log.info("从 ZSet 中移除 dataNodeId={}", dataNodeId);
         }
     }
 
@@ -88,10 +118,10 @@ public class DataNodeManager implements ApplicationRunner {
     }
 
     /**
-     * 从 redis zset 中获取当前数据节点下标/排名（下标从0开始）
+     * 从 redis zset 中获取当前数据节点下标/排名（下标从0开始；数据节点权重越高，下标值越小）
      */
     public Long getIndex() {
-        return redisTemplate.opsForZSet().rank(redisZsetKey, dataNodeId);
+        return redisTemplate.opsForZSet().reverseRank(redisZsetKey, dataNodeId);
     }
 
     /**
@@ -108,13 +138,6 @@ public class DataNodeManager implements ApplicationRunner {
         return dataNodeId;
     }
 
-    @Order(Ordered.LOWEST_PRECEDENCE)
-    @Override
-    public void run(ApplicationArguments args) throws Exception {
-        addDataNode();
-        log.info("项目启动时自动注册 datanode 完成。");
-    }
-
     public RTopic getRTopic() {
         // 请注意：这里的 codec 需要与 topic channel 中发送的消息类型对应，否则会报无法解码数据异常！
         return redissonClient.getTopic(redisTopicChannel, new StringCodec());
@@ -122,7 +145,7 @@ public class DataNodeManager implements ApplicationRunner {
 
     /**
      * 主数据节点向 redis topic channel 中发布更新任务（所有子数据节点订阅获取到这个任务之后，进行数据更新）（1对多）<br/>
-     * 有关子数据节点的订阅，请查看 {@link cn.ultronxr.valorant.controller.StoreFrontController#run(ApplicationArguments)}
+     * 有关子数据节点的订阅，请查看 {@link TopicChannelListener#run(ApplicationArguments)}
      */
     public void publishUpdateMission() {
         String missionName = "batchUpdateBoth";
