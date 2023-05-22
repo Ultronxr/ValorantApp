@@ -59,4 +59,9 @@ public class BaseController {
         return "valorant/cdk/redeem/redeem";
     }
 
+    @GetMapping("/wwdw/2io")
+    public String twoInOne() {
+        return "misc/userIndex";
+    }
+
 }

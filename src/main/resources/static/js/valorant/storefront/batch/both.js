@@ -36,6 +36,9 @@ var selectData = [
                     }, {
                         title: "恶鬼 暴徒",
                         id: "恶鬼 暴徒"
+                    },  {
+                        title: "RGX 11z Pro 暴徒",
+                        id: "RGX 11z Pro 暴徒"
                     }, {
                         title: "光之哨兵 暴徒",
                         id: "光之哨兵 暴徒"
@@ -62,6 +65,9 @@ var selectData = [
                 id: '幻象',
                 child: [
                     {
+                        title: "Radiant Entertainment System 幻象（电玩街机）",
+                        id: "Radiant Entertainment System 幻象"
+                    }, {
                         title: "781-A协定 幻象",
                         id: "781-A协定 幻象"
                     }, {
@@ -371,6 +377,9 @@ var selectData = [
             }, {
                 title: "个人近战单位",
                 id: "个人近战单位"
+            }, {
+                title: "电幻普普 匕首",
+                id: "电幻普普 匕首"
             },
         ]
     },
@@ -379,6 +388,9 @@ var selectData = [
         , id: "皮肤系列关键词"
         , child: [
             {
+                title: "Radiant Entertainment System（电玩街机）",
+                id: "Radiant Entertainment System"
+            }, {
                 title: "781-A协定",
                 id: "781-A协定"
             }, {

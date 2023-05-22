@@ -40,7 +40,7 @@
     background-color: #ff4654;
     font-weight: bold;
     position: relative;
-    -webkit-mask: url(//game.gtimg.cn/images/val/act/a20230301act/pc/btn-mask.png);
+    -webkit-mask: url(/static/assets/img/valorant/btn-mask.png);
 }
 /* 按钮主体的背景覆盖层（由红色覆盖为黑色） */
 .btn-main:before {

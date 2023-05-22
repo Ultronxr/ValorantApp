@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1700, initial-scale=1.0">
+    <title>无畏电玩初始号</title>
+    <link rel="icon" href="/static/assets/img/valorant/wwdw/shop_logo.png">
+    <link href="/static/lib/layui-v2.7.6/css/layui.css" rel="stylesheet">
+    <link href="/static/css/userIndex.css" rel="stylesheet">
+    <!--<link href="/static/css/valorant/valorant-style.css" rel="stylesheet">-->
+</head>
+<body>
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo layui-bg-black">
+            <img src="/static/assets/img/valorant/wwdw/shop_logo.png" width="35px" height="35px">
+            无畏电玩
+        </div>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧垂直导航栏 -->
+            <ul class="layui-nav layui-nav-tree" lay-filter="leftNavFilter">
+                <li class="layui-nav-item">
+                    <a href="javascript:;" class="left-nav-menu btn-main" data-url="/static/html/valorant/cdk/redeem/redeem.html" data-name="提号" data-id="layMenuID01">
+                        <span class="btn-main-text">提号</span>
+                    </a>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;" class="left-nav-menu btn-main" data-url="/static/html/valorant/storefront/batch/both.html" data-name="选号" data-id="layMenuID02">
+                        <span class="btn-main-text">选号</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div class="layui-tab" lay-allowClose="true" lay-filter="tabFilter">
+            <ul class="layui-tab-title">
+                <!--<li class="layui-this" lay-id="layMenuID00">首页</li>-->
+            </ul>
+            <div class="layui-tab-content">
+                <!--<div class="layui-tab-item layui-show">首页...</div>-->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="indexTab">
+    <!--<div class="layui-tab-item layui-show">首页...</div>-->
+</script>
+
+<script src="/static/lib/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="/static/lib/layui-v2.7.6/layui.js"></script>
+<script src="/static/js/util/layui-utils.js"></script>
+<script src="/static/js/userIndex.js"></script>
+</body>
+</html>

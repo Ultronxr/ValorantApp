@@ -18,7 +18,7 @@ table.render({
     ,cols: [[ //表头
         {field: 'cdk', title: 'CDK', width:'30%', sort: false, hide: false, align: 'center',
             templet: function (d) {
-                if(d.cdk.startsWith('hEoopH3dak95EhOF') || d.cdk.startsWith('fiaRabIpGWo0uzWY')) {
+                if(d.cdk.startsWith('hEoopH3dak95EhOF') || d.cdk.startsWith('fiaRabIpGWo0uzWY') || d.cdk.startsWith('1CtPlqGTZnSQ8i3W') || d.cdk.startsWith('1kUkyMIFQZALSqBc')) {
                     return '<div style="color: red">' + d.cdk + '</div>';
                 }
                 return d.cdk;
