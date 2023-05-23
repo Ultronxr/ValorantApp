@@ -1,0 +1,90 @@
+.layui-header {
+    width: 200px !important;
+}
+.layui-body {
+    top: 0 !important;
+}
+
+.layui-nav-tree .layui-nav-child dd.layui-this, .layui-nav-tree .layui-nav-child dd.layui-this a, .layui-nav-tree .layui-this, .layui-nav-tree .layui-this>a, .layui-nav-tree .layui-this>a:hover {
+    background-color: #ff4654;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* 隐藏顶部tab */
+.layui-tab {
+    height: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+.layui-tab-content {
+    height: 100%;
+    padding: 0;
+}
+.layui-tab-item {
+    height: 100%;
+}
+.layui-tab-title {
+    display: none;
+}
+.layui-layout-admin .layui-body {
+    padding-bottom: 0 !important;
+}
+
+/* 调整侧边栏宽度 */
+.layui-header {
+    width: 100px !important;
+}
+.layui-layout-admin .layui-logo {
+    font-size: 13px;
+    width: 100px !important;
+}
+.layui-layout-admin .layui-side {
+    width: 100px !important;
+}
+.layui-side-scroll {
+    width: 100px !important;
+}
+.layui-nav-tree {
+    width: 100px !important;
+}
+.layui-body {
+    top: 0 !important;
+    left: 100px !important;
+}
+
+/* 按钮动画 */
+
+/* 按钮主体 */
+.btn-main {
+    z-index: 11;
+    background-color: #393d49;
+    font-weight: bold;
+    position: relative;
+    -webkit-mask: url(/static/assets/img/valorant/btn-mask.png);
+}
+/* 按钮主体的背景覆盖层（由黑色覆盖为红色） */
+.btn-main:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -10px;
+    z-index: 2;
+    width: 120%;
+    height: 100%;
+    background-color: #ff4654;
+    -webkit-transition: -webkit-transform .3s ease-in-out;
+    transition: transform .3s ease-in-out;
+    -webkit-transform: skew(-10deg) translateX(-100%);
+    transform: skew(-10deg) translateX(-100%);
+}
+/* hover 时触发背景覆盖层动画 */
+.btn-main:hover:before {
+    -webkit-transform: translateX(0) skew(-10deg);
+    transform: translateX(0) skew(-10deg);
+}
+/* 按钮文字 */
+.btn-main-text {
+    z-index: 12;
+    position: relative;
+}

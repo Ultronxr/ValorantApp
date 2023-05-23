@@ -49,6 +49,16 @@ public class BaseController {
         return "valorant/storefront/batch/both";
     }
 
+    @GetMapping("/wwdw/sf2")
+    public String sf2() {
+        return "misc/userIndex";
+    }
+
+    @GetMapping("/wwdw/sf3")
+    public String sf3() {
+        return "misc/userIndex2";
+    }
+
     @GetMapping("/wwdw/xh")
     public String storefront2() {
         return "valorant/storefront/batch/both2";
@@ -57,11 +67,6 @@ public class BaseController {
     @GetMapping("/wwdw/cdk")
     public String cdkRedeem() {
         return "valorant/cdk/redeem/redeem";
-    }
-
-    @GetMapping("/wwdw/2io")
-    public String twoInOne() {
-        return "misc/userIndex";
     }
 
 }
