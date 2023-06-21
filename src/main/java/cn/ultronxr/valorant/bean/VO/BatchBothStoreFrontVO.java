@@ -16,8 +16,6 @@ public class BatchBothStoreFrontVO {
 
     private Boolean isBonus;
 
-    private String date;
-
     private Integer[] costList;
 
     private Integer[] discountPercentList;

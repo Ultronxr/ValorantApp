@@ -245,6 +245,15 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
         log.info("预更新拳头账号的RSO access token 完成。");
     }
 
+    @Scheduled(cron = "${valorant.storefront.cron.clear-storefront-data}")
+    protected void clearStorefrontDataScheduled() {
+        // 2023/06/21 修改：先全表删除，再进行更新每日商店+夜市数据（storefront 表 date 字段名存实亡）
+        if(dataNodeManager.isMainDataNode()
+                && sfMapper.delete(null) >= 0) {
+            log.info("清空 storefront 数据库表完成。开始更新今天的每日商店数据...");
+        }
+    }
+
     @Scheduled(cron = "${valorant.storefront.cron.batch-update-both}")
     protected void batchUpdateBothScheduled() {
         batchUpdateBoth(true);
@@ -316,14 +325,8 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
     @Override
     public IPage<BatchBothStoreFrontVO> batchQueryBoth(BatchQueryBothDTO batchQueryBothDTO) {
         log.info("批量查询每日商店+夜市数据，batchQueryBothDTO={}", batchQueryBothDTO);
-        if(StringUtils.isEmpty(batchQueryBothDTO.getDate())) {
-            batchQueryBothDTO.setDate(DateUtil.today());
-        }
-        if(!ValorantDateUtils.isNowAfterToday8AM()) {
-            batchQueryBothDTO.setDate(ValorantDateUtils.addDays(batchQueryBothDTO.getDate(), -1));
-        }
 
-        boolean isNightShopClosed = sfMapper.isNightShopClosed(batchQueryBothDTO.getDate());
+        boolean isNightShopClosed = sfMapper.isNightShopClosed();
         if(isNightShopClosed) {
             // 如果夜市关闭，那么使用对应方法进行查询，该方法忽略了有关夜市皮肤的查询条件
             log.info("夜市关闭，忽略夜市皮肤的查询条件。");
@@ -356,11 +359,7 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
 
     @Override
     public BatchBothStoreFrontVO queryBothByAccountId(String userId, Long accountNo) {
-        String date = DateUtil.today();
-        if(!ValorantDateUtils.isNowAfterToday8AM()) {
-            date = ValorantDateUtils.addDays(date, -1);
-        }
-        List<BatchBothStoreFrontVO> list = sfMapper.queryBothByAccountId(userId, accountNo, date);
+        List<BatchBothStoreFrontVO> list = sfMapper.queryBothByAccountId(userId, accountNo);
         // 把每日商店和夜市合并为一条
         if(list != null && list.size() > 1){
             list.get(0).setBonusOffer(list.get(1));

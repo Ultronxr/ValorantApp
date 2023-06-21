@@ -10,8 +10,6 @@ import lombok.Data;
 @Data
 public class BatchQueryBothDTO {
 
-    private String date;
-
     private String skin1;
 
     private String skin2;

@@ -24,20 +24,18 @@ public interface StoreFrontMapper extends MppBaseMapper<StoreFront> {
     IPage<BatchBothStoreFrontVO> batchQueryBoth(@Param("page") IPage<BatchBothStoreFrontVO> page, @Param("batchQueryBothDTO") BatchQueryBothDTO batchQueryBothDTO);
 
     /**
-     * 判断当前日期，夜市是否处于关闭状态
-     * @param date 日期字符串
+     * 判断夜市是否处于关闭状态
      * @return 夜市关闭 - true；夜市开放 - false
      */
-    default boolean isNightShopClosed(String date) {
+    default boolean isNightShopClosed() {
         return this.selectCount(
                 new QueryWrapper<StoreFront>()
-                        .ge("date", date)
                         .eq("is_bonus", 1)
         ) == 0;
     }
 
     /**
-     * 当夜市关闭时（需要调用 {@link #isNightShopClosed(String)} 方法手动判断），查询每日商店和夜市的数据，此时夜市的查询条件被忽略
+     * 当夜市关闭时（需要调用 {@link #isNightShopClosed()} 方法手动判断），查询每日商店和夜市的数据，此时夜市的查询条件被忽略
      * @return 实际上只返回每日商店的查询结果
      */
     IPage<BatchBothStoreFrontVO> batchQueryBothWhileNightShopClosed(@Param("page") IPage<BatchBothStoreFrontVO> page, @Param("batchQueryBothDTO") BatchQueryBothDTO batchQueryBothDTO);
@@ -46,6 +44,6 @@ public interface StoreFrontMapper extends MppBaseMapper<StoreFront> {
      * 使用 拳头账号ID 或 拳头账号编号 查询 每日商店+夜市
      * @return 对应拳头账号的每日商店+夜市数据。查询结果list中，每日商店数据在夜市数据前面
      */
-    List<BatchBothStoreFrontVO> queryBothByAccountId(@Param("userId") String userId, @Param("accountNo") Long accountNo, @Param("date") String date);
+    List<BatchBothStoreFrontVO> queryBothByAccountId(@Param("userId") String userId, @Param("accountNo") Long accountNo);
 
 }

@@ -6,7 +6,6 @@
         <result column="account_no" jdbcType="BIGINT" property="accountNo" />
         <result column="has_email" jdbcType="TINYINT" property="hasEmail" />
         <result column="is_bonus" jdbcType="TINYINT" property="isBonus" />
-        <result column="date" jdbcType="VARCHAR" property="date" />
         <result column="cost_list" jdbcType="VARCHAR" property="costList" typeHandler="cn.ultronxr.framework.typeHandler.IntegerJsonArrayTypeHandler" />
         <result column="discount_percent_list" jdbcType="VARCHAR" property="discountPercentList" typeHandler="cn.ultronxr.framework.typeHandler.IntegerJsonArrayTypeHandler" />
         <result column="discount_cost_list" jdbcType="VARCHAR" property="discountCostList" typeHandler="cn.ultronxr.framework.typeHandler.IntegerJsonArrayTypeHandler" />
@@ -17,7 +16,7 @@
 
     <select id="batchQueryBoth" parameterType="java.lang.Object" resultMap="ResultMapBatchBoth">
         SELECT
-            account.account_no, account.has_email, store.is_bonus, store.date,
+            account.account_no, account.has_email, store.is_bonus,
             JSON_ARRAYAGG(store.cost) AS cost_list,
             JSON_ARRAYAGG(store.discount_percent) AS discount_percent_list,
             JSON_ARRAYAGG(store.discount_cost) AS discount_cost_list,
@@ -36,7 +35,6 @@
             <if test="batchQueryBothDTO.accountNo != null">
                 AND account.account_no = #{batchQueryBothDTO.accountNo}
             </if>
-            AND store.date >= #{batchQueryBothDTO.date}
             AND store.user_id IN
                 (SELECT single.user_id FROM (
                     (SELECT
@@ -45,10 +43,9 @@
                         valorant_store_front AS store, valorant_weapon_skin AS skin
                     WHERE
                         store.item_id = skin.uuid
-                        AND store.date = #{batchQueryBothDTO.date}
                         AND store.is_bonus = 0
                     GROUP BY
-                        store.user_id, store.is_bonus, store.date
+                        store.user_id, store.is_bonus
                     HAVING
                         1
                         <if test="batchQueryBothDTO.skin1 != null">
@@ -71,10 +68,9 @@
                         valorant_store_front AS store, valorant_weapon_skin AS skin
                     WHERE
                         store.item_id = skin.uuid
-                        AND store.date >= #{batchQueryBothDTO.date}
                         AND store.is_bonus = 1
                     GROUP BY
-                        store.user_id, store.is_bonus, store.date
+                        store.user_id, store.is_bonus
                     HAVING
                         1
                         <if test="batchQueryBothDTO.bonusSkin1 != null">
@@ -89,7 +85,7 @@
                     ) AS bonus
                 ON single.user_id = bonus.user_id))
         GROUP BY
-            account.account_no, store.user_id, store.is_bonus, store.date
+            account.account_no, store.user_id, store.is_bonus
         ORDER BY
             -- ANY_VALUE() 函数用于抑制 ONLY_FULL_GROUP_BY SQL_MODE 限制
             account_no ASC, is_bonus ASC, ANY_VALUE(skin.uuid) ASC
@@ -97,7 +93,7 @@
 
     <select id="batchQueryBothWhileNightShopClosed" parameterType="java.lang.Object" resultMap="ResultMapBatchBoth">
         SELECT
-            account.account_no, account.has_email, store.is_bonus, store.date,
+            account.account_no, account.has_email, store.is_bonus,
             JSON_ARRAYAGG(store.cost) AS cost_list,
             JSON_ARRAYAGG(store.discount_percent) AS discount_percent_list,
             JSON_ARRAYAGG(store.discount_cost) AS discount_cost_list,
@@ -116,7 +112,6 @@
             <if test="batchQueryBothDTO.accountNo != null">
                 AND account.account_no = #{batchQueryBothDTO.accountNo}
             </if>
-            AND store.date = #{batchQueryBothDTO.date}
             AND store.user_id IN
                 (SELECT
                     store.user_id
@@ -124,10 +119,9 @@
                     valorant_store_front AS store, valorant_weapon_skin AS skin
                 WHERE
                     store.item_id = skin.uuid
-                    AND store.date = #{batchQueryBothDTO.date}
                     AND store.is_bonus = 0
                 GROUP BY
-                    store.user_id, store.is_bonus, store.date
+                    store.user_id, store.is_bonus
                 HAVING
                     1
                     <if test="batchQueryBothDTO.skin1 != null">
@@ -144,14 +138,14 @@
                     </if>
                 )
         GROUP BY
-            account.account_no, store.user_id, store.is_bonus, store.date
+            account.account_no, store.user_id, store.is_bonus
         ORDER BY
             account_no ASC, is_bonus ASC, ANY_VALUE(skin.uuid) ASC
     </select>
 
     <select id="queryBothByAccountId" parameterType="java.lang.Object" resultMap="ResultMapBatchBoth">
         SELECT
-            account.account_no, account.has_email, store.is_bonus, store.date,
+            account.account_no, account.has_email, store.is_bonus,
             JSON_ARRAYAGG(store.cost) AS cost_list,
             JSON_ARRAYAGG(store.discount_percent) AS discount_percent_list,
             JSON_ARRAYAGG(store.discount_cost) AS discount_cost_list,
@@ -169,9 +163,8 @@
           <if test="accountNo != null">
               AND account.account_no = #{accountNo}
           </if>
-          AND store.date >= #{date}
         GROUP BY
-            account.account_no, store.user_id, store.is_bonus, store.date
+            account.account_no, store.user_id, store.is_bonus
         ORDER BY
             account_no ASC, is_bonus ASC, ANY_VALUE(skin.uuid) ASC
     </select>

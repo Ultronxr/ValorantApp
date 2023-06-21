@@ -75,10 +75,14 @@ valorant:
   storefront:
     # 预更新拳头账号token的数据量（每个数据节点）
     pre-update-account-token:
-      count-per-datanode: 660
-    # 定时任务cron：事先更新账号token、批量更新每日商店+夜市
+      count-per-datanode: 520
+    # 定时任务cron
     cron:
+      # 预更新账号token
       pre-update-account-token: "0 8 7 * * ? "
+      # 清空 storefront 表数据
+      clear-storefront-data: "0 57 7 * * ? "
+      # 批量更新每日商店+夜市
       batch-update-both: "0 0 8 * * ? "
 
 adminAuth:
