@@ -469,7 +469,12 @@ function loadAllSelect() {
         {name: "未验证初邮", value: false},
         {name: "带初邮", value: true}
     ];
+    let regionSelectOptions = [
+        {name: "缅甸", value: 0},
+        {name: "马来西亚", value: 1}
+    ];
     loadSelectFromJson(hasEmailSelectOptions, $("#hasEmail"), "name", "value");
+    loadSelectFromJson(regionSelectOptions, $("#region"), "name", "value");
 }
 
 function renderDropdown(element, id) {
@@ -497,9 +502,9 @@ table.render({
     // ,toolbar: '#toolbar'
     ,defaultToolbar: [] //清空默认的三个工具栏按钮
     ,cols: [[ //表头
-        {field: 'accountNo', title: '账号编号', sort: false, align: 'center', width: '7%', style: 'height:50px;',
+        {field: 'accountNo', title: '账号编号', sort: false, align: 'center', width: '6%', style: 'height:50px;',
             templet: '<div>{{=d.accountNo}}</div>'}
-        ,{field: 'displayName', title: '每日商店', sort: false, align: 'center', width: '30%', style: 'height:50px;',
+        ,{field: 'displayName', title: '每日商店', sort: false, align: 'center', width: '28%', style: 'height:50px;',
             templet: function (d) {
                 let res = '';
                 for(let i = 0; i < d.displayNameList.length; ++i) {
@@ -507,7 +512,7 @@ table.render({
                 }
                 return res.slice(0, -2);
             }}
-        ,{field: 'cost', title: '夜市', sort: false, align: 'center', width: '50%', style: 'height:50px;',
+        ,{field: 'cost', title: '夜市', sort: false, align: 'center', width: '48%', style: 'height:50px;',
             templet: function (d) {
                 if(d.bonusOffer != null) {
                     let res = '';
@@ -518,12 +523,22 @@ table.render({
                 }
                 return '夜市未开放';
             }}
-        ,{field: 'hasEmail', title: '初邮', sort: false, align: 'center', width: '7%', style: 'height:50px;',
+        ,{field: 'hasEmail', title: '初邮', sort: false, align: 'center', width: '6%', style: 'height:50px;',
             templet: function (d) {
                 if(d.hasEmail != null && d.hasEmail === true) {
                     return '带初邮';
                 }
                 return '未验证初邮';
+            }
+        }
+        ,{field: 'region', title: '地区', sort: false, align: 'center', width: '6%', style: 'height:50px;',
+            templet: function (d) {
+                switch (d.region) {
+                    case 0:
+                        return '缅甸';
+                    case 1:
+                        return '马来西亚';
+                }
             }
         }
         ,{title:'操作', sort: false, align: 'center', width: '5%', toolbar: '#inlineToolbar'}
@@ -545,6 +560,7 @@ table.render({
         bonusSkin3: $('#bonusSkin3').val(),
         hasEmail: $('#hasEmail').val(),
         accountNo: $('#accountNo').val(),
+        region: $('#region').val(),
     }
     ,page: true //分页
     ,limit: 100
@@ -602,6 +618,7 @@ var active = {
                 bonusSkin3: $('#bonusSkin3').val(),
                 hasEmail: $('#hasEmail').val(),
                 accountNo: $('#accountNo').val(),
+                region: $('#region').val(),
             }
         });
     },
@@ -615,7 +632,9 @@ var active = {
         $('#bonusSkin3').val('');
         $('#hasEmail').val('');
         $('#accountNo').val('');
+        $('#region').val('');
         refreshTable();
+        form.render('select');
     },
 };
 

@@ -21,6 +21,8 @@ public class RiotAccount {
 
     private Long accountNo;
 
+    private Integer region;
+
     private String username;
 
     private String password;

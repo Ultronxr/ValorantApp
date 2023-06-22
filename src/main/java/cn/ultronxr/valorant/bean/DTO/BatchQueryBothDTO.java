@@ -28,6 +28,8 @@ public class BatchQueryBothDTO {
 
     private Long accountNo;
 
+    private Integer region;
+
     private Integer current = 1;
 
     private Integer size = 100;

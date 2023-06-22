@@ -4,6 +4,7 @@
 
     <resultMap id="ResultMapBatchBoth" type="cn.ultronxr.valorant.bean.VO.BatchBothStoreFrontVO">
         <result column="account_no" jdbcType="BIGINT" property="accountNo" />
+        <result column="region" jdbcType="INTEGER" property="region" />
         <result column="has_email" jdbcType="TINYINT" property="hasEmail" />
         <result column="is_bonus" jdbcType="TINYINT" property="isBonus" />
         <result column="cost_list" jdbcType="VARCHAR" property="costList" typeHandler="cn.ultronxr.framework.typeHandler.IntegerJsonArrayTypeHandler" />
@@ -16,7 +17,7 @@
 
     <select id="batchQueryBoth" parameterType="java.lang.Object" resultMap="ResultMapBatchBoth">
         SELECT
-            account.account_no, account.has_email, store.is_bonus,
+            account.account_no, account.region, account.has_email, store.is_bonus,
             JSON_ARRAYAGG(store.cost) AS cost_list,
             JSON_ARRAYAGG(store.discount_percent) AS discount_percent_list,
             JSON_ARRAYAGG(store.discount_cost) AS discount_cost_list,
@@ -34,6 +35,9 @@
             </if>
             <if test="batchQueryBothDTO.accountNo != null">
                 AND account.account_no = #{batchQueryBothDTO.accountNo}
+            </if>
+            <if test="batchQueryBothDTO.region != null">
+                AND account.region = #{batchQueryBothDTO.region}
             </if>
             AND store.user_id IN
                 (SELECT single.user_id FROM (
@@ -93,7 +97,7 @@
 
     <select id="batchQueryBothWhileNightShopClosed" parameterType="java.lang.Object" resultMap="ResultMapBatchBoth">
         SELECT
-            account.account_no, account.has_email, store.is_bonus,
+            account.account_no,  account.region, account.has_email, store.is_bonus,
             JSON_ARRAYAGG(store.cost) AS cost_list,
             JSON_ARRAYAGG(store.discount_percent) AS discount_percent_list,
             JSON_ARRAYAGG(store.discount_cost) AS discount_cost_list,
@@ -111,6 +115,9 @@
             </if>
             <if test="batchQueryBothDTO.accountNo != null">
                 AND account.account_no = #{batchQueryBothDTO.accountNo}
+            </if>
+            <if test="batchQueryBothDTO.region != null">
+                AND account.region = #{batchQueryBothDTO.region}
             </if>
             AND store.user_id IN
                 (SELECT
@@ -145,7 +152,7 @@
 
     <select id="queryBothByAccountId" parameterType="java.lang.Object" resultMap="ResultMapBatchBoth">
         SELECT
-            account.account_no, account.has_email, store.is_bonus,
+            account.account_no, account.region, account.has_email, store.is_bonus,
             JSON_ARRAYAGG(store.cost) AS cost_list,
             JSON_ARRAYAGG(store.discount_percent) AS discount_percent_list,
             JSON_ARRAYAGG(store.discount_cost) AS discount_cost_list,
