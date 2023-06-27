@@ -9,6 +9,7 @@ import cn.ultronxr.valorant.bean.DTO.CDKHistoryDTO;
 import cn.ultronxr.valorant.bean.VO.BatchBothStoreFrontVO;
 import cn.ultronxr.valorant.bean.VO.CDKHistoryAndMoreCDKInfoVO;
 import cn.ultronxr.valorant.bean.VO.CDKRedeemVerifyVO;
+import cn.ultronxr.valorant.bean.enums.RiotAccountRegion;
 import cn.ultronxr.valorant.bean.mybatis.bean.CDK;
 import cn.ultronxr.valorant.bean.mybatis.bean.CDKHistory;
 import cn.ultronxr.valorant.bean.mybatis.bean.RiotAccount;
@@ -297,6 +298,7 @@ public class CDKServiceImpl extends ServiceImpl<CDKMapper, CDK> implements CDKSe
 
         StringBuilder sb = new StringBuilder();
         sb.append("账号编号：").append(account.getAccountNo()).append("<br/>\n")
+                .append("账号地区：").append(RiotAccountRegion.getRegionStrByCode(account.getRegion())).append("<br/>\n")
                 .append("每日商店：").append(ArrayUtils.toString(storeFront.getDisplayNameList())).append("<br/>\n")
                 .append("夜市商店：").append(bonusOfferString).append("<br/>\n")
                 .append("账号版本：").append(account.getHasEmail() ? "完全版（带初邮）" : "黄金版（未验证初邮）").append("<br/>\n")

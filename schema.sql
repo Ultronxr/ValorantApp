@@ -11,7 +11,7 @@ CREATE DATABASE `valorant_prod` DEFAULT CHARACTER SET 'utf8mb4' COLLATE 'utf8mb4
 CREATE TABLE valorant_riot_account (
     `user_id`                   VARCHAR(100)     NOT NULL                   COMMENT '账户ID（从拳头RSO接口中获取）',
     `account_no`                BIGINT           NOT NULL AUTO_INCREMENT    COMMENT '账户编号',
-    `region`                    INT              NOT NULL DEFAULT 0         COMMENT '账号地区，0-缅甸、1-马来西亚',
+    `region`                    INT              NOT NULL DEFAULT 1         COMMENT '账号地区，0-缅甸、1-马来西亚',
     `username`                  VARCHAR(100)     DEFAULT NULL               COMMENT '用户名（登录名）',
     `password`                  VARCHAR(500)     DEFAULT NULL               COMMENT '密码',
     `has_email`                 TINYINT(1)       NOT NULL DEFAULT 0         COMMENT '是否带初邮。0-未验证初邮；1-带初邮',
@@ -37,7 +37,7 @@ ALTER TABLE valorant_riot_account ADD `has_email`    TINYINT(1)    NOT NULL DEFA
 ALTER TABLE valorant_riot_account ADD `is_auth_failure`    TINYINT(1)    NOT NULL DEFAULT 0    COMMENT '是否RSO验证失败（账号或密码错误，批量更新时会跳过验证失败的账号）。0-验证成功；1-验证失败' AFTER `is_verified`;
 ALTER TABLE valorant_riot_account ADD `access_token_expire_at`    DATETIME    DEFAULT NULL    COMMENT 'accessToken过期时间' AFTER `access_token`;
 ALTER TABLE valorant_riot_account ADD `cookie`    VARCHAR(3000)    DEFAULT NULL    COMMENT '用于下次免密登录的cookie' AFTER `multi_factor`;
-ALTER TABLE valorant_riot_account ADD `region`    INT    NOT NULL  DEFAULT 0   COMMENT '账号地区，0-缅甸、1-马来西亚' AFTER `account_no`;
+ALTER TABLE valorant_riot_account ADD `region`    INT    NOT NULL  DEFAULT 1   COMMENT '账号地区，0-缅甸、1-马来西亚' AFTER `account_no`;
 
 CREATE TABLE valorant_weapon (
     `uuid`                 VARCHAR(100)    NOT NULL         COMMENT '对象ID，主键',
