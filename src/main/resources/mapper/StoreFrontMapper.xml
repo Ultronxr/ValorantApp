@@ -52,16 +52,16 @@
                         store.user_id, store.is_bonus
                     HAVING
                         1
-                        <if test="batchQueryBothDTO.skin1 != null">
+                        <if test="batchQueryBothDTO.skin1 != null and batchQueryBothDTO.skin1 != ''">
                             AND display_name_list LIKE CONCAT('%', #{batchQueryBothDTO.skin1}, '%')
                         </if>
-                        <if test="batchQueryBothDTO.skin2 != null">
+                        <if test="batchQueryBothDTO.skin2 != null and batchQueryBothDTO.skin2 != ''">
                             AND display_name_list LIKE CONCAT('%', #{batchQueryBothDTO.skin2}, '%')
                         </if>
-                        <if test="batchQueryBothDTO.skin3 != null">
+                        <if test="batchQueryBothDTO.skin3 != null and batchQueryBothDTO.skin3 != ''">
                             AND display_name_list LIKE CONCAT('%', #{batchQueryBothDTO.skin3}, '%')
                         </if>
-                        <if test="batchQueryBothDTO.skin4 != null">
+                        <if test="batchQueryBothDTO.skin4 != null and batchQueryBothDTO.skin4 != ''">
                             AND display_name_list LIKE CONCAT('%', #{batchQueryBothDTO.skin4}, '%')
                         </if>
                     ) AS single
@@ -77,13 +77,13 @@
                         store.user_id, store.is_bonus
                     HAVING
                         1
-                        <if test="batchQueryBothDTO.bonusSkin1 != null">
+                        <if test="batchQueryBothDTO.bonusSkin1 != null and batchQueryBothDTO.bonusSkin1 != ''">
                             AND display_name_list LIKE CONCAT('%', #{batchQueryBothDTO.bonusSkin1}, '%')
                         </if>
-                        <if test="batchQueryBothDTO.bonusSkin2 != null">
+                        <if test="batchQueryBothDTO.bonusSkin2 != null and batchQueryBothDTO.bonusSkin2 != ''">
                             AND display_name_list LIKE CONCAT('%', #{batchQueryBothDTO.bonusSkin2}, '%')
                         </if>
-                        <if test="batchQueryBothDTO.bonusSkin3 != null">
+                        <if test="batchQueryBothDTO.bonusSkin3 != null and batchQueryBothDTO.bonusSkin3 != ''">
                             AND display_name_list LIKE CONCAT('%', #{batchQueryBothDTO.bonusSkin3}, '%')
                         </if>
                     ) AS bonus
@@ -131,16 +131,16 @@
                     store.user_id, store.is_bonus
                 HAVING
                     1
-                    <if test="batchQueryBothDTO.skin1 != null">
+                    <if test="batchQueryBothDTO.skin1 != null and batchQueryBothDTO.skin1 != ''">
                         AND GROUP_CONCAT(skin.display_name) LIKE CONCAT('%', #{batchQueryBothDTO.skin1}, '%')
                     </if>
-                    <if test="batchQueryBothDTO.skin2 != null">
+                    <if test="batchQueryBothDTO.skin2 != null and batchQueryBothDTO.skin2 != ''">
                         AND GROUP_CONCAT(skin.display_name) LIKE CONCAT('%', #{batchQueryBothDTO.skin2}, '%')
                     </if>
-                    <if test="batchQueryBothDTO.skin3 != null">
+                    <if test="batchQueryBothDTO.skin3 != null and batchQueryBothDTO.skin3 != ''">
                         AND GROUP_CONCAT(skin.display_name) LIKE CONCAT('%', #{batchQueryBothDTO.skin3}, '%')
                     </if>
-                    <if test="batchQueryBothDTO.skin4 != null">
+                    <if test="batchQueryBothDTO.skin4 != null and batchQueryBothDTO.skin4 != ''">
                         AND GROUP_CONCAT(skin.display_name) LIKE CONCAT('%', #{batchQueryBothDTO.skin4}, '%')
                     </if>
                 )
