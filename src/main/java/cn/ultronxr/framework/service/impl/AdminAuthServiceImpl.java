@@ -93,4 +93,21 @@ public class AdminAuthServiceImpl extends ServiceImpl<SystemAccountMapper, Syste
         return userExists;
     }
 
+    @Override
+    public SystemAccount getSystemUserFromValidatedToken(String token) {
+        if(StringUtils.isBlank(token)) {
+            return null;
+        }
+        JWSParseResult result = jjwtService.validateToken(token);
+        if(!result.isValidation()) {
+            log.info("JWS token username = {} | 验证结果 = {} | 信息 = {}", result.getUsername() ,result.isValidation(), result.getMsg());
+            return null;
+        }
+        return this.getOne(
+            new LambdaQueryWrapper<SystemAccount>()
+                    .eq(SystemAccount::getUsername, result.getUsername())
+                    .eq(SystemAccount::getIsDel, false)
+        );
+    }
+
 }

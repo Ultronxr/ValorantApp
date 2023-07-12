@@ -47,7 +47,23 @@ const app = {
                 redeem: '/redeem',
                 history: '/history',
                 historyAndMoreCDKInfo: '/historyAndMoreCDKInfo',
-            }
+            },
+            endProduct: {
+                url: '/endProduct',
+                account: {
+                    url: '/account',
+                    management: {
+                        url: '/management',
+                        create: '/create',
+                        update: '/update',
+                        delete: '/delete',
+                        query: '/query',
+                        redeem: '/redeem',
+                    },
+                    query: '/query',
+                    getOne: '/getOne',
+                },
+            },
         },
     },
 

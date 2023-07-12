@@ -115,8 +115,39 @@ CREATE TABLE system_account (
     `username`       VARCHAR(100)     NOT NULL              COMMENT '用户名',
     `password`       VARCHAR(100)     NOT NULL              COMMENT '密码',
     `token`          VARCHAR(1000)    DEFAULT NULL          COMMENT 'token',
+    `x_secret`       VARCHAR(200)     DEFAULT NULL          COMMENT '特殊密码：进行特殊操作时需要再次验证这项密码',
     `create_time`    DATETIME         NOT NULL              COMMENT '创建时间',
     `is_del`         TINYINT(1)       NOT NULL DEFAULT 0    COMMENT '是否删除：1-true; 0-false',
     PRIMARY KEY(`uuid`),
     UNIQUE KEY(`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT '系统账号（管理员账号）记录表';
+
+ALTER TABLE system_account ADD `x_secret` VARCHAR(200) DEFAULT NULL COMMENT '特殊密码：进行特殊操作时需要再次验证这项密码' AFTER `token`;
+
+CREATE TABLE valorant_end_product_riot_account (
+    `account_no`                BIGINT           NOT NULL AUTO_INCREMENT    COMMENT '账户编号',
+    `user_id`                   VARCHAR(100)     NOT NULL                   COMMENT '账户ID（从拳头RSO接口中获取）',
+    `region`                    INT              NOT NULL DEFAULT 0         COMMENT '账号地区，0-缅甸、1-马来西亚、2-香港、3-泰国',
+    `username`                  VARCHAR(100)     DEFAULT NULL               COMMENT '用户名（登录名）',
+    `password`                  VARCHAR(500)     DEFAULT NULL               COMMENT '密码',
+    `has_email`                 TINYINT(1)       NOT NULL DEFAULT 0         COMMENT '是否带初邮。0-未验证初邮；1-带初邮',
+    `email`                     VARCHAR(100)     DEFAULT NULL               COMMENT '初始邮箱',
+    `email_pwd`                 VARCHAR(500)     DEFAULT NULL               COMMENT '初始邮箱密码',
+    `access_token`              VARCHAR(3000)    DEFAULT NULL               COMMENT 'API用户验证token（从拳头RSO接口中获取）',
+    `access_token_expire_at`    DATETIME         DEFAULT NULL               COMMENT 'accessToken过期时间',
+    `entitlements_token`        VARCHAR(3000)    DEFAULT NULL               COMMENT 'API用户验证token（从拳头RSO接口中获取）',
+    `multi_factor`              VARCHAR(3000)    DEFAULT NULL               COMMENT '两步验证信息',
+    `cookie`                    VARCHAR(3000)    DEFAULT NULL               COMMENT '用于下次免密登录的cookie',
+    `status`                    TINYINT(1)       NOT NULL DEFAULT 1         COMMENT '状态标记：1-在售、2-出租、10-已售出',
+    `title`                     VARCHAR(500)     DEFAULT NULL               COMMENT '标题',
+    `note`                      VARCHAR(1000)    DEFAULT NULL               COMMENT '备注',
+    `img`                       VARCHAR(1000)    DEFAULT NULL               COMMENT '图片',
+    `price`                     DECIMAL(10,2)    NOT NULL DEFAULT 0.00      COMMENT '售价',
+    PRIMARY KEY(`account_no`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT 'valorant 模块 - 成品拳头账号';
+
+CREATE TABLE valorant_end_product_store_entitlements (
+    `account_no`    BIGINT          NOT NULL    COMMENT '账户编号',
+    `itemId`        VARCHAR(100)    NOT NULL    COMMENT '物品ID',
+    `typeId`        VARCHAR(100)    NOT NULL    COMMENT '物品类别ID'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT 'valorant 模块 - 成品拳头账号 的 已拥有物品信息';

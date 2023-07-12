@@ -23,6 +23,8 @@ public class SystemAccount {
 
     private String token;
 
+    private String xSecret;
+
     @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 

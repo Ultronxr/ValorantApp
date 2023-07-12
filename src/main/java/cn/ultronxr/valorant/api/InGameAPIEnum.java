@@ -6,6 +6,7 @@ package cn.ultronxr.valorant.api;
  * @description 游戏内 API 枚举（GitHub上的大佬从客户端里扒出来的）<br/>
  *              <a href="https://github.com/HeyM1ke/ValorantClientAPI">API来源（部分API未更新已失效）</a>、
  *              <a href="https://github.com/staciax/Valorant-DiscordBot/blob/139aab8bf77fe4a1bdd186e6df4c5001fa5d203e/utils/valorant/endpoint.py">API来源（有效）</a>
+ *              <a href="https://valapidocs.techchrism.me/">完善的API文档（有效）</a>
  */
 public enum InGameAPIEnum {
 

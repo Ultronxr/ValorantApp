@@ -38,4 +38,11 @@ public interface SystemAccountService extends IService<SystemAccount> {
      */
     boolean validateToken(String token);
 
+    /**
+     * 从合法的 token 中读取用户名，并从数据库取出 systemAccount 对象
+     * @param token 合法的 token
+     * @return SystemAccount 对象。（如果 token 非法，返回 null）
+     */
+    SystemAccount getSystemUserFromValidatedToken(String token);
+
 }
