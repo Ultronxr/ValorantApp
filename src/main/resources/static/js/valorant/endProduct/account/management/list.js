@@ -3,10 +3,6 @@ $(function () {
 });
 
 function loadAllSelect() {
-    // let typeHasEmail = [
-    //     {name: "未验证初邮CDK（黄金版）", value: false},
-    //     {name: "带初邮CDK（完全版）", value: true}
-    // ];
     let region = [
         {name: "缅甸", value: 0},
         {name: "马来西亚", value: 1},
@@ -30,39 +26,22 @@ table.render({
     ,size: 'lg'
     ,cols: [[ //表头
         {type: 'checkbox', fixed: 'left'}
-        ,{field: 'accountNo', title: '账号编号', width: '7%', sort: true, hide: false, align: 'center'}
+        ,{field: 'accountNo', title: '编号', sort: true, hide: false, align: 'center'}
+        ,{field: 'username', title: '账号名', sort: false, align: 'center'}
         ,{field: 'region', title: '地区', sort: true, align: 'center',
             templet: function (d) {
-                switch (d.typeReusable) {
-                    case 0: return "缅甸";
-                    case 1: return "马来西亚";
-                    case 2: return "香港";
-                    case 3: return "泰国";
-                    default: return ""
-                }
+                return regionCodeToStr(d.region);
             }
         }
         ,{field: 'price', title: '价格', sort: true, align: 'center'}
         ,{field: 'status', title: '状态', sort: true, align: 'center',
             templet: function (d) {
-                switch (d.typeReusable) {
-                    case 1: return "在售";
-                    case 2: return "出租";
-                    case 10: return "已售出";
-                    default: return ""
-                }
+                return statusCodeToStr(d.status);
             }
         }
-        ,{field: 'title', title: '标题', width: '7%', sort: true, hide: false, align: 'center'}
+        ,{field: 'title', title: '标题', width: '10%', sort: false, hide: false, align: 'center'}
+        ,{field: 'note', title: '备注', width: '10%', sort: false, hide: false, align: 'center'}
         ,{field: 'img', title: '账号截图', width:'40%', sort: false, hide: false, align: 'center'}
-        // ,{field: 'typeHasEmail', title: '是否带初邮', sort: true, align: 'center',
-        //     templet: function (d) {
-        //         if(d.typeHasEmail != null && d.typeHasEmail === true) {
-        //             return '带初邮CDK（完全版）';
-        //         }
-        //         return '未验证初邮（黄金版）';
-        //     }
-        // }
         ,{title:'操作', width: '10%', align: 'center', fixed: 'right', toolbar: '#inlineToolbar'}
     ]]
     ,toolbar: '#toolbar'
@@ -174,28 +153,6 @@ $('#table-div .layui-btn').on('click', function(){
 //     );
 // }
 
-// 修改选中的行
-// function updateRowsReuseRemainingTimes(toBeUpdatedCDKNoList, reuseRemainingTimes) {
-//     app.util.ajax.post(app.util.api.getAPIUrl('valorant.cdk.updateReuseRemainingTimes'),
-//         {reusableCDKNoList: toBeUpdatedCDKNoList.join(), reuseRemainingTimes: reuseRemainingTimes},
-//         function (res) {
-//             // console.log(res);
-//             if(res.code === app.RESPONSE_CODE.SUCCESS) {
-//                 layer.msg('修改成功。', {icon: 1, time: 2000});
-//                 refreshTable();
-//             }
-//         },
-//         function (res) {
-//             if(res.status === 401) {
-//                 layer.msg('未授权！', {icon:2, time: 2000});
-//             } else {
-//                 layer.msg('请求失败！', {icon:2, time: 2000});
-//             }
-//             refreshTable();
-//         }
-//     );
-// }
-
 // 顶部工具栏事件
 table.on('toolbar(dataTable)', function(obj){
     let id = obj.config.id; // 获取表格ID
@@ -206,40 +163,88 @@ table.on('toolbar(dataTable)', function(obj){
                 title: '新增成品号',
                 type: 2,
                 content: 'create.html',
-                area: ['700px', '800px']
+                area: ['700px', '850px']
             });
             break;
         }
-        // case 'editReuseRemainingTimesBatch': {
-        //     let checkedRows = checkStatus.data;
-        //     // console.log(checkedRows);
-        //     if(checkedRows.length === 0) {
-        //         layer.msg('未选中任何一行！', {icon: 2, time: 2000});
-        //     } else {
-        //         let toBeUpdatedIdList = [];
-        //         for(let row of checkedRows) {
-        //             if(row.typeReusable === false) {
-        //                 layer.msg('选中的CDK中包含一次性CDK，无法修改可用次数！', {icon:2, time: 3000});
-        //                 return;
-        //             }
-        //             toBeUpdatedIdList.push(row.cdkNo);
-        //         }
-        //         layer.prompt({
-        //             formType: 0,
-        //             value: '',
-        //             title: '批量修改CDK可用次数，选中数量：' + toBeUpdatedIdList.length,
-        //         }, function(value, index, elem){
-        //             if(!isPositiveInteger(value)) {
-        //                 layer.msg('请输入一个正整数！', {icon:2, time: 2000});
-        //                 return;
-        //             }
-        //             updateRowsReuseRemainingTimes(toBeUpdatedIdList, value);
-        //             layer.close(index);
-        //             refreshTable();
-        //         });
-        //     }
-        //     break;
-        // }
+        case 'redeem' : {
+            layer.open({
+                title: '提号',
+                type: 1,
+                area: ['550px', '500px'],
+                shadeClose: true,
+                content: `
+                    <form class="layui-form" action="" style="margin: 15px 10px">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">账号编号<label style="color: red;">*</label></label>
+                            <div class="layui-input-block">
+                                <input type="text" name="accountNo" class="layui-input" lay-verify="required|number">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">提号密码<label style="color: red;">*</label></label>
+                            <div class="layui-input-block">
+                                <input type="text" name="xxSecret" class="layui-input" lay-verify="required">
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn btn-main" lay-submit lay-filter="redeem">提号</button>
+                            </div>
+                        </div>
+                        <br/><br/>
+                        <div id="redeem-response" style="margin: 15px 20px;"></div>
+                    </form>
+                    <script>
+                        form.on('submit(redeem)', function(data) {
+                            app.util.ajax.post(app.util.api.getAPIUrl('valorant.endProduct.account.management.redeem'),
+                                JSON.stringify(data.field),
+                                function (res) {
+                                    // console.log(res);
+                                    if(res.code === app.RESPONSE_CODE.SUCCESS) {
+                                        parent.layer.msg('提号成功。', {icon: 1, time: 3000});
+                                        let redeemResponse = "地区：" + regionCodeToStr(res.data.region) + "<br/>"
+                                                    + "价格：￥" + res.data.price + "<br/>"
+                                                    + "账号名：" + res.data.username + "<br/>"
+                                                    + "账号密码：" + res.data.password + "<br/>"
+                                                    + "邮箱：" + res.data.email + "<br/>"
+                                                    + "邮箱密码：" + res.data.emailPwd + "<br/>"
+                                                    ;
+                                        $('#redeem-response').html(redeemResponse);
+                                    } else {
+                                        parent.layer.msg(res.msg, {icon: 2, time: 2000});
+                                    }
+                                },
+                                function (res) {
+                                    if(res.status === 401) {
+                                        parent.layer.msg("未授权！", {icon: 2, time: 2000});
+                                    } else {
+                                        parent.layer.msg("请求失败！", {icon: 2, time: 2000});
+                                    }
+                                },
+                                function () {
+                                    this.layerIndex = layer.load(2, { shade: [0.2, '#ccc'] });
+                                },
+                                function () {
+                                    layer.close(this.layerIndex);
+                                },
+                            );
+                            return false;
+                        });
+                    </script>
+                  `,
+                btn: ['复制账号信息', '取消'],
+                yes: function(index, layero) {
+                    copyRedeemInfoToClipboard($('#redeem-response').html(), layero);
+                    return false;
+                },
+                btn2: function(index, layero) {
+                    // 点击取消按钮的回调函数
+                    // 关闭弹窗，不做任何处理
+                },
+            });
+            break;
+        }
         // case 'delete': {
         //     let checkedRows = checkStatus.data;
         //     // console.log(checkedRows);
@@ -267,53 +272,14 @@ table.on('tool(dataTable)', function(obj) {
             layer.open({
                 title: '修改成品号信息',
                 type: 2,
-                content: 'update.html?accountNo=' + rowData.accountNo,
-                area: ['700px', '800px']
-            });
-            break;
-        }
-        case 'redeem': {
-            layer.prompt({
-                formType: 0,
-                value: '',
-                title: '正在提号，需要验证提号密码：',
-            }, function(value, index, elem) {
-                if(value === null || value === '') {
-                    layer.msg('提号密码不能为空！', {icon:2, time: 2000});
-                    return;
+                content: 'update.html',
+                area: ['700px', '700px'],
+                shadeClose: true,
+                success: function (layero, index) {
+                    // 执行子页面的函数
+                    let iframe = window[layero.find('iframe')[0]['name']];
+                    iframe.setRowData(rowData);
                 }
-                app.util.ajax.post(app.util.api.getAPIUrl('valorant.endProduct.account.management.redeem'),
-                    JSON.stringify({accountNo: rowData.accountNo, xSecret: value}),
-                    function (res) {
-                        // console.log(res);
-                        if(res.code === app.RESPONSE_CODE.SUCCESS) {
-                            layer.open({
-                                title: '兑换成功！'
-                                ,content: res.data.detail
-                                ,btn: ['复制账号信息', '确定']
-                                ,yes: function(index, layero) {
-                                    copyRedeemInfoToClipboard(res.data.detail, index);
-                                    return false;
-                                }
-                            });
-                        } else {
-                            parent.layer.msg(res.msg, {icon: 2, time: 2000});
-                        }
-                    },
-                    function (res) {
-                        if(res.status === 401) {
-                            parent.layer.msg("未授权！", {icon: 2, time: 2000});
-                        } else {
-                            parent.layer.msg("请求失败！", {icon: 2, time: 2000});
-                        }
-                    },
-                    function () {
-                        this.layerIndex = layer.load(2, { shade: [0.2, '#ccc'] });
-                    },
-                    function () {
-                        layer.close(this.layerIndex);
-                    }
-                );
             });
             break;
         }
@@ -321,27 +287,6 @@ table.on('tool(dataTable)', function(obj) {
         //     layer.confirm('确认删除此行？', {icon: 3, title:'提示'}, function(index) {
         //         let toBeDeletedIdList = [rowData.accountNo];
         //         deleteRows(toBeDeletedIdList);
-        //     });
-        //     break;
-        // }
-        // case 'editReuseRemainingTimes': {
-        //     if(rowData.typeReusable === false) {
-        //         layer.msg('该CDK是一次性CDK，无法修改可用次数！', {icon:2, time: 3000});
-        //         return;
-        //     }
-        //     layer.prompt({
-        //         formType: 0,
-        //         value: rowData.reuseRemainingTimes,
-        //         title: '修改CDK可用次数，编号：' + rowData.cdkNo,
-        //     }, function(value, index, elem){
-        //         if(!isPositiveInteger(value)) {
-        //             layer.msg('请输入一个正整数！', {icon:2, time: 2000});
-        //             return;
-        //         }
-        //         let toBeUpdatedIdList = [rowData.cdkNo];
-        //         updateRowsReuseRemainingTimes(toBeUpdatedIdList, value);
-        //         layer.close(index);
-        //         refreshTable();
         //     });
         //     break;
         // }
@@ -353,10 +298,28 @@ table.on('tool(dataTable)', function(obj) {
 //     console.log(obj)
 // });
 
+function regionCodeToStr(region) {
+    switch (region) {
+        case 0: return "缅甸";
+        case 1: return "马来西亚";
+        case 2: return "香港";
+        case 3: return "泰国";
+        default: return ""
+    }
+}
+
+function statusCodeToStr(status) {
+    switch (status) {
+        case 1: return "在售";
+        case 2: return "出租";
+        case 10: return "已售出";
+        default: return ""
+    }
+}
+
 // 复制兑换成功的内容到剪切板
 function copyRedeemInfoToClipboard(redeemInfo, layero) {
-    redeemInfo = redeemInfo.substring(redeemInfo.indexOf("拳头账号"));
-    redeemInfo = redeemInfo.replaceAll("<br/>", "");
+    redeemInfo = redeemInfo.replaceAll("<br/>", "\n").replaceAll("<br>", "\n");
 
     if(navigator.clipboard && window.isSecureContext) {
         copyToClipboardUsingAPI(redeemInfo, layero);

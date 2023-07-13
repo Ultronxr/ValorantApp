@@ -1,6 +1,5 @@
 package cn.ultronxr.valorant.service.impl;
 
-import cn.ultronxr.framework.bean.mybatis.mapper.SystemAccountMapper;
 import cn.ultronxr.valorant.auth.RSO;
 import cn.ultronxr.valorant.bean.DTO.EndProductRiotAccountDTO;
 import cn.ultronxr.valorant.bean.enums.RiotAccountCreateState;
@@ -10,6 +9,7 @@ import cn.ultronxr.valorant.bean.mybatis.mapper.EndProductRiotAccountMapper;
 import cn.ultronxr.valorant.service.EndProductRiotAccountService;
 import cn.ultronxr.valorant.service.RSOService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -49,7 +49,7 @@ public class EndProductRiotAccountServiceImpl extends ServiceImpl<EndProductRiot
 
         log.info("添加成品拳头账号：{}", account);
         // 手动设置是否带初邮
-        account.setHasEmail(StringUtils.isNotEmpty(account.getEmail()));
+        account.setHasEmail(StringUtils.isNotBlank(account.getEmail()));
         RiotAccount tempAccount = new RiotAccount();
         BeanUtils.copyProperties(account, tempAccount);
         RSO rso = rsoService.requestRSOByAccount(tempAccount);
@@ -70,7 +70,14 @@ public class EndProductRiotAccountServiceImpl extends ServiceImpl<EndProductRiot
 
     @Override
     public boolean update(EndProductRiotAccount account) {
-        return updateById(account);
+        LambdaUpdateWrapper<EndProductRiotAccount> wrapper = Wrappers.lambdaUpdate();
+        wrapper.eq(EndProductRiotAccount::getAccountNo, account.getAccountNo())
+                .set(account.getRegion() != null, EndProductRiotAccount::getRegion, account.getRegion())
+                .set(account.getPrice() != null, EndProductRiotAccount::getPrice, account.getPrice())
+                .set(account.getStatus() != null, EndProductRiotAccount::getStatus, account.getStatus())
+                .set(StringUtils.isNotBlank(account.getTitle()), EndProductRiotAccount::getTitle, account.getTitle())
+                .set(StringUtils.isNotBlank(account.getNote()), EndProductRiotAccount::getNote, account.getNote());
+        return this.update(wrapper);
     }
 
     @Override
@@ -86,18 +93,23 @@ public class EndProductRiotAccountServiceImpl extends ServiceImpl<EndProductRiot
                 .eq(accountDTO.getStatus() != null, EndProductRiotAccount::getStatus, accountDTO.getStatus())
                 // 默认不显示已售出状态的数据
                 .ne(accountDTO.getStatus() == null, EndProductRiotAccount::getStatus, 10)
-                .gt(accountDTO.getPriceLow() != null, EndProductRiotAccount::getPrice, accountDTO.getPriceLow())
-                .lt(accountDTO.getPriceHigh() != null, EndProductRiotAccount::getPrice, accountDTO.getPriceHigh())
+                .ge(accountDTO.getPriceLow() != null, EndProductRiotAccount::getPrice, accountDTO.getPriceLow())
+                .le(accountDTO.getPriceHigh() != null, EndProductRiotAccount::getPrice, accountDTO.getPriceHigh())
                 .orderByAsc(EndProductRiotAccount::getStatus)
                 .orderByAsc(EndProductRiotAccount::getAccountNo)
                 .orderByAsc(EndProductRiotAccount::getPrice);
 
-        return this.getBaseMapper().selectPage(page, wrapper);
+        return this.page(page, wrapper);
     }
 
     @Override
     public EndProductRiotAccount redeem(Long accountNo) {
-        return this.getById(accountNo);
+        LambdaQueryWrapper<EndProductRiotAccount> wrapper = Wrappers.lambdaQuery();
+        wrapper.eq(EndProductRiotAccount::getAccountNo, accountNo)
+                .select(EndProductRiotAccount::getRegion, EndProductRiotAccount::getPrice, EndProductRiotAccount::getAccountNo,
+                        EndProductRiotAccount::getUsername, EndProductRiotAccount::getPassword,
+                        EndProductRiotAccount::getEmail, EndProductRiotAccount::getEmailPwd);
+        return this.getOne(wrapper);
     }
 
     @Override
@@ -116,7 +128,7 @@ public class EndProductRiotAccountServiceImpl extends ServiceImpl<EndProductRiot
                 .orderByAsc(EndProductRiotAccount::getAccountNo)
                 .orderByAsc(EndProductRiotAccount::getPrice);
 
-        return this.getBaseMapper().selectPage(page, wrapper);
+        return this.page(page, wrapper);
     }
 
     @Override

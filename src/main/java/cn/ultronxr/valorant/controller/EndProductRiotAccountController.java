@@ -78,7 +78,7 @@ public class EndProductRiotAccountController {
     @AdminAuthRequired
     @PostMapping("/management/redeem")
     @ResponseBody
-    public AjaxResponse redeem(HttpServletRequest request, Long accountNo, String xSecret) {
+    public AjaxResponse redeem(HttpServletRequest request, @RequestBody EndProductRiotAccountDTO accountDTO) {
         String authToken = null;
         // 从请求的 cookie 中取出 token
         if(null != request.getCookies() && request.getCookies().length > 0) {
@@ -90,10 +90,12 @@ public class EndProductRiotAccountController {
             }
         }
         SystemAccount systemAccount = systemAccountService.getSystemUserFromValidatedToken(authToken);
-        if(systemAccount != null && systemAccount.getXSecret().equals(xSecret)) {
-            return AjaxResponseUtils.success(
-                    endProductRiotAccountService.redeem(accountNo)
-            );
+        if(systemAccount != null && systemAccount.getXSecret().equals(accountDTO.getXxSecret())) {
+            EndProductRiotAccount account = endProductRiotAccountService.redeem(accountDTO.getAccountNo());
+            if(null != account) {
+                return AjaxResponseUtils.success(account);
+            }
+            return AjaxResponseUtils.fail("无数据！");
         }
 
         return AjaxResponseUtils.fail("无权获取！");

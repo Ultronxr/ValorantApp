@@ -20,6 +20,8 @@ public class EndProductRiotAccountDTO {
 
     private Float priceHigh;
 
+    private String xxSecret;
+
     private Integer current = 1;
 
     private Integer size = 100;

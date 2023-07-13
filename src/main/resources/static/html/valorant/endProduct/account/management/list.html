@@ -41,17 +41,17 @@
                 </div>
             </div>
             <div class="layui-inline">
-                <label class="layui-form-label">状态</label>
-                <div class="layui-input-inline">
-                    <select class="layui-select" name="status" id="status"></select>
-                </div>
-            </div>
-            <div class="layui-inline">
                 <label class="layui-form-label">价格区间</label>
                 <div class="layui-input-inline">
                     <input class="layui-input price-input" name="priceLow" id="priceLow" autocomplete="off" lay-verify="number">
                     -
                     <input class="layui-input price-input" name="priceHigh" id="priceHigh" autocomplete="off" lay-verify="number">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-inline">
+                    <select class="layui-select" name="status" id="status"></select>
                 </div>
             </div>
 
@@ -69,16 +69,14 @@
 <script type="text/html" id="toolbar">
     <div class="layui-btn-container">
         <button class="layui-btn btn-main layui-btn-sm" lay-event="create">新增成品号</button>
-        <!--<button class="layui-btn btn-main layui-btn-sm" lay-event="editReuseRemainingTimesBatch">批量修改CDK可用次数</button>-->
+        <button class="layui-btn btn-main layui-btn-sm" lay-event="redeem">提号</button>
         <!--<button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">批量删除</button>-->
     </div>
 </script>
 
 <script type="text/html" id="inlineToolbar">
-    <!--<a class="layui-btn btn-main layui-btn-xs" lay-event="editReuseRemainingTimes">修改可用次数</a>-->
     <a class="layui-btn btn-main layui-btn-xs" lay-event="update">修改</a>
     <!--<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>-->
-    <a class="layui-btn btn-main layui-btn-xs" lay-event="redeem">提号</a>
 </script>
 
 <script src="/static/lib/layui-v2.7.6/layui.js"></script>

@@ -26,7 +26,9 @@ form.on('submit(create)', function(data) {
         },
         function () {
             layer.close(this.layerIndex);
-        }
+        },
+        null,
+        300000
     );
 
     return false;
@@ -37,8 +39,14 @@ form.on('radio(typeHasEmail)', function(data) {
     let value = data.value;
     if(value === 'true') {
         $('.email-div').css('display', 'block');
+        $('#email').attr('lay-verify', 'required|email');
+        $('#emailPwd').attr('lay-verify', 'required');
     } else {
         $('.email-div').css('display', 'none');
+        $('#email').removeAttr('lay-verify');
+        $('#emailPwd').removeAttr('lay-verify');
+        $('#email').val('');
+        $('#emailPwd').val('');
     }
 });
 
