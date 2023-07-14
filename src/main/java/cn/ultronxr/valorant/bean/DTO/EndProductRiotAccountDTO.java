@@ -20,7 +20,8 @@ public class EndProductRiotAccountDTO {
 
     private Float priceHigh;
 
-    private String xxSecret;
+    /** 前两个字母都小写，避免字段命名的坑 */
+    private String xsecret;
 
     private Integer current = 1;
 

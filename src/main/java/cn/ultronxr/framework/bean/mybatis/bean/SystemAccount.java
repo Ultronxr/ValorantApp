@@ -23,7 +23,9 @@ public class SystemAccount {
 
     private String token;
 
-    private String xSecret;
+    /** 前两个字母都小写，避免字段命名的坑 */
+    @TableField(value = "x_secret")
+    private String xsecret;
 
     @TableField(fill = FieldFill.INSERT)
     private Date createTime;

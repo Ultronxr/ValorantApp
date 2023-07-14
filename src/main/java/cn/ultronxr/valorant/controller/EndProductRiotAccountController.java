@@ -90,7 +90,7 @@ public class EndProductRiotAccountController {
             }
         }
         SystemAccount systemAccount = systemAccountService.getSystemUserFromValidatedToken(authToken);
-        if(systemAccount != null && systemAccount.getXSecret().equals(accountDTO.getXxSecret())) {
+        if(systemAccount != null && systemAccount.getXsecret().equals(accountDTO.getXsecret())) {
             EndProductRiotAccount account = endProductRiotAccountService.redeem(accountDTO.getAccountNo());
             if(null != account) {
                 return AjaxResponseUtils.success(account);

@@ -184,7 +184,7 @@ table.on('toolbar(dataTable)', function(obj){
                         <div class="layui-form-item">
                             <label class="layui-form-label">提号密码<label style="color: red;">*</label></label>
                             <div class="layui-input-block">
-                                <input type="text" name="xxSecret" class="layui-input" lay-verify="required">
+                                <input type="text" name="xsecret" class="layui-input" lay-verify="required">
                             </div>
                         </div>
                         <div class="layui-form-item">
