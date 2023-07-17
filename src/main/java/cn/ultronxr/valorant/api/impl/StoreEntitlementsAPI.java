@@ -1,14 +1,19 @@
 package cn.ultronxr.valorant.api.impl;
 
+import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONException;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import cn.ultronxr.valorant.api.BaseAPI;
 import cn.ultronxr.valorant.api.InGameAPIEnum;
 import cn.ultronxr.valorant.auth.RSO;
+import cn.ultronxr.valorant.bean.mybatis.bean.EndProductStoreEntitlements;
 import cn.ultronxr.valorant.exception.APIUnauthorizedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Ultronxr
@@ -56,6 +61,23 @@ public class StoreEntitlementsAPI extends BaseAPI {
             log.warn("如下是本次请求的响应体：\n{}", responseBody);
         }
         return obj;
+    }
+
+    public List<EndProductStoreEntitlements> getContent(JSONObject rootJsonObj, Long accountNo) {
+        List<EndProductStoreEntitlements> list = new ArrayList<>();
+
+        JSONArray jsonArray = rootJsonObj.getJSONArray("Entitlements");
+        if(null != jsonArray && !jsonArray.isEmpty()) {
+            jsonArray.forEach(item -> {
+                JSONObject jObj = (JSONObject) item;
+                EndProductStoreEntitlements epse = new EndProductStoreEntitlements();
+                epse.setAccountNo(accountNo);
+                epse.setItemId(jObj.getStr("ItemID"));
+                epse.setTypeId(jObj.getStr("TypeID"));
+                list.add(epse);
+            });
+        }
+        return list;
     }
 
 }

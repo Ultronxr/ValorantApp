@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ultronxr.valorant.bean.mybatis.mapper.EndProductStoreEntitlementsMapper">
+
+    <resultMap id="EndProductWeaponSkin" type="cn.ultronxr.valorant.bean.VO.EndProductWeaponSkinVO">
+        <result column="parent_weapon_uuid" jdbcType="VARCHAR" property="parentWeaponUuid" />
+        <result column="display_name_list" jdbcType="VARCHAR" property="displayNameList" typeHandler="cn.ultronxr.framework.typeHandler.StringJsonArrayTypeHandler" />
+        <result column="display_icon_list" jdbcType="VARCHAR" property="displayIconList" typeHandler="cn.ultronxr.framework.typeHandler.StringJsonArrayTypeHandler" />
+        <result column="sort_end_product" jdbcType="INTEGER" property="sortEndProduct" />
+    </resultMap>
+
+    <select id="selectSkinForOneAccount" parameterType="java.lang.Long" resultMap="EndProductWeaponSkin">
+        SELECT
+            skin.parent_weapon_uuid,
+            JSON_ARRAYAGG(skin.display_name) AS display_name_list,
+            JSON_ARRAYAGG(skin.display_icon) AS display_icon_list,
+            weapon.sort_end_product
+        FROM
+            valorant_end_product_store_entitlements AS se,
+            valorant_weapon_skin AS skin,
+            valorant_weapon AS weapon
+        WHERE
+            se.item_id = skin.uuid
+            AND se.account_no = #{accountNo}
+            AND skin.parent_weapon_uuid = weapon.uuid
+            AND LOCATE(' 等级', skin.display_name) = 0
+        GROUP BY
+            skin.parent_weapon_uuid
+        ORDER BY
+            ANY_VALUE(weapon.sort_end_product) ASC
+    </select>
+
+</mapper>

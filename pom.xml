@@ -14,7 +14,7 @@
 
     <groupId>cn.ultronxr</groupId>
     <artifactId>ValorantApp</artifactId>
-    <version>1.35</version>
+    <version>1.40</version>
     <description>瓦罗兰特APP</description>
 
     <properties>
@@ -55,7 +55,8 @@
         <lombok.version>1.18.24</lombok.version>
         <hutool.version>5.8.10</hutool.version>
         <aliyun-sdk-oss.version>3.11.0</aliyun-sdk-oss.version>
-        <tencentcloud-sdk-java.version>3.1.621</tencentcloud-sdk-java.version>
+        <tencentcloud-sdk-java.version>3.1.800</tencentcloud-sdk-java.version>
+        <tencentcloud-sdk-java-cos.version>5.6.133</tencentcloud-sdk-java-cos.version>
         <quartz.version>2.3.2</quartz.version>
         <opencc4j.version>1.8.0</opencc4j.version>
     </properties>
@@ -252,6 +253,20 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- 腾讯云 SDK -->
+        <!--<dependency>-->
+        <!--    <groupId>com.tencentcloudapi</groupId>-->
+        <!--    <artifactId>tencentcloud-sdk-java</artifactId>-->
+        <!--    <version>${tencentcloud-sdk-java.version}</version>-->
+        <!--</dependency>-->
+
+        <dependency>
+            <groupId>com.qcloud</groupId>
+            <artifactId>cos_api</artifactId>
+            <version>${tencentcloud-sdk-java-cos.version}</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>
@@ -274,6 +289,14 @@
                 <directory>src/main/resources</directory>
                 <includes>
                     <include>static/**</include>
+                </includes>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>file/**</include>
+                    <include>img/**</include>
                 </includes>
                 <filtering>false</filtering>
             </resource>

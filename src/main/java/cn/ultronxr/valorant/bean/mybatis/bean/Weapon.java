@@ -29,4 +29,6 @@ public class Weapon {
 
     private String killStreamIcon;
 
+    private Integer sortEndProduct;
+
 }

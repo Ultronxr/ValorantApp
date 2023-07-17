@@ -4,10 +4,11 @@ import cn.ultronxr.valorant.auth.RSO;
 import cn.ultronxr.valorant.bean.DTO.EndProductRiotAccountDTO;
 import cn.ultronxr.valorant.bean.enums.RiotAccountCreateState;
 import cn.ultronxr.valorant.bean.mybatis.bean.EndProductRiotAccount;
-import cn.ultronxr.valorant.bean.mybatis.bean.RiotAccount;
 import cn.ultronxr.valorant.bean.mybatis.mapper.EndProductRiotAccountMapper;
 import cn.ultronxr.valorant.service.EndProductRiotAccountService;
+import cn.ultronxr.valorant.service.EndProductStoreEntitlementsService;
 import cn.ultronxr.valorant.service.RSOService;
+import cn.ultronxr.valorant.util.BeanUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -15,7 +16,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +32,9 @@ public class EndProductRiotAccountServiceImpl extends ServiceImpl<EndProductRiot
 
     @Autowired
     private RSOService rsoService;
+
+    @Autowired
+    private EndProductStoreEntitlementsService storeEntitlementsService;
 
 
     @Override
@@ -50,9 +53,7 @@ public class EndProductRiotAccountServiceImpl extends ServiceImpl<EndProductRiot
         log.info("添加成品拳头账号：{}", account);
         // 手动设置是否带初邮
         account.setHasEmail(StringUtils.isNotBlank(account.getEmail()));
-        RiotAccount tempAccount = new RiotAccount();
-        BeanUtils.copyProperties(account, tempAccount);
-        RSO rso = rsoService.requestRSOByAccount(tempAccount);
+        RSO rso = rsoService.requestRSOByAccount(BeanUtils.transformToRiotAccountFromEndProduct(account));
         if(null != rso) {
             account.setUserId(rso.getUserId());
             account.setAccessToken(rso.getAccessToken());
@@ -61,6 +62,19 @@ public class EndProductRiotAccountServiceImpl extends ServiceImpl<EndProductRiot
             account.setStatus(1);
             if(this.save(account)) {
                 log.info("成品拳头账号添加成功。username={}", account.getUsername());
+                // 请求API获取该账号的库存皮肤信息
+                // （accountNo 是数据库自动填充的，所以这里要从数据库取一次）
+                account = this.getOne(new LambdaQueryWrapper<EndProductRiotAccount>()
+                                        .eq(EndProductRiotAccount::getUserId, account.getUserId()));
+                storeEntitlementsService.skins(account);
+                // 生成库存皮肤截图
+                String imgUrl = storeEntitlementsService.generateSkinImg(account);
+                if(StringUtils.isNotEmpty(imgUrl)) {
+                    account.setImg(imgUrl);
+                    this.update(new LambdaUpdateWrapper<EndProductRiotAccount>()
+                                    .eq(EndProductRiotAccount::getAccountNo, account.getAccountNo())
+                                    .set(EndProductRiotAccount::getImg, imgUrl));
+                }
                 return OK;
             }
         }

@@ -40,15 +40,18 @@ ALTER TABLE valorant_riot_account ADD `cookie`    VARCHAR(3000)    DEFAULT NULL 
 ALTER TABLE valorant_riot_account ADD `region`    INT    NOT NULL  DEFAULT 1   COMMENT '账号地区，0-缅甸、1-马来西亚' AFTER `account_no`;
 
 CREATE TABLE valorant_weapon (
-    `uuid`                 VARCHAR(100)    NOT NULL         COMMENT '对象ID，主键',
-    `asset_path`           VARCHAR(300)    DEFAULT NULL     COMMENT '游戏素材路径',
-    `category`             VARCHAR(100)    DEFAULT NULL     COMMENT '分类',
-    `default_skin_uuid`    VARCHAR(100)    DEFAULT NULL     COMMENT '默认皮肤ID',
-    `display_name`         VARCHAR(100)    DEFAULT NULL     COMMENT '显示名称',
-    `display_icon`         VARCHAR(300)    DEFAULT NULL     COMMENT '显示图标',
-    `kill_stream_icon`     VARCHAR(300)    DEFAULT NULL     COMMENT '击杀信息中显示的图标',
+    `uuid`                 VARCHAR(100)    NOT NULL                COMMENT '对象ID，主键',
+    `asset_path`           VARCHAR(300)    DEFAULT NULL            COMMENT '游戏素材路径',
+    `category`             VARCHAR(100)    DEFAULT NULL            COMMENT '分类',
+    `default_skin_uuid`    VARCHAR(100)    DEFAULT NULL            COMMENT '默认皮肤ID',
+    `display_name`         VARCHAR(100)    DEFAULT NULL            COMMENT '显示名称',
+    `display_icon`         VARCHAR(300)    DEFAULT NULL            COMMENT '显示图标',
+    `kill_stream_icon`     VARCHAR(300)    DEFAULT NULL            COMMENT '击杀信息中显示的图标',
+    `sort_end_product`     INT             NOT NULL DEFAULT 999    COMMENT '排序（用于成品号，数字越小越靠前）',
     PRIMARY KEY(`uuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT 'valorant 模块 - 武器信息';
+
+ALTER TABLE valorant_weapon ADD `sort_end_product` INT NOT NULL DEFAULT 999 COMMENT '排序序号' AFTER `kill_stream_icon`;
 
 CREATE TABLE valorant_weapon_skin (
     `uuid`                  VARCHAR(100)    NOT NULL         COMMENT '对象ID，主键',
@@ -148,6 +151,6 @@ CREATE TABLE valorant_end_product_riot_account (
 
 CREATE TABLE valorant_end_product_store_entitlements (
     `account_no`    BIGINT          NOT NULL    COMMENT '账户编号',
-    `itemId`        VARCHAR(100)    NOT NULL    COMMENT '物品ID',
-    `typeId`        VARCHAR(100)    NOT NULL    COMMENT '物品类别ID'
+    `item_id`       VARCHAR(100)    NOT NULL    COMMENT '物品ID',
+    `type_id`       VARCHAR(100)    NOT NULL    COMMENT '物品类别ID'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT 'valorant 模块 - 成品拳头账号 的 已拥有物品信息';

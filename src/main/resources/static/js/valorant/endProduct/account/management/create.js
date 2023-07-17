@@ -28,7 +28,7 @@ form.on('submit(create)', function(data) {
             layer.close(this.layerIndex);
         },
         null,
-        300000
+        600000
     );
 
     return false;

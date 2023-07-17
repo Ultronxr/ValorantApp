@@ -39,9 +39,12 @@ table.render({
                 return statusCodeToStr(d.status);
             }
         }
-        ,{field: 'title', title: '标题', width: '10%', sort: false, hide: false, align: 'center'}
-        ,{field: 'note', title: '备注', width: '10%', sort: false, hide: false, align: 'center'}
-        ,{field: 'img', title: '账号截图', width:'40%', sort: false, hide: false, align: 'center'}
+        ,{field: 'title', title: '标题', width: '20%', sort: false, hide: false, align: 'center'}
+        ,{field: 'note', title: '备注', width: '20%', sort: false, hide: false, align: 'center'}
+        ,{field: 'img', title: '账号截图', width:'20%', sort: false, hide: false, align: 'center',
+            templet: function (d) {
+                return '<img src="' + d.img + '" onclick="previewImg(this)" height="100px">';
+            }}
         ,{title:'操作', width: '10%', align: 'center', fixed: 'right', toolbar: '#inlineToolbar'}
     ]]
     ,toolbar: '#toolbar'
@@ -352,6 +355,37 @@ function copyToClipboardUsingExecCommand(content) {
         callback: function() {
             // layer.msg("已复制账号信息！", {icon:1, time: 2000});
             alert("已复制账号信息！");
+        }
+    });
+}
+
+var bodyWidth = $('body').width(),
+    bodyHeight = $('body').height(),
+    htmlWidth = $('html').width(),
+    htmlHeight = $('html').height();
+console.log('bodyWidth='+bodyWidth + ' bodyHeight='+bodyHeight + ' htmlWidth='+htmlWidth + ' htmlHeight='+htmlHeight);
+
+//预览大小根据原图的大小决定弹窗的大小
+function previewImg(obj) {
+    var img = new Image();
+    img.src = obj.src;
+    // var height = img.height + 50; //获取图片高度
+    // var width = img.width; //获取图片宽度
+    let width = bodyWidth*0.85;
+    let height = width*0.5625;
+    var imgHtml = "<img src='" + obj.src + "' width='100%' height='100%'/>";
+    //弹出层
+    layer.open({
+        type: 1,
+        shade: 0.8,
+        offset: 'auto',
+        area: [width + 'px', height + 'px'],
+        shadeClose: true,
+        scrollbar: false,
+        title: "图片预览",
+        content: imgHtml, //捕获的元素，注意：最好该指定的元素要存放在body最外层，否则可能被其它的相对元素所影响
+        cancel: function () {
+            //layer.msg('捕获就是从页面已经存在的元素上，包裹layer的结构', { time: 5000, icon: 6 });
         }
     });
 }
