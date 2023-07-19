@@ -2,11 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=1450, initial-scale=1.0">
     <title>valorant</title>
     <link href="/static/lib/layui-v2.7.6/css/layui.css" rel="stylesheet">
     <link href="/static/css/layui-override.css" rel="stylesheet">
     <style>
+        html {
+            min-width: 1500px;
+        }
         body {
             width: 96%;
             max-width: 2000px;
@@ -22,6 +25,9 @@
             display: inline-block;
             width: 40% !important;
         }
+        .layui-table img {
+             max-width: 500px !important;
+        }
     </style>
 </head>
 <body>
@@ -29,9 +35,9 @@
     <form class="searchBar layui-form layui-form-pane" action="">
         <div class="layui-form-item">
             <div class="layui-inline">
-                <label class="layui-form-label">账号编号</label>
+                <label class="layui-form-label">皮肤搜索</label>
                 <div class="layui-input-inline">
-                    <input class="layui-input" name="accountNo" id="accountNo" autocomplete="off" lay-verify="number">
+                    <input class="layui-input" name="skin" id="skin" autocomplete="off">
                 </div>
             </div>
             <div class="layui-inline">
@@ -54,12 +60,6 @@
                     <select class="layui-select" name="priceOrder" id="priceOrder"></select>
                 </div>
             </div>
-            <div class="layui-inline">
-                <label class="layui-form-label">状态</label>
-                <div class="layui-input-inline">
-                    <select class="layui-select" name="status" id="status"></select>
-                </div>
-            </div>
 
             <div class="layui-inline">
                 <button type="button" class="layui-btn btn-main" data-type="reload" lay-filter="data-search-btn" id="searchBtn"><i class="layui-icon"></i> 搜 索</button>
@@ -74,15 +74,10 @@
 
 <script type="text/html" id="toolbar">
     <div class="layui-btn-container">
-        <button class="layui-btn btn-main layui-btn-sm" lay-event="create">新增成品号</button>
-        <button class="layui-btn btn-main layui-btn-sm" lay-event="redeem">提号</button>
-        <!--<button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delete">批量删除</button>-->
     </div>
 </script>
 
 <script type="text/html" id="inlineToolbar">
-    <a class="layui-btn btn-main layui-btn-xs" lay-event="update">修改</a>
-    <!--<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>-->
 </script>
 
 <script src="/static/lib/layui-v2.7.6/layui.js"></script>
@@ -91,6 +86,6 @@
 <script src="/static/lib/jquery.copy.js"></script>
 <script src="/static/js/util/app.js"></script>
 <script src="/static/js/util/layui-utils.js"></script>
-<script src="/static/js/valorant/endProduct/account/management/list.js"></script>
+<script src="/static/js/valorant/endProduct/account/client/list.js"></script>
 </body>
 </html>

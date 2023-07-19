@@ -14,8 +14,13 @@ function loadAllSelect() {
         {name: "出租", value: 2},
         {name: "已售出", value: 10},
     ];
+    let priceOrder = [
+        {name: "升序", value: 0},
+        {name: "降序", value: 1},
+    ];
     loadSelectFromJson(region, $("#region"), "name", "value");
     loadSelectFromJson(status, $("#status"), "name", "value");
+    loadSelectFromJson(priceOrder, $("#priceOrder"), "name", "value");
 }
 
 table.render({

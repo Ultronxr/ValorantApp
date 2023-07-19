@@ -1,3 +1,5 @@
+var ROW_DATA;
+
 $(function () {
 });
 

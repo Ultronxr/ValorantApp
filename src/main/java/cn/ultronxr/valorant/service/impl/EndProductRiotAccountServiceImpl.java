@@ -2,9 +2,11 @@ package cn.ultronxr.valorant.service.impl;
 
 import cn.ultronxr.valorant.auth.RSO;
 import cn.ultronxr.valorant.bean.DTO.EndProductRiotAccountDTO;
+import cn.ultronxr.valorant.bean.VO.EndProductWeaponSkinVO;
 import cn.ultronxr.valorant.bean.enums.RiotAccountCreateState;
 import cn.ultronxr.valorant.bean.mybatis.bean.EndProductRiotAccount;
 import cn.ultronxr.valorant.bean.mybatis.mapper.EndProductRiotAccountMapper;
+import cn.ultronxr.valorant.bean.mybatis.mapper.EndProductStoreEntitlementsMapper;
 import cn.ultronxr.valorant.service.EndProductRiotAccountService;
 import cn.ultronxr.valorant.service.EndProductStoreEntitlementsService;
 import cn.ultronxr.valorant.service.RSOService;
@@ -18,6 +20,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static cn.ultronxr.valorant.bean.enums.RiotAccountCreateState.*;
 
@@ -35,6 +40,9 @@ public class EndProductRiotAccountServiceImpl extends ServiceImpl<EndProductRiot
 
     @Autowired
     private EndProductStoreEntitlementsService storeEntitlementsService;
+
+    @Autowired
+    private EndProductStoreEntitlementsMapper storeEntitlementsMapper;
 
 
     @Override
@@ -109,9 +117,10 @@ public class EndProductRiotAccountServiceImpl extends ServiceImpl<EndProductRiot
                 .ne(accountDTO.getStatus() == null, EndProductRiotAccount::getStatus, 10)
                 .ge(accountDTO.getPriceLow() != null, EndProductRiotAccount::getPrice, accountDTO.getPriceLow())
                 .le(accountDTO.getPriceHigh() != null, EndProductRiotAccount::getPrice, accountDTO.getPriceHigh())
+                .orderByAsc(accountDTO.getPriceOrder() != null && accountDTO.getPriceOrder() == 0, EndProductRiotAccount::getPrice)
+                .orderByDesc(accountDTO.getPriceOrder() != null && accountDTO.getPriceOrder() == 1, EndProductRiotAccount::getPrice)
                 .orderByAsc(EndProductRiotAccount::getStatus)
-                .orderByAsc(EndProductRiotAccount::getAccountNo)
-                .orderByAsc(EndProductRiotAccount::getPrice);
+                .orderByAsc(EndProductRiotAccount::getAccountNo);
 
         return this.page(page, wrapper);
     }
@@ -130,24 +139,41 @@ public class EndProductRiotAccountServiceImpl extends ServiceImpl<EndProductRiot
     public Page<EndProductRiotAccount> queryAccount(EndProductRiotAccountDTO accountDTO) {
         Page<EndProductRiotAccount> page = Page.of(accountDTO.getCurrent(), accountDTO.getSize());
 
-        LambdaQueryWrapper<EndProductRiotAccount> wrapper = Wrappers.lambdaQuery();
-        wrapper.select(EndProductRiotAccount::getAccountNo, EndProductRiotAccount::getUserId, EndProductRiotAccount::getRegion,
-                        EndProductRiotAccount::getTitle, EndProductRiotAccount::getImg, EndProductRiotAccount::getPrice)
-                .eq(accountDTO.getAccountNo() != null, EndProductRiotAccount::getAccountNo, accountDTO.getAccountNo())
-                .eq(accountDTO.getRegion() != null, EndProductRiotAccount::getRegion, accountDTO.getRegion())
-                // 只筛选正在出售的数据
-                .eq(EndProductRiotAccount::getStatus, 1)
-                .gt(accountDTO.getPriceLow() != null, EndProductRiotAccount::getPrice, accountDTO.getPriceLow())
-                .lt(accountDTO.getPriceHigh() != null, EndProductRiotAccount::getPrice, accountDTO.getPriceHigh())
-                .orderByAsc(EndProductRiotAccount::getAccountNo)
-                .orderByAsc(EndProductRiotAccount::getPrice);
-
-        return this.page(page, wrapper);
+        //LambdaQueryWrapper<EndProductRiotAccount> wrapper = Wrappers.lambdaQuery();
+        //wrapper.select(EndProductRiotAccount::getAccountNo, EndProductRiotAccount::getRegion,
+        //                EndProductRiotAccount::getTitle, EndProductRiotAccount::getImg, EndProductRiotAccount::getPrice)
+        //        .eq(accountDTO.getAccountNo() != null, EndProductRiotAccount::getAccountNo, accountDTO.getAccountNo())
+        //        .eq(accountDTO.getRegion() != null, EndProductRiotAccount::getRegion, accountDTO.getRegion())
+        //        // 只筛选正在出售的数据
+        //        .eq(EndProductRiotAccount::getStatus, 1)
+        //        .ge(accountDTO.getPriceLow() != null, EndProductRiotAccount::getPrice, accountDTO.getPriceLow())
+        //        .le(accountDTO.getPriceHigh() != null, EndProductRiotAccount::getPrice, accountDTO.getPriceHigh())
+        //        .orderByAsc(accountDTO.getPriceOrder() != null && accountDTO.getPriceOrder() == 0, EndProductRiotAccount::getPrice)
+        //        .orderByDesc(accountDTO.getPriceOrder() != null && accountDTO.getPriceOrder() == 1, EndProductRiotAccount::getPrice)
+        //        .orderByAsc(EndProductRiotAccount::getAccountNo);
+        //
+        //return this.page(page, wrapper);
+        return this.getBaseMapper().queryAccount(page, accountDTO);
     }
 
     @Override
     public EndProductRiotAccount getOne(Long accountNo) {
-        return null;
+        LambdaQueryWrapper<EndProductRiotAccount> wrapper = Wrappers.lambdaQuery();
+        wrapper.select(EndProductRiotAccount::getAccountNo, EndProductRiotAccount::getRegion,
+                        EndProductRiotAccount::getTitle, EndProductRiotAccount::getImg, EndProductRiotAccount::getPrice)
+                .eq(EndProductRiotAccount::getAccountNo, accountNo);
+        EndProductRiotAccount account = this.getOne(wrapper);
+
+        List<EndProductWeaponSkinVO> skinVOList = storeEntitlementsMapper.selectSkinForOneAccount(accountNo);
+        StringBuilder sb = new StringBuilder();
+        for(EndProductWeaponSkinVO skinVO : skinVOList) {
+            String skins = Arrays.toString(skinVO.getDisplayNameList());
+            sb.append(skins.substring(1, skins.length()-1));
+            sb.append("<br/>\n");
+        }
+        account.setNote(sb.toString());
+
+        return account;
     }
 
 }

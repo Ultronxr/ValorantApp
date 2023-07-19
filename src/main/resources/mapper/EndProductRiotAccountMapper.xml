@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ultronxr.valorant.bean.mybatis.mapper.EndProductRiotAccountMapper">
+
+    <select id="queryAccount" parameterType="java.lang.Object" resultType="cn.ultronxr.valorant.bean.mybatis.bean.EndProductRiotAccount">
+        SELECT
+            account_no, region, title, img, price
+        FROM
+            valorant_end_product_riot_account
+        WHERE
+            status = 1
+            <if test="endProductRiotAccountDTO.accountNo != null">
+                AND account_no = #{endProductRiotAccountDTO.accountNo}
+            </if>
+            <if test="endProductRiotAccountDTO.region != null">
+                AND region = #{endProductRiotAccountDTO.region}
+            </if>
+            <if test="endProductRiotAccountDTO.priceLow != null">
+                AND price >= #{endProductRiotAccountDTO.priceLow}
+            </if>
+            <if test="endProductRiotAccountDTO.priceHigh != null">
+                AND price <![CDATA[ <= ]]> #{endProductRiotAccountDTO.priceHigh}
+            </if>
+            <if test="endProductRiotAccountDTO.skin != null and endProductRiotAccountDTO.skin != ''">
+                AND account_no IN (
+                    SELECT DISTINCT
+                        account_no
+                    FROM
+                        valorant_end_product_store_entitlements
+                    WHERE
+                        item_id IN
+                        ( SELECT
+                              uuid
+                          FROM
+                              valorant_weapon_skin
+                          WHERE
+                              type = 'level'
+                            AND display_name LIKE CONCAT('%', #{endProductRiotAccountDTO.skin}, '%')
+                            AND LOCATE( ' 等级', display_name ) = 0
+                        )
+                )
+            </if>
+        ORDER BY
+            <if test="endProductRiotAccountDTO.priceOrder != null and endProductRiotAccountDTO.priceOrder == 0">
+                price ASC,
+            </if>
+            <if test="endProductRiotAccountDTO.priceOrder != null and endProductRiotAccountDTO.priceOrder == 1">
+                price DESC,
+            </if>
+                account_no ASC
+    </select>
+
+</mapper>

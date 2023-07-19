@@ -109,9 +109,9 @@ public class EndProductRiotAccountController {
         );
     }
 
-    @PostMapping("/getOne")
+    @GetMapping("/getOne")
     @ResponseBody
-    public AjaxResponse getOne(Long accountNo) {
+    public AjaxResponse getOne(@RequestParam Long accountNo) {
         return AjaxResponseUtils.success(
                 endProductRiotAccountService.getOne(accountNo)
         );

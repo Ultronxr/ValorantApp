@@ -46,6 +46,7 @@ application-local.yml
 mybatisGeneratorConfig.xml
 /server-log-collect/
 /Note.md
+tencentCloudConfig.properties
 
 # flatten-maven-plugin 生成的文件
 .flattened-pom.xml
