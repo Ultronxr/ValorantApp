@@ -14,7 +14,7 @@ import java.util.List;
 public interface EndProductStoreEntitlementsMapper extends BaseMapper<EndProductStoreEntitlements> {
 
     /**
-     * 查询指定成品拳头账号的所有库存武器皮肤
+     * 从数据库中查询指定成品拳头账号的所有库存武器皮肤
      *
      * @param accountNo 成品拳头账号 编号
      * @return 该账号拥有的全部武器的所有库存皮肤 {@link EndProductWeaponSkinVO} 列表

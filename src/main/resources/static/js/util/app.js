@@ -63,6 +63,10 @@ const app = {
                     query: '/query',
                     getOne: '/getOne',
                 },
+                storeEntitlements: {
+                    url: '/storeEntitlements',
+                    generateSkinImg: '/generateSkinImg',
+                }
             },
         },
     },

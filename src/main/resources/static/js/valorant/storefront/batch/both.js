@@ -68,6 +68,9 @@ var selectData = [
                         title: "Radiant Entertainment System 幻象（电玩街机）",
                         id: "Radiant Entertainment System 幻象"
                     }, {
+                        title: "边陲纪元 幻象",
+                        id: "边陲纪元 幻象"
+                    }, {
                         title: "781-A协定 幻象",
                         id: "781-A协定 幻象"
                     }, {
@@ -291,6 +294,9 @@ var selectData = [
                 ,id: "神射"
                 ,child: [
                     {
+                        title: "边陲纪元 神射",
+                        id: "边陲纪元 神射"
+                    }, {
                         title: "781-A协定 神射",
                         id: "781-A协定 神射"
                     }, {

@@ -23,7 +23,7 @@ public class EndProductRiotAccount {
 
     private String userId;
 
-    /** 账号地区，0-缅甸、1-马来西亚、2-香港、3-泰国 */
+    /** 账号地区，0-缅甸、1-马来西亚、2-香港、3-泰国 <br/> {@link cn.ultronxr.valorant.bean.enums.RiotAccountRegion} */
     private Integer region;
 
     private String username;

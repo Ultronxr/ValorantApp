@@ -297,6 +297,7 @@
                 <includes>
                     <include>file/**</include>
                     <include>img/**</include>
+                    <include>font/**</include>
                 </includes>
                 <filtering>false</filtering>
             </resource>

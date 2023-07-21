@@ -21,27 +21,32 @@ table.render({
     elem: '#data-table'
     ,id: 'dataTable'
     // ,height: 'full'
-    ,skin: 'row'
+    ,skin: 'nob'
     ,even: true
     ,size: 'lg'
     ,cols: [[ //表头
         {type: 'checkbox', fixed: 'left', hide: true}
-        ,{field: 'accountNo', title: '账号编号', width: '10%', sort: true, hide: false, align: 'center'}
-        ,{field: 'title', title: '标题（点击可查看账号详情）', width: '40%', sort: false, hide: false, align: 'center',
+        ,{field: 'accountNo', title: '', width: '10%', sort: false, hide: false, align: 'center'}
+        // ,{field: 'title', title: '标题（点击可查看账号详情）', width: '40%', sort: false, hide: false, align: 'center',
+        //     templet: function (d) {
+        //         return '<a target="_blank" onclick="getOne(' + d.accountNo + ')" style="cursor: pointer; text-decoration: solid #cccccc; font-weight: bold;">' + d.title + '</a>';
+        //     }}
+        ,{field: 'price', title: '', width: '10%', sort: false, align: 'center',
             templet: function (d) {
-                return '<a target="_blank" onclick="getOne(' + d.accountNo + ')" style="cursor: pointer; text-decoration: solid #cccccc; font-weight: bold;">' + d.title + '</a>';
+                return '<div style="color: red; font-size: 25px; font-weight: bold;">￥ ' + d.price + '</div>';
             }}
-        ,{field: 'img', title: '账号截图（点击可查看大图）', width:'30%', sort: false, hide: false, align: 'center', style: 'height:310px;',
+        ,{field: 'img', title: '', width:'40%', sort: false, hide: false, align: 'center', style: 'height:310px;',
             templet: function (d) {
-                return '<img src="' + d.img + '" onclick="previewImg(this)" width="500px" height="300px">';
+                return '<img src="' + d.img + '" onclick="previewImg(this)" width="500px" height="375px">';
             }}
-        ,{field: 'price', title: '价格', width: '10%', sort: true, align: 'center',
-            templet: function (d) {
-                return '￥ ' + d.price;
-            }}
-        ,{field: 'region', title: '地区', width: '10%', sort: true, align: 'center',
+        ,{field: 'region', title: '', width: '20%', sort: false, align: 'center',
             templet: function (d) {
                 return regionCodeToStr(d.region);
+            }
+        }
+        ,{field: 'status', title: '', width: '20%', sort: false, align: 'center',
+            templet: function (d) {
+                return statusCodeToStr(d.status);
             }
         }
     ]]
@@ -196,8 +201,8 @@ function previewImg(obj) {
     img.src = obj.src;
     // var height = img.height + 50; //获取图片高度
     // var width = img.width; //获取图片宽度
-    let width = bodyWidth*0.85;
-    let height = width*0.5625;
+    let width = bodyWidth*0.7;
+    let height = width*0.75;
     var imgHtml = "<img src='" + obj.src + "' width='100%' height='100%'/>";
     //弹出层
     layer.open({

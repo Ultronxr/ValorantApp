@@ -12,6 +12,8 @@ import lombok.Getter;
 public enum RiotAccountRegion {
     Myanmar(0, "缅甸")
     ,Malaysia(1, "马来西亚")
+    ,HongKong(2, "香港")
+    ,Thailand(3, "泰国")
     ;
 
     private int code;

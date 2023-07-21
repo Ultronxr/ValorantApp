@@ -70,11 +70,11 @@ public class EndProductRiotAccountServiceImpl extends ServiceImpl<EndProductRiot
             account.setStatus(1);
             if(this.save(account)) {
                 log.info("成品拳头账号添加成功。username={}", account.getUsername());
-                // 请求API获取该账号的库存皮肤信息
-                // （accountNo 是数据库自动填充的，所以这里要从数据库取一次）
+                // accountNo 是数据库自动填充的，所以这里要从数据库取一次
                 account = this.getOne(new LambdaQueryWrapper<EndProductRiotAccount>()
                                         .eq(EndProductRiotAccount::getUserId, account.getUserId()));
-                storeEntitlementsService.skins(account);
+                // 请求API获取该账号的库存皮肤信息
+                storeEntitlementsService.getSkinByAPI(account);
                 // 生成库存皮肤截图
                 String imgUrl = storeEntitlementsService.generateSkinImg(account);
                 if(StringUtils.isNotEmpty(imgUrl)) {

@@ -4,11 +4,11 @@
 
     <select id="queryAccount" parameterType="java.lang.Object" resultType="cn.ultronxr.valorant.bean.mybatis.bean.EndProductRiotAccount">
         SELECT
-            account_no, region, title, img, price
+            account_no, region, title, img, price, status
         FROM
             valorant_end_product_riot_account
         WHERE
-            status = 1
+            status != 10
             <if test="endProductRiotAccountDTO.accountNo != null">
                 AND account_no = #{endProductRiotAccountDTO.accountNo}
             </if>

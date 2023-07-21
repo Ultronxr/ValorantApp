@@ -44,9 +44,9 @@ table.render({
                 return statusCodeToStr(d.status);
             }
         }
-        ,{field: 'title', title: '标题', width: '20%', sort: false, hide: false, align: 'center'}
+        ,{field: 'title', title: '标题', width: '10%', sort: false, hide: false, align: 'center'}
         ,{field: 'note', title: '备注', width: '20%', sort: false, hide: false, align: 'center'}
-        ,{field: 'img', title: '账号截图', width:'20%', sort: false, hide: false, align: 'center',
+        ,{field: 'img', title: '账号截图', width:'15%', sort: false, hide: false, align: 'center',
             templet: function (d) {
                 return '<img src="' + d.img + '" onclick="previewImg(this)" height="100px">';
             }}
@@ -291,6 +291,34 @@ table.on('tool(dataTable)', function(obj) {
             });
             break;
         }
+        case 'generateSkinImg': {
+            layer.confirm('确认需要重新生成图片？', {icon: 3, title:'提示'}, function(index) {
+                layer.msg("正在重新生成图片，请等待。", {icon: 6, time: 5000});
+                app.util.ajax.get(app.util.api.getAPIUrl('valorant.endProduct.storeEntitlements.generateSkinImg'),
+                    {accountNo: rowData.accountNo},
+                    function (res) {
+                        // console.log(res);
+                        if(res.code === app.RESPONSE_CODE.SUCCESS) {
+                            layer.msg("生成图片成功！", {icon: 1, time: 2000});
+                        } else {
+                            layer.msg(res.msg, {icon: 2, time: 2000});
+                        }
+                    },
+                    function (res) {
+                        if(res.status === 401) {
+                            layer.msg("未授权！", {icon: 2, time: 2000});
+                        } else {
+                            layer.msg("请求失败！", {icon: 2, time: 2000});
+                        }
+                    },
+                    false,
+                    300000
+                );
+                refreshTable();
+                layer.close(index);
+            });
+            break;
+        }
         // case 'del': {
         //     layer.confirm('确认删除此行？', {icon: 3, title:'提示'}, function(index) {
         //         let toBeDeletedIdList = [rowData.accountNo];
@@ -376,8 +404,8 @@ function previewImg(obj) {
     img.src = obj.src;
     // var height = img.height + 50; //获取图片高度
     // var width = img.width; //获取图片宽度
-    let width = bodyWidth*0.85;
-    let height = width*0.5625;
+    let width = bodyWidth*0.7;
+    let height = width*0.75;
     var imgHtml = "<img src='" + obj.src + "' width='100%' height='100%'/>";
     //弹出层
     layer.open({
