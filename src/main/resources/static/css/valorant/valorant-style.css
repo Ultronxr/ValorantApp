@@ -122,6 +122,7 @@
     border-style: solid solid solid solid;
     border-width: 4px 4px 4px 4px;
     box-shadow: 4px -4px 5px rgb(204 204 204 / 84%);
+    background-color: #fff;
 }
 /* 行内工具栏按钮 */
 .layui-table-view .layui-btn-xs {

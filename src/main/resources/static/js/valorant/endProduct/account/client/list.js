@@ -1,3 +1,8 @@
+// 皮肤搜索全局对象
+var SKIN_SEARCH_OBJ = {};
+// 保存所搜索的皮肤ID
+var SKIN_SEARCH_ARRAY = [];
+
 $(function () {
    loadAllSelect();
 });
@@ -112,7 +117,7 @@ var active = {
                 current: 1 //重新从第 1 页开始
             },
             where: { //设定异步数据接口的额外参数
-                skin: $("#skin").val(),
+                skinSearchArray: SKIN_SEARCH_ARRAY,
                 accountNo: $("#accountNo").val(),
                 region: $("#region").val(),
                 status: $("#status").val(),
@@ -122,7 +127,8 @@ var active = {
         });
     },
     clear: function () {
-        $("#skin").val("");
+        SKIN_SEARCH_OBJ = {};
+        SKIN_SEARCH_ARRAY = [];
         $("#accountNo").val("");
         $("#region").val("");
         $("#status").val("");
@@ -217,5 +223,15 @@ function previewImg(obj) {
         cancel: function () {
             //layer.msg('捕获就是从页面已经存在的元素上，包裹layer的结构', { time: 5000, icon: 6 });
         }
+    });
+}
+
+function searchSkin() {
+    layer.open({
+        title: '皮肤搜索',
+        type: 2,
+        content: 'skinSearch.html',
+        area: ['800px', '700px'],
+        shadeClose: false
     });
 }

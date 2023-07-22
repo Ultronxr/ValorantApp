@@ -39,34 +39,46 @@ public class BaseController {
         return "index";
     }
 
+    /** 后台管理网页 */
     @GetMapping("/magnt/mgemidx/XLlcGAAlOX4fBak8")
     public String management() {
         return "misc/fakeIndex";
     }
 
+    /** 每日商店+夜市查询网页 */
     @GetMapping("/wwdw/sf")
     public String storefront() {
         return "valorant/storefront/batch/both";
     }
 
+    /** 每日商店+夜市查询（带侧边栏）网页 */
     @GetMapping("/wwdw/sf2")
     public String sf2() {
         return "misc/userIndex";
     }
 
+    /** 每日商店+夜市查询（带侧边栏）网页 */
     @GetMapping("/wwdw/sf3")
     public String sf3() {
         return "misc/userIndex2";
     }
 
+    /** 每日商店+夜市查询（合作）网页 */
     @GetMapping("/wwdw/xh")
     public String storefront2() {
         return "valorant/storefront/batch/both2";
     }
 
+    /** 每日商店+夜市 CDK兑换（提号）网页 */
     @GetMapping("/wwdw/cdk")
     public String cdkRedeem() {
         return "valorant/cdk/redeem/redeem";
+    }
+
+    /** 成品号选号网页 */
+    @GetMapping("/wwdw/cph")
+    public String endProduct() {
+        return "valorant/endproduct/account/client/list";
     }
 
 }

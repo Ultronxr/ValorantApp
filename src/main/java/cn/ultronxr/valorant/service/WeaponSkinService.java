@@ -1,5 +1,6 @@
 package cn.ultronxr.valorant.service;
 
+import cn.ultronxr.valorant.bean.VO.WeaponSkinSelectVO;
 import cn.ultronxr.valorant.bean.mybatis.bean.WeaponSkin;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -39,5 +40,14 @@ public interface WeaponSkinService extends IService<WeaponSkin> {
      * @return 父武器ID
      */
     String getParentWeaponIdBySkinId(String skinId);
+
+    /**
+     * 查询出每一种武器的所有皮肤名称、皮肤 ID，前端由此（加载select下拉框内容）在所有皮肤中选择某几款皮肤，再进行后续查询<br/>
+     * 由于该方法会被频繁调用，所以请对数据库查询结果进行缓存！（这里默认采用 redis 缓存方式）<br/>
+     * 如果更新了数据库中的武器、皮肤数据，也要清理/更新缓存！
+     *
+     * @return
+     */
+    List<WeaponSkinSelectVO> weaponSkinSelectAllSkin();
 
 }

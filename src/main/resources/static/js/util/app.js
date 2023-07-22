@@ -17,6 +17,7 @@ const app = {
             weaponAndSkin: {
                 url: '/weaponAndSkinAPI',
                 updateDB: '/updateDB',
+                selectAllSkin: '/selectAllSkin',
             },
             account: {
                 url: '/account',

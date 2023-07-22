@@ -2,6 +2,8 @@ package cn.ultronxr.valorant.bean.DTO;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @author Ultronxr
  * @date 2023/07/12 14:40:33
@@ -10,7 +12,8 @@ import lombok.Data;
 @Data
 public class EndProductRiotAccountDTO {
 
-    private String skin;
+    /** 用于搜索皮肤的 皮肤ID 数组 */
+    private List<String> skinSearchArray;
 
     private Long accountNo;
 

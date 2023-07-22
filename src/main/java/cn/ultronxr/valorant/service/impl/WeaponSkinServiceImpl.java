@@ -1,5 +1,6 @@
 package cn.ultronxr.valorant.service.impl;
 
+import cn.ultronxr.valorant.bean.VO.WeaponSkinSelectVO;
 import cn.ultronxr.valorant.bean.mybatis.bean.WeaponSkin;
 import cn.ultronxr.valorant.bean.mybatis.mapper.WeaponSkinMapper;
 import cn.ultronxr.valorant.service.WeaponSkinService;
@@ -8,6 +9,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,6 +25,13 @@ public class WeaponSkinServiceImpl extends ServiceImpl<WeaponSkinMapper, WeaponS
 
     @Autowired
     private WeaponSkinMapper wsMapper;
+
+    @Autowired
+    private RedisTemplate<Object, Object> redisTemplate;
+
+    public static final String REDIS_CACHE_KEY = "valorant_cache";
+
+    public static final String REDIS_CACHE_HASH_KEY = "weapon_skin_select_vo_list";
 
 
     public List<WeaponSkin> getSkins(String weaponId) {
@@ -62,6 +71,18 @@ public class WeaponSkinServiceImpl extends ServiceImpl<WeaponSkinMapper, WeaponS
         LambdaQueryWrapper<WeaponSkin> wrapper = Wrappers.lambdaQuery();
         wrapper.eq(WeaponSkin::getUuid, skinId);
         return this.getOne(wrapper).getParentWeaponUuid();
+    }
+
+    @Override
+    public List<WeaponSkinSelectVO> weaponSkinSelectAllSkin() {
+        // 先从 redis 缓存中取，如果缓存中没有，再去数据库中取
+        List<WeaponSkinSelectVO> list =
+                (List<WeaponSkinSelectVO>) redisTemplate.opsForHash().get(REDIS_CACHE_KEY, REDIS_CACHE_HASH_KEY);
+        if(null == list) {
+            list = getBaseMapper().weaponSkinSelect();
+            redisTemplate.opsForHash().put(REDIS_CACHE_KEY, REDIS_CACHE_HASH_KEY, list);
+        }
+        return list;
     }
 
 }

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>valorant</title>
+    <link href="/static/lib/layui-v2.7.6/css/layui.css" rel="stylesheet">
+    <link href="/static/css/layui-override.css" rel="stylesheet">
+    <style>
+        .layui-form-label {
+            width: 80px !important;
+        }
+        .layui-form-item label {
+            font-weight: bold;
+        }
+        .layui-input-inline {
+            padding: 9px 15px !important;
+            width: 200px !important;
+        }
+    </style>
+</head>
+<body>
+<div id="data-form">
+    <form class="layui-form" action="" style="margin: 15px 10px" lay-filter="dataForm">
+        <div class="layui-inline">
+            <label class="layui-form-label">近战武器</label>
+            <div class="layui-input-inline">
+                <select class="layui-select" name="melee" id="melee"></select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">幻象</label>
+            <div class="layui-input-inline">
+                <select class="layui-select" name="phantom" id="phantom"></select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">暴徒</label>
+            <div class="layui-input-inline">
+                <select class="layui-select" name="vandal" id="vandal"></select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">斗牛犬</label>
+            <div class="layui-input-inline">
+                <select class="layui-select" name="bulldog" id="bulldog"></select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">捍卫者</label>
+            <div class="layui-input-inline">
+                <select class="layui-select" name="guardian" id="guardian"></select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">间谍</label>
+            <div class="layui-input-inline">
+                <select class="layui-select" name="operator" id="operator"></select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">警长</label>
+            <div class="layui-input-inline">
+                <select class="layui-select" name="marshal" id="marshal"></select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">恶灵</label>
+            <div class="layui-input-inline">
+                <select class="layui-select" name="spectre" id="spectre"></select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">刺针</label>
+            <div class="layui-input-inline">
+                <select class="layui-select" name="stinger" id="stinger"></select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">神射</label>
+            <div class="layui-input-inline">
+                <select class="layui-select" name="sheriff" id="sheriff"></select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">鬼魅</label>
+            <div class="layui-input-inline">
+                <select class="layui-select" name="ghost" id="ghost"></select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">狂弑</label>
+            <div class="layui-input-inline">
+                <select class="layui-select" name="frenzy" id="frenzy"></select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">短管</label>
+            <div class="layui-input-inline">
+                <select class="layui-select" name="shorty" id="shorty"></select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">制式手枪</label>
+            <div class="layui-input-inline">
+                <select class="layui-select" name="classic" id="classic"></select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">奥丁</label>
+            <div class="layui-input-inline">
+                <select class="layui-select" name="odin" id="odin"></select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">战神</label>
+            <div class="layui-input-inline">
+                <select class="layui-select" name="ares" id="ares"></select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">判官</label>
+            <div class="layui-input-inline">
+                <select class="layui-select" name="judge" id="judge"></select>
+            </div>
+        </div>
+        <div class="layui-inline">
+            <label class="layui-form-label">重砲</label>
+            <div class="layui-input-inline">
+                <select class="layui-select" name="bucky" id="bucky"></select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn btn-main" lay-submit lay-filter="confirm">确定</button>
+                <button class="layui-btn layui-btn-primary" id="cancel-btn">取消</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script src="/static/lib/layui-v2.7.6/layui.js"></script>
+<script src="/static/lib/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="/static/lib/jquery-3.6.0/jquery.cookie-v1.4.1.js"></script>
+<script src="/static/js/util/app.js"></script>
+<script src="/static/js/util/layui-utils.js"></script>
+<script src="/static/js/valorant/endProduct/account/client/skinSearch.js"></script>
+</body>
+</html>

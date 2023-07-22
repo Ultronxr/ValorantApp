@@ -3,12 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=1450, initial-scale=1.0">
-    <title>valorant</title>
+    <title>无畏契约成品号选号</title>
+    <link rel="icon" href="/static/assets/img/valorant/wwdw/shop_logo.png">
     <link href="/static/lib/layui-v2.7.6/css/layui.css" rel="stylesheet">
     <link href="/static/css/layui-override.css" rel="stylesheet">
+    <link href="/static/css/valorant/valorant-style.css" rel="stylesheet">
     <style>
         html {
             min-width: 1500px;
+            background-image: url("/static/assets/img/valorant/RANT_Logo_V.jpg");
+            background-repeat: no-repeat;
+            background-position: left top;
+            background-size: cover;
         }
         body {
             width: 96%;
@@ -48,41 +54,54 @@
             background: url("/static/assets/img/valorant/endProduct/account/账号状态.png") no-repeat center;
             background-size: contain;
         }
+        .skin-search-btn {
+            background-color: #ff4654 !important;
+            font-weight: bold !important;
+            color: #3d3d3d !important;
+        }
     </style>
 </head>
 <body>
 <div id="table-div">
     <form class="searchBar layui-form layui-form-pane" action="">
         <div class="layui-form-item">
+            <!--<div class="layui-inline">-->
+            <!--    <label class="layui-form-label label-style-1">皮肤搜索</label>-->
+            <!--    <div class="layui-input-inline">-->
+            <!--        <input class="layui-input" name="skin" id="skin" autocomplete="off">-->
+            <!--    </div>-->
+            <!--</div>-->
             <div class="layui-inline">
-                <label class="layui-form-label">皮肤搜索</label>
-                <div class="layui-input-inline">
-                    <input class="layui-input" name="skin" id="skin" autocomplete="off">
-                </div>
+                <!--<label class="layui-form-label label-style-1">皮肤选择</label>-->
+                <!--<div class="layui-inline">-->
+                    <button type="button" class="layui-btn skin-search-btn" onclick="searchSkin()">皮肤选择</button>
+                <!--</div>-->
             </div>
             <div class="layui-inline">
-                <label class="layui-form-label">地区</label>
+                <label class="layui-form-label label-style-1">地区</label>
                 <div class="layui-input-inline">
                     <select class="layui-select" name="region" id="region"></select>
                 </div>
             </div>
             <div class="layui-inline">
-                <label class="layui-form-label">价格区间</label>
+                <label class="layui-form-label label-style-1">价格区间</label>
                 <div class="layui-input-inline">
                     <input class="layui-input price-input" name="priceLow" id="priceLow" autocomplete="off" lay-verify="number">
-                    -
+                    <span style="color: #fff; font-size: 17px;">-</span>
                     <input class="layui-input price-input" name="priceHigh" id="priceHigh" autocomplete="off" lay-verify="number">
                 </div>
             </div>
             <div class="layui-inline">
-                <label class="layui-form-label">价格排序</label>
+                <label class="layui-form-label label-style-1">价格排序</label>
                 <div class="layui-input-inline">
                     <select class="layui-select" name="priceOrder" id="priceOrder"></select>
                 </div>
             </div>
 
             <div class="layui-inline">
-                <button type="button" class="layui-btn btn-main" data-type="reload" lay-filter="data-search-btn" id="searchBtn"><i class="layui-icon"></i> 搜 索</button>
+                <button type="button" class="layui-btn btn-main" data-type="reload" lay-filter="data-search-btn" id="searchBtn">
+                    <span class="btn-main-text"><i class="layui-icon"></i> 搜 索</span>
+                </button>
             </div>
             <div class="layui-inline">
                 <button type="button" class="layui-btn layui-btn-primary" data-type="clear" lay-filter="data-clear-btn" id="clearBtn">清 空</button>

@@ -9,11 +9,13 @@ import cn.ultronxr.valorant.bean.mybatis.bean.Weapon;
 import cn.ultronxr.valorant.bean.mybatis.bean.WeaponSkin;
 import cn.ultronxr.valorant.service.WeaponService;
 import cn.ultronxr.valorant.service.WeaponSkinService;
+import cn.ultronxr.valorant.service.impl.WeaponSkinServiceImpl;
 import com.github.houbb.opencc4j.util.ZhConverterUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,18 +39,27 @@ public class WeaponAndSkinAPI extends BaseAPI {
     @Autowired
     private WeaponSkinService weaponSkinService;
 
+    @Autowired
+    private RedisTemplate<Object, Object> redisTemplate;
 
+
+    /**
+     * 更新数据库中的武器、皮肤内容<br/>
+     * 如果缓存了武器、皮肤信息，那么需要进行清理并更新！（这里默认会清理 redis 缓存）
+     *
+     * @return true-更新成功；false-更新失败
+     */
     @Transactional(rollbackFor = Exception.class)
-    public void processAndUpdateDB() {
+    public boolean processAndUpdateDB() {
         log.info("正在更新武器皮肤数据库...");
         String responseBody = requestAPI(WEAPON_API, null);
         if(StringUtils.isEmpty(responseBody)) {
-            return;
+            return false;
         }
 
         JSONArray dataArray = parseData(responseBody);
         if(null == dataArray) {
-            return;
+            return false;
         }
 
         List<Weapon> weaponList = new ArrayList<>(25);
@@ -57,10 +68,13 @@ public class WeaponAndSkinAPI extends BaseAPI {
 
         if(weaponService.saveOrUpdateBatch(weaponList)
                 && weaponSkinService.saveOrUpdateBatch(skinList)) {
+            // 清理 redis 缓存
+            redisTemplate.opsForHash().delete(WeaponSkinServiceImpl.REDIS_CACHE_KEY, WeaponSkinServiceImpl.REDIS_CACHE_HASH_KEY);
             log.info("更新武器及皮肤数据库完成。武器（weapon）数据量={}，皮肤（skin/level/chroma）数据量={}", weaponList.size(), skinList.size());
-            return;
+            return true;
         }
         log.info("更新武器及皮肤数据库失败。");
+        return false;
     }
 
     /**

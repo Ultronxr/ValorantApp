@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ultronxr.valorant.bean.mybatis.mapper.WeaponSkinMapper">
+
+    <resultMap id="WeaponSkinSelectVO" type="cn.ultronxr.valorant.bean.VO.WeaponSkinSelectVO">
+        <result column="weapon" jdbcType="VARCHAR" property="weapon" />
+        <result column="weaponUuid" jdbcType="VARCHAR" property="weaponUuid" />
+        <result column="skinList" jdbcType="VARCHAR" property="skinList" typeHandler="cn.ultronxr.framework.typeHandler.StringJsonArrayTypeHandler" />
+        <result column="skinUuidList" jdbcType="VARCHAR" property="skinUuidList" typeHandler="cn.ultronxr.framework.typeHandler.StringJsonArrayTypeHandler" />
+    </resultMap>
+
+    <select id="weaponSkinSelect" resultMap="WeaponSkinSelectVO">
+        SELECT
+            temp.weapon_display_name AS weapon,
+            temp.weapon_uuid AS weaponUuid,
+            JSON_ARRAYAGG( temp.skin_display_name ) AS skinList,
+            JSON_ARRAYAGG( temp.skin_uuid ) AS skinUuidList
+        FROM (
+            SELECT
+                weapon.display_name AS weapon_display_name,
+                weapon.uuid AS weapon_uuid,
+                weapon.sort_end_product AS sort_end_product,
+                skin.uuid AS skin_uuid,
+                skin.display_name AS skin_display_name,
+                <!-- 添加行号排序，使 JSON_ARRAYAGG 聚合的结果有序 -->
+                ROW_NUMBER() OVER (ORDER BY weapon.sort_end_product ASC, skin.display_name ASC) AS row_num
+            FROM
+                valorant_weapon_skin skin,
+                valorant_weapon weapon
+            WHERE
+                skin.type = 'level'
+                AND skin.parent_weapon_uuid = weapon.uuid
+                <!-- 排除武器的默认皮肤、“随机最爱皮肤”两类 -->
+                AND NOT ISNULL(skin.content_tier_uuid)
+                <!-- AND LOCATE( '随机最爱', skin.display_name ) = 0 -->
+                <!-- 排除带有“ 等级x”的等级皮肤 -->
+                AND LOCATE( ' 等级', skin.display_name ) = 0
+        ) AS temp
+        GROUP BY
+            temp.weapon_uuid
+        ORDER BY
+            ANY_VALUE(temp.sort_end_product) ASC
+    </select>
+
+</mapper>

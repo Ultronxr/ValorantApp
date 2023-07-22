@@ -21,23 +21,27 @@
             <if test="endProductRiotAccountDTO.priceHigh != null">
                 AND price <![CDATA[ <= ]]> #{endProductRiotAccountDTO.priceHigh}
             </if>
-            <if test="endProductRiotAccountDTO.skin != null and endProductRiotAccountDTO.skin != ''">
+            <if test="endProductRiotAccountDTO.skinSearchArray != null and endProductRiotAccountDTO.skinSearchArray.size() > 0">
                 AND account_no IN (
-                    SELECT DISTINCT
+                <!-- 查询出拥有所有皮肤ID的账号 -->
+                    SELECT
                         account_no
-                    FROM
-                        valorant_end_product_store_entitlements
+                    FROM (
+                        SELECT
+                            account_no,
+                            COUNT(item_id) AS count
+                        FROM
+                            valorant_end_product_store_entitlements
+                        WHERE
+                            item_id IN
+                            <foreach  item="item" index="index" collection="endProductRiotAccountDTO.skinSearchArray" open="(" separator="," close=" )">
+                                #{item}
+                            </foreach>
+                        GROUP BY
+                            account_no
+                    ) AS temp
                     WHERE
-                        item_id IN
-                        ( SELECT
-                              uuid
-                          FROM
-                              valorant_weapon_skin
-                          WHERE
-                              type = 'level'
-                            AND display_name LIKE CONCAT('%', #{endProductRiotAccountDTO.skin}, '%')
-                            AND LOCATE( ' 等级', display_name ) = 0
-                        )
+                        count = ${endProductRiotAccountDTO.skinSearchArray.size}
                 )
             </if>
         ORDER BY
