@@ -53,6 +53,13 @@
     left: 100px !important;
 }
 
+.layui-nav-tree .layui-nav-item * {
+    font-size: 13px !important;
+}
+.layui-nav .layui-nav-item a {
+    padding: 8px 12px !important;
+}
+
 /* 按钮动画 */
 
 /* 按钮主体 */

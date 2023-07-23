@@ -46,6 +46,13 @@ body {
     font-weight: bold;
 }
 
+.layui-nav-tree .layui-nav-item * {
+    font-size: 13px !important;
+}
+.layui-nav .layui-nav-item a {
+    padding: 8px 12px !important;
+}
+
 .layui-tab {
     height: 100%;
     margin: 0 !important;
