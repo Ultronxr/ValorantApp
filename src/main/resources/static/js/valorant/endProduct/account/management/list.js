@@ -119,6 +119,7 @@ var active = {
                 status: $("#status").val(),
                 priceLow: $("#priceLow").val(),
                 priceHigh: $("#priceHigh").val(),
+                priceOrder: $("#priceOrder").val(),
             }
         });
     },
@@ -128,6 +129,7 @@ var active = {
         $("#status").val("");
         $("#priceLow").val("");
         $("#priceHigh").val("");
+        $("#priceOrder").val("");
         refreshTable();
         form.render('select');
     }

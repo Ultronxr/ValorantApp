@@ -123,6 +123,7 @@ var active = {
                 status: $("#status").val(),
                 priceLow: $("#priceLow").val(),
                 priceHigh: $("#priceHigh").val(),
+                priceOrder: $("#priceOrder").val(),
             }
         });
     },
@@ -134,6 +135,7 @@ var active = {
         $("#status").val("");
         $("#priceLow").val("");
         $("#priceHigh").val("");
+        $("#priceOrder").val("");
         refreshTable();
         form.render('select');
     }
@@ -230,7 +232,7 @@ function searchSkin() {
     layer.open({
         title: '皮肤搜索',
         type: 2,
-        content: 'skinSearch.html',
+        content: '/static/html/valorant/endProduct/account/client/skinSearch.html',
         area: ['800px', '700px'],
         shadeClose: false
     });

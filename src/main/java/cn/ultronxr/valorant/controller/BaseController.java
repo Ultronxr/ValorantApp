@@ -51,7 +51,7 @@ public class BaseController {
         return "valorant/storefront/batch/both";
     }
 
-    /** 每日商店+夜市查询（带侧边栏）网页 */
+    /** 【无用】每日商店+夜市查询（带侧边栏）网页 */
     @GetMapping("/wwdw/sf2")
     public String sf2() {
         return "misc/userIndex";
@@ -78,7 +78,7 @@ public class BaseController {
     /** 成品号选号网页 */
     @GetMapping("/wwdw/cph")
     public String endProduct() {
-        return "valorant/endproduct/account/client/list";
+        return "valorant/endProduct/account/client/list";
     }
 
 }
