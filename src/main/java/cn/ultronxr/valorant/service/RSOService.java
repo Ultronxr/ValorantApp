@@ -45,6 +45,17 @@ public interface RSOService {
     RSO updateRSO(String userId);
 
     /**
+     * 更新成品号账号的 RSO<br/>
+     * TODO 2023/07/29 12:57:16 最好把 EndProductRiotAccount 相关的方法全部单独拎出来，放到另外的 EndProductRSOServiceImpl 实现文件中去<br/>
+     * 成品号账号的数据库主键是账号编号（accountNo），这里沿用了普通拳头账号的 userId 主键，原因是 RSO 对象中不包含账号编号信息，也不好强行改；
+     * 成品号账号的 userId 也是唯一的，可以用来 selectOne()
+     *
+     * @param userId 用户ID
+     * @return
+     */
+    RSO updateRSOForEndProduct(String userId);
+
+    /**
      * 为一个账号请求获取一个新的 RSO 对象（token是全新的）
      * @param riotAccount 账号对象
      * @return RSO 对象

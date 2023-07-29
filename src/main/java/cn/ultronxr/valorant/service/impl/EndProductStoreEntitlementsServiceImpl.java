@@ -112,7 +112,7 @@ public class EndProductStoreEntitlementsServiceImpl extends ServiceImpl<EndProdu
             }
         } catch (APIUnauthorizedException e1) {
             log.info("RSO token 已过期，尝试更新 token ，userId={}", rso.getUserId());
-            rso = rsoService.updateRSO(rso.getUserId());
+            rso = rsoService.updateRSOForEndProduct(rso.getUserId());
             try {
                 if(rso != null) {
                     jObj = seAPI.processSkins(rso);

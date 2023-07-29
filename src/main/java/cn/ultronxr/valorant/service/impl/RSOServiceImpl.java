@@ -7,11 +7,14 @@ import cn.hutool.http.Method;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import cn.ultronxr.valorant.auth.RSO;
+import cn.ultronxr.valorant.bean.mybatis.bean.EndProductRiotAccount;
 import cn.ultronxr.valorant.bean.mybatis.bean.RiotAccount;
+import cn.ultronxr.valorant.bean.mybatis.mapper.EndProductRiotAccountMapper;
 import cn.ultronxr.valorant.bean.mybatis.mapper.RiotAccountMapper;
 import cn.ultronxr.valorant.exception.*;
 import cn.ultronxr.valorant.service.RSOService;
 import cn.ultronxr.valorant.util.RSOUtils;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +35,9 @@ public class RSOServiceImpl implements RSOService {
 
     @Autowired
     private RiotAccountMapper accountMapper;
+
+    @Autowired
+    private EndProductRiotAccountMapper endProductRiotAccountMapper;
 
 
     @Override
@@ -197,6 +203,40 @@ public class RSOServiceImpl implements RSOService {
                         .set(RiotAccount::getAccessToken, account.getAccessToken())
                         .set(RiotAccount::getAccessTokenExpireAt, account.getAccessTokenExpireAt())
                         .set(needRequestEntitlementsToken, RiotAccount::getEntitlementsToken, account.getEntitlementsToken())
+        );
+        return rso;
+    }
+
+    @Override
+    public RSO updateRSOForEndProduct(String userId) {
+        RSO rso = null;
+        EndProductRiotAccount account = endProductRiotAccountMapper.selectOne(
+                new LambdaQueryWrapper<EndProductRiotAccount>()
+                        .eq(EndProductRiotAccount::getUserId, userId)
+        );
+        boolean needRequestEntitlementsToken = StringUtils.isEmpty(account.getEntitlementsToken());
+        try {
+            HttpRequest request = HttpUtil.createPost(RSOUtils.AUTH_URL);
+            rso = this.processRSO(request, account.getUsername(), account.getPassword(), account.getMultiFactor(), needRequestEntitlementsToken);
+            // 如果不需要请求 entitlementsToken，那么需要手动填充 RSO 对象字段
+            if(!needRequestEntitlementsToken) {
+                rso.setEntitlementsToken(account.getEntitlementsToken());
+            }
+        } catch (Exception e) {
+            log.warn("RSO验证失败：exception={}, userId={}, username={}, ", e.getMessage(), account.getUserId(), account.getUsername());
+            return null;
+        }
+        account.setAccessToken(rso.getAccessToken());
+        account.setAccessTokenExpireAt(rso.getAccessTokenExpireAt());
+        if(needRequestEntitlementsToken) {
+            account.setEntitlementsToken(rso.getEntitlementsToken());
+        }
+        endProductRiotAccountMapper.update(account,
+                new LambdaUpdateWrapper<EndProductRiotAccount>()
+                        .eq(EndProductRiotAccount::getAccountNo, account.getAccountNo())
+                        .set(EndProductRiotAccount::getAccessToken, account.getAccessToken())
+                        .set(EndProductRiotAccount::getAccessTokenExpireAt, account.getAccessTokenExpireAt())
+                        .set(needRequestEntitlementsToken, EndProductRiotAccount::getEntitlementsToken, account.getEntitlementsToken())
         );
         return rso;
     }
