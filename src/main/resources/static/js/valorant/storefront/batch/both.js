@@ -475,7 +475,7 @@ $(function () {
 
 function loadAllSelect() {
     let hasEmailSelectOptions = [
-        {name: "未验证初邮", value: false},
+        {name: "不带初邮", value: false},
         {name: "带初邮", value: true}
     ];
     let regionSelectOptions = [
@@ -537,7 +537,7 @@ table.render({
                 if(d.hasEmail != null && d.hasEmail === true) {
                     return '带初邮';
                 }
-                return '未验证初邮';
+                return '不带初邮';
             }
         }
         ,{field: 'region', title: '地区', sort: false, align: 'center', width: '6%', style: 'height:50px;',

@@ -38,7 +38,7 @@ $(function () {
 
 function loadAllSelect() {
     let hasEmailSelectOptions = [
-        {name: "未验证初邮", value: false},
+        {name: "不带初邮", value: false},
         {name: "带初邮", value: true}
     ];
     let isAuthFailureSelectOptions = [
@@ -65,7 +65,7 @@ table.render({
                 if(d.hasEmail != null && d.hasEmail === true) {
                     return d.email;
                 }
-                return '未验证初邮';
+                return '不带初邮';
             }
         }
         ,{field: 'isAuthFailure', title: '登录验证', sort: false, align: 'center',

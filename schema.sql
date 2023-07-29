@@ -14,7 +14,7 @@ CREATE TABLE valorant_riot_account (
     `region`                    INT              NOT NULL DEFAULT 1         COMMENT '账号地区，0-缅甸、1-马来西亚',
     `username`                  VARCHAR(100)     DEFAULT NULL               COMMENT '用户名（登录名）',
     `password`                  VARCHAR(500)     DEFAULT NULL               COMMENT '密码',
-    `has_email`                 TINYINT(1)       NOT NULL DEFAULT 0         COMMENT '是否带初邮。0-未验证初邮；1-带初邮',
+    `has_email`                 TINYINT(1)       NOT NULL DEFAULT 0         COMMENT '是否带初邮。0-不带初邮；1-带初邮',
     `email`                     VARCHAR(100)     DEFAULT NULL               COMMENT '初始邮箱',
     `email_pwd`                 VARCHAR(500)     DEFAULT NULL               COMMENT '初始邮箱密码',
     `access_token`              VARCHAR(3000)    DEFAULT NULL               COMMENT 'API用户验证token（从拳头RSO接口中获取）',
@@ -33,7 +33,7 @@ CREATE TABLE valorant_riot_account (
 ALTER TABLE valorant_riot_account ADD `account_no` BIGINT UNIQUE KEY NOT NULL AUTO_INCREMENT     COMMENT '账户编号' AFTER `user_id`;
 ALTER TABLE valorant_riot_account CHANGE `social_name` `email` VARCHAR(100)     DEFAULT NULL       COMMENT '初始邮箱';
 ALTER TABLE valorant_riot_account CHANGE `social_tag` `email_pwd` VARCHAR(500)     DEFAULT NULL    COMMENT '初始邮箱密码';
-ALTER TABLE valorant_riot_account ADD `has_email`    TINYINT(1)    NOT NULL DEFAULT 0    COMMENT '是否带初邮。0-未验证初邮；1-带初邮' AFTER `password`;
+ALTER TABLE valorant_riot_account ADD `has_email`    TINYINT(1)    NOT NULL DEFAULT 0    COMMENT '是否带初邮。0-不带初邮；1-带初邮' AFTER `password`;
 ALTER TABLE valorant_riot_account ADD `is_auth_failure`    TINYINT(1)    NOT NULL DEFAULT 0    COMMENT '是否RSO验证失败（账号或密码错误，批量更新时会跳过验证失败的账号）。0-验证成功；1-验证失败' AFTER `is_verified`;
 ALTER TABLE valorant_riot_account ADD `access_token_expire_at`    DATETIME    DEFAULT NULL    COMMENT 'accessToken过期时间' AFTER `access_token`;
 ALTER TABLE valorant_riot_account ADD `cookie`    VARCHAR(3000)    DEFAULT NULL    COMMENT '用于下次免密登录的cookie' AFTER `multi_factor`;
@@ -97,7 +97,7 @@ CREATE TABLE valorant_store_front (
 CREATE TABLE valorant_cdk (
     `cdk`                      VARCHAR(100)    NOT NULL                   COMMENT 'CDK内容',
     `cdk_no`                   BIGINT          NOT NULL AUTO_INCREMENT    COMMENT 'CDK编号',
-    `type_has_email`           TINYINT(1)      NOT NULL DEFAULT 0         COMMENT 'CDK种类（初邮）：1 - 带初邮； 0 - 未验证初邮',
+    `type_has_email`           TINYINT(1)      NOT NULL DEFAULT 0         COMMENT 'CDK种类（初邮）：1 - 带初邮； 0 - 不带初邮',
     `type_reusable`            TINYINT(1)      NOT NULL DEFAULT 0         COMMENT 'CDK种类（重复使用）：1 - 可重复使用；0 - 不可重复使用',
     `reuse_remaining_times`    INT             DEFAULT NULL               COMMENT 'CDK剩余可用次数',
     `is_used`                  TINYINT(1)      NOT NULL DEFAULT 0         COMMENT '是否被使用：1 - true; 0 - false',
@@ -133,7 +133,7 @@ CREATE TABLE valorant_end_product_riot_account (
     `region`                    INT              NOT NULL DEFAULT 0         COMMENT '账号地区，0-缅甸、1-马来西亚、2-香港、3-泰国',
     `username`                  VARCHAR(100)     DEFAULT NULL               COMMENT '用户名（登录名）',
     `password`                  VARCHAR(500)     DEFAULT NULL               COMMENT '密码',
-    `has_email`                 TINYINT(1)       NOT NULL DEFAULT 0         COMMENT '是否带初邮。0-未验证初邮；1-带初邮',
+    `has_email`                 TINYINT(1)       NOT NULL DEFAULT 0         COMMENT '是否带初邮。0-不带初邮；1-带初邮',
     `email`                     VARCHAR(100)     DEFAULT NULL               COMMENT '初始邮箱',
     `email_pwd`                 VARCHAR(500)     DEFAULT NULL               COMMENT '初始邮箱密码',
     `access_token`              VARCHAR(3000)    DEFAULT NULL               COMMENT 'API用户验证token（从拳头RSO接口中获取）',

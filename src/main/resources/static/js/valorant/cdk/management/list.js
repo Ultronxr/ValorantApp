@@ -4,7 +4,7 @@ $(function () {
 
 function loadAllSelect() {
     let typeHasEmail = [
-        {name: "未验证初邮CDK（黄金版）", value: false},
+        {name: "不带初邮CDK（黄金版）", value: false},
         {name: "带初邮CDK（完全版）", value: true}
     ];
     let typeReusable = [
@@ -30,7 +30,7 @@ table.render({
                 if(d.typeHasEmail != null && d.typeHasEmail === true) {
                     return '带初邮CDK（完全版）';
                 }
-                return '未验证初邮（黄金版）';
+                return '不带初邮（黄金版）';
             }
         }
         ,{field: 'typeReusable', title: '是否可重复使用', sort: true, align: 'center',
