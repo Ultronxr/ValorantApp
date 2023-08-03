@@ -25,8 +25,12 @@ public enum RiotAccountRegion {
     }
 
     public static String getRegionStrByCode(int code) {
-        RiotAccountRegion result = EnumUtil.getBy(RiotAccountRegion.class, (e)->e.code == code);
+        RiotAccountRegion result = getRegionByCode(code);
         return result != null ? result.getRegion() : null;
+    }
+
+    public static RiotAccountRegion getRegionByCode(int code) {
+        return EnumUtil.getBy(RiotAccountRegion.class, (e)->e.code == code);
     }
 
 }

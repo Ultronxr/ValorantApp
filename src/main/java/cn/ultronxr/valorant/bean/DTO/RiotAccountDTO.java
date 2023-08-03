@@ -20,6 +20,8 @@ public class RiotAccountDTO {
 
     private Boolean isAuthFailure;
 
+    private Integer region;
+
     private Integer current = 1;
 
     private Integer size = 100;

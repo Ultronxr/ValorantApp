@@ -48,6 +48,12 @@
                     <select class="layui-select" name="isAuthFailure" id="isAuthFailure"></select>
                 </div>
             </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">地区</label>
+                <div class="layui-input-inline">
+                    <select class="layui-select" name="region" id="region"></select>
+                </div>
+            </div>
             <br/>
             <div class="layui-inline">
                 <button type="button" class="layui-btn btn-main"  data-type="reload" lay-filter="data-search-btn" id="searchBtn"><i class="layui-icon"></i> 搜 索</button>
@@ -62,8 +68,11 @@
 
 <script type="text/html" id="toolbar">
     <div class="layui-btn-container">
-        <button type="button" class="layui-btn btn-main" id="import">
-            <i class="layui-icon">&#xe67c;</i>批量导入账号
+        <button type="button" class="layui-btn btn-main" id="importMyanmar">
+            <i class="layui-icon">&#xe67c;</i>批量导入账号（缅甸）
+        </button>
+        <button type="button" class="layui-btn btn-main" id="importMalaysia">
+            <i class="layui-icon">&#xe67c;</i>批量导入账号（马来）
         </button>
         <button type="button" class="layui-btn btn-main" id="importResult" onclick="downloadImportResult()">
             <i class="layui-icon">&#xe601;</i>获取上次批量导入结果

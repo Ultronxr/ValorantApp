@@ -8,17 +8,11 @@ $(function () {
 });
 
 function loadAllSelect() {
-    let region = [
-        {name: "缅甸", value: 0},
-        {name: "马来西亚", value: 1},
-        {name: "香港", value: 2},
-        {name: "泰国", value: 3},
-    ];
     let priceOrder = [
         {name: "升序", value: 0},
         {name: "降序", value: 1},
     ];
-    loadSelectFromJson(region, $("#region"), "name", "value");
+    loadSelectFromJson(app.REGION, $("#region"), "name", "value");
     loadSelectFromJson(priceOrder, $("#priceOrder"), "name", "value");
 }
 
@@ -46,7 +40,7 @@ table.render({
             }}
         ,{field: 'region', title: '', width: '20%', sort: false, align: 'center',
             templet: function (d) {
-                return regionCodeToStr(d.region);
+                return app.util.region.regionCodeToStr(d.region);
             }
         }
         ,{field: 'status', title: '', width: '20%', sort: false, align: 'center',
@@ -177,16 +171,6 @@ function getOne(accountNo) {
         area: ['1200px', '900px'],
         shadeClose: true
     });
-}
-
-function regionCodeToStr(region) {
-    switch (region) {
-        case 0: return "缅甸";
-        case 1: return "马来西亚";
-        case 2: return "香港";
-        case 3: return "泰国";
-        default: return ""
-    }
 }
 
 function statusCodeToStr(status) {

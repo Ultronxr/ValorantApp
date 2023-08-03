@@ -6,11 +6,16 @@ layui.define(function(){
 
 $(function () {
    loadAllSelect();
+   uploadRenderer('#importMyanmar', {region: 0});
+   uploadRenderer('#importMalaysia', {region: 1});
+});
+
+function uploadRenderer(element, data) {
     upload.render({
-        elem: '#import'
+        elem: element
         ,url: app.util.api.getAPIUrl('valorant.account.import')
         ,headers: {}
-        ,data: {}
+        ,data: data
         ,field: 'file'
         ,auto: true
         ,accept: 'file'
@@ -34,7 +39,7 @@ $(function () {
             layer.msg('文件上传失败！', {icon:2, time: 2000});
         }
     });
-});
+}
 
 function loadAllSelect() {
     let hasEmailSelectOptions = [
@@ -45,8 +50,15 @@ function loadAllSelect() {
         {name: "登录验证成功", value: false},
         {name: "用户名或密码错误", value: true}
     ];
+    let region = [
+        {name: "缅甸", value: 0},
+        {name: "马来西亚", value: 1},
+        // {name: "香港", value: 2},
+        // {name: "泰国", value: 3},
+    ];
     loadSelectFromJson(hasEmailSelectOptions, $("#hasEmail"), "name", "value");
     loadSelectFromJson(isAuthFailureSelectOptions, $("#isAuthFailure"), "name", "value");
+    loadSelectFromJson(region, $("#region"), "name", "value");
 }
 
 table.render({
@@ -74,6 +86,11 @@ table.render({
                     return '用户名或密码错误';
                 }
                 return '登录验证成功';
+            }
+        }
+        ,{field: 'region', title: '地区', sort: false, align: 'center',
+            templet: function (d) {
+                return app.util.region.regionCodeToStr(d.region);
             }
         }
         ,{title:'操作', width: 125, minWidth: 125, fixed: 'right', toolbar: '#inlineToolbar', align: 'center'}
@@ -145,6 +162,7 @@ var active = {
                 username: $("#username").val(),
                 hasEmail: $("#hasEmail").val(),
                 isAuthFailure: $("#isAuthFailure").val(),
+                region: $("#region").val(),
             }
         });
     },
@@ -154,6 +172,7 @@ var active = {
         $("#username").val("");
         $("#hasEmail").val("");
         $("#isAuthFailure").val("");
+        $("#region").val("");
         refreshTable();
         form.render('select');
     }

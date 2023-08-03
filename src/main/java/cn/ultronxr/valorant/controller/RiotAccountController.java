@@ -6,6 +6,7 @@ import cn.ultronxr.common.util.AjaxResponseUtils;
 import cn.ultronxr.framework.annotation.AdminAuthRequired;
 import cn.ultronxr.valorant.bean.DTO.RiotAccountDTO;
 import cn.ultronxr.valorant.bean.enums.RiotAccountCreateState;
+import cn.ultronxr.valorant.bean.enums.RiotAccountRegion;
 import cn.ultronxr.valorant.bean.mybatis.bean.RiotAccount;
 import cn.ultronxr.valorant.exception.RSOMultiFactorAttemptFailedException;
 import cn.ultronxr.valorant.service.RSOService;
@@ -74,8 +75,9 @@ public class RiotAccountController {
     @AdminAuthRequired
     @PostMapping("/import")
     @ResponseBody
-    public AjaxResponse importFile(@RequestParam("file") MultipartFile file) {
-        if(accountService.importFile(file)) {
+    public AjaxResponse importFile(@RequestParam("file") MultipartFile file, @RequestParam("region") Integer region) {
+        log.info("Excel 导入拳头账号：region={}", region);
+        if(accountService.importFile(file, RiotAccountRegion.getRegionByCode(region))) {
             return AjaxResponseUtils.success();
         }
         return AjaxResponseUtils.fail();

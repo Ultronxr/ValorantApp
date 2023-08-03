@@ -3,12 +3,6 @@ $(function () {
 });
 
 function loadAllSelect() {
-    let region = [
-        {name: "缅甸", value: 0},
-        {name: "马来西亚", value: 1},
-        {name: "香港", value: 2},
-        {name: "泰国", value: 3},
-    ];
     let status = [
         {name: "在售", value: 1},
         {name: "出租", value: 2},
@@ -18,7 +12,7 @@ function loadAllSelect() {
         {name: "升序", value: 0},
         {name: "降序", value: 1},
     ];
-    loadSelectFromJson(region, $("#region"), "name", "value");
+    loadSelectFromJson(app.REGION, $("#region"), "name", "value");
     loadSelectFromJson(status, $("#status"), "name", "value");
     loadSelectFromJson(priceOrder, $("#priceOrder"), "name", "value");
 }
@@ -35,7 +29,7 @@ table.render({
         ,{field: 'username', title: '账号名', sort: false, align: 'center'}
         ,{field: 'region', title: '地区', sort: true, align: 'center',
             templet: function (d) {
-                return regionCodeToStr(d.region);
+                return app.util.region.regionCodeToStr(d.region);
             }
         }
         ,{field: 'price', title: '价格', sort: true, align: 'center'}
@@ -335,16 +329,6 @@ table.on('tool(dataTable)', function(obj) {
 // table.on('checkbox(accountTable)', function(obj){
 //     console.log(obj)
 // });
-
-function regionCodeToStr(region) {
-    switch (region) {
-        case 0: return "缅甸";
-        case 1: return "马来西亚";
-        case 2: return "香港";
-        case 3: return "泰国";
-        default: return ""
-    }
-}
 
 function statusCodeToStr(status) {
     switch (status) {

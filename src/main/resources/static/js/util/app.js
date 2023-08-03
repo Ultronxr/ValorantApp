@@ -72,6 +72,14 @@ const app = {
         },
     },
 
+    // 账号地区
+    REGION: [
+        {name: "缅甸", value: 0},
+        {name: "马来西亚", value: 1},
+        {name: "香港", value: 2},
+        {name: "泰国", value: 3},
+    ],
+
     // 通用方法类库
     util: {
         api: {
@@ -112,6 +120,18 @@ const app = {
                 }
                 recurseSearchAPI(mainObj, props);
                 return outputs;
+            },
+        },
+
+        region: {
+            regionCodeToStr: function (region) {
+                switch (region) {
+                    case 0: return "缅甸";
+                    case 1: return "马来西亚";
+                    case 2: return "香港";
+                    case 3: return "泰国";
+                    default: return ""
+                }
             },
         },
 

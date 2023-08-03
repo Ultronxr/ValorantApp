@@ -7,6 +7,7 @@ import cn.hutool.poi.excel.ExcelWriter;
 import cn.ultronxr.valorant.auth.RSO;
 import cn.ultronxr.valorant.bean.DTO.RiotAccountDTO;
 import cn.ultronxr.valorant.bean.enums.RiotAccountCreateState;
+import cn.ultronxr.valorant.bean.enums.RiotAccountRegion;
 import cn.ultronxr.valorant.bean.mybatis.bean.RiotAccount;
 import cn.ultronxr.valorant.bean.mybatis.mapper.RiotAccountMapper;
 import cn.ultronxr.valorant.service.RSOService;
@@ -107,7 +108,7 @@ public class RiotAccountServiceImpl extends ServiceImpl<RiotAccountMapper, RiotA
     }
 
     @Override
-    public boolean importFile(MultipartFile file) {
+    public boolean importFile(MultipartFile file, RiotAccountRegion region) {
         FileInputStream fileIS = null;
         try {
             String transferFilename = "拳头账号导入模板-" + DateUtil.now().replaceAll("[ :]", "-") + ".xlsx";
@@ -150,6 +151,9 @@ public class RiotAccountServiceImpl extends ServiceImpl<RiotAccountMapper, RiotA
                 }
                 if(size > 3) {
                     account.setEmailPwd(String.valueOf(row.get(3)));
+                }
+                if(region != null) {
+                    account.setRegion(region.getCode());
                 }
 
                 RiotAccountCreateState state = this.createWithoutRSO(account);
@@ -209,12 +213,14 @@ public class RiotAccountServiceImpl extends ServiceImpl<RiotAccountMapper, RiotA
         Page<RiotAccount> page = Page.of(accountDTO.getCurrent(), accountDTO.getSize());
 
         LambdaQueryWrapper<RiotAccount> wrapper = Wrappers.lambdaQuery();
-        wrapper.select(RiotAccount::getUserId, RiotAccount::getUsername, RiotAccount::getAccountNo, RiotAccount::getHasEmail, RiotAccount::getEmail, RiotAccount::getIsAuthFailure)
+        wrapper.select(RiotAccount::getUserId, RiotAccount::getUsername, RiotAccount::getAccountNo, RiotAccount::getHasEmail,
+                        RiotAccount::getEmail, RiotAccount::getIsAuthFailure, RiotAccount::getRegion)
                 .eq(accountDTO.getAccountNo() != null, RiotAccount::getAccountNo, accountDTO.getAccountNo())
                 .like(StringUtils.isNotEmpty(accountDTO.getUserId()), RiotAccount::getUserId, accountDTO.getUserId())
                 .like(StringUtils.isNotEmpty(accountDTO.getUsername()), RiotAccount::getUsername, accountDTO.getUsername())
                 .eq(accountDTO.getHasEmail() != null, RiotAccount::getHasEmail, accountDTO.getHasEmail())
                 .eq(accountDTO.getIsAuthFailure() != null, RiotAccount::getIsAuthFailure, accountDTO.getIsAuthFailure())
+                .eq(accountDTO.getRegion() != null, RiotAccount::getRegion, accountDTO.getRegion())
                 // 如果使用账号编号/ID查找，是可以查出 isDel = true 的账号的
                 .eq(accountDTO.getAccountNo() == null && StringUtils.isEmpty(accountDTO.getUserId()), RiotAccount::getIsDel, false)
                 .orderByAsc(RiotAccount::getAccountNo);

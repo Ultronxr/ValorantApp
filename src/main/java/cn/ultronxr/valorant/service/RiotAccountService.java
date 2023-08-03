@@ -2,6 +2,7 @@ package cn.ultronxr.valorant.service;
 
 import cn.ultronxr.valorant.bean.DTO.RiotAccountDTO;
 import cn.ultronxr.valorant.bean.enums.RiotAccountCreateState;
+import cn.ultronxr.valorant.bean.enums.RiotAccountRegion;
 import cn.ultronxr.valorant.bean.mybatis.bean.RiotAccount;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -23,7 +24,13 @@ public interface RiotAccountService extends IService<RiotAccount> {
      */
     RiotAccountCreateState createWithoutRSO(RiotAccount account);
 
-    boolean importFile(MultipartFile file);
+    /**
+     * 使用 Excel 批量导入拳头账号
+     * @param file   Excel 文件
+     * @param region 拳头账号地区枚举
+     * @return
+     */
+    boolean importFile(MultipartFile file, RiotAccountRegion region);
 
     //boolean update(RiotAccount account);
 

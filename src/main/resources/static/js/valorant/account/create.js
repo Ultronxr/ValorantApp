@@ -3,6 +3,13 @@ $(function () {
 });
 
 function loadAllSelect() {
+    let region = [
+        {name: "缅甸", value: 0},
+        {name: "马来西亚", value: 1},
+        // {name: "香港", value: 2},
+        // {name: "泰国", value: 3},
+    ];
+    loadSelectFromJson(region, $("#region"), "name", "value");
 }
 
 form.on('submit(create)', function(data) {
