@@ -207,7 +207,7 @@ table.on('toolbar(dataTable)', function(obj){
                                     // console.log(res);
                                     if(res.code === app.RESPONSE_CODE.SUCCESS) {
                                         parent.layer.msg('提号成功。', {icon: 1, time: 3000});
-                                        let redeemResponse = "地区：" + regionCodeToStr(res.data.region) + "<br/>"
+                                        let redeemResponse = "地区：" + app.util.region.regionCodeToStr(res.data.region) + "<br/>"
                                                     + "价格：￥" + res.data.price + "<br/>"
                                                     + "账号名：" + res.data.username + "<br/>"
                                                     + "账号密码：" + res.data.password + "<br/>"
