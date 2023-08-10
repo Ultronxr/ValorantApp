@@ -504,7 +504,7 @@ function renderDropdown(element, id) {
 table.render({
     elem: '#data-table'
     ,id: 'dataTable'
-    ,height: 700
+    ,height: 800
     // ,skin: 'line' //行边框风格 line row nob
     ,even: true //开启隔行背景
     ,size: 'lg' //小尺寸的表格 sm lg
