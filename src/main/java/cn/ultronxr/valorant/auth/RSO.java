@@ -36,10 +36,10 @@ public class RSO {
     private String riotClientPlatform = "ew0KCSJwbGF0Zm9ybVR5cGUiOiAiUEMiLA0KCSJwbGF0Zm9ybU9TIjogIldpbmRvd3MiLA0KCSJwbGF0Zm9ybU9TVmVyc2lvbiI6ICIxMC4wLjE5MDQyLjEuMjU2LjY0Yml0IiwNCgkicGxhdGZvcm1DaGlwc2V0IjogIlVua25vd24iDQp9";
 
     /** 拳头客户端版本 */
-    private String riotClientVersion = "release-06.03-shipping-6-830687";
+    private String riotClientVersion = "release-07.03-shipping-10-948900";
 
     /** 拳头客户端构建版本 默认值 */
-    private static final String DEFAULT_RIOT_CLIENT_BUILD = "63.0.9.4909983.4789131";
+    private static final String DEFAULT_RIOT_CLIENT_BUILD = "69.0.3.228.1352";
 
     /** 拳头客户端构建版本 */
     private String riotClientBuild = DEFAULT_RIOT_CLIENT_BUILD;
