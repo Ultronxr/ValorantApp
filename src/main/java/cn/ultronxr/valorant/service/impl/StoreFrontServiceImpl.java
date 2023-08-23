@@ -314,7 +314,7 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
             // 处理一个账号数据需要请求4-6次API（包括RSO认证），2分钟的请求上限为20个账号，即6秒处理一个账号
             // 实测处理一个账号数据请求时间为1.5秒左右，添加 sleep
             try {
-                singleItemOffersWithSleep(userId, date, 1.5f);
+                singleItemOffersWithSleep(userId, date, 1.6f);
             } catch (Exception e) {
                 log.warn("更新未预更新token账号的每日商店+夜市数据时抛出异常！", e);
             }

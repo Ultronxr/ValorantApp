@@ -31,7 +31,8 @@ public class RSOUtils {
 
     private static final Map<String, String> HEADER = new HashMap<>() {{
         put("Accept-Encoding", "deflate, gzip, zstd");
-        put("User-Agent", RSO.DEFAULT_RIOT_CLIENT_AGENT);
+        // put("User-Agent", RSO.DEFAULT_RIOT_CLIENT_AGENT);
+        put("User-Agent", "ASGenPoj/5.89.6"); // random UA string to avoid 403 forbidden issue
         put("Cache-Control", "no-cache");
         put("Accept", "application/json");
         put("Content-Type", "application/json");
