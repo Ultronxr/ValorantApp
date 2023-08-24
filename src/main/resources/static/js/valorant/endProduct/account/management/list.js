@@ -39,12 +39,12 @@ table.render({
             }
         }
         ,{field: 'title', title: '标题', width: '10%', sort: false, hide: false, align: 'center'}
-        ,{field: 'note', title: '备注', width: '20%', sort: false, hide: false, align: 'center'}
+        ,{field: 'note', title: '备注', width: '15%', sort: false, hide: false, align: 'center'}
         ,{field: 'img', title: '账号截图', width:'15%', sort: false, hide: false, align: 'center',
             templet: function (d) {
                 return '<img src="' + d.img + '" onclick="previewImg(this)" height="100px">';
             }}
-        ,{title:'操作', width: '10%', align: 'center', fixed: 'right', toolbar: '#inlineToolbar'}
+        ,{title:'操作', width: '15%', align: 'center', fixed: 'right', toolbar: '#inlineToolbar'}
     ]]
     ,toolbar: '#toolbar'
     ,defaultToolbar: [] //清空默认的三个工具栏按钮
@@ -136,26 +136,26 @@ $('#table-div .layui-btn').on('click', function(){
 });
 
 // 删除选中的行
-// function deleteRows(toBeDeletedIdList) {
-//     app.util.ajax.delete(app.util.api.getAPIUrl('valorant.endProduct.account.management.delete'),
-//         {accountNoList: toBeDeletedIdList.join()},
-//         function (res) {
-//             // console.log(res);
-//             if(res.code === app.RESPONSE_CODE.SUCCESS) {
-//                 layer.msg('删除成功。', {icon: 1, time: 2000});
-//                 refreshTable();
-//             }
-//         },
-//         function (res) {
-//             if(res.status === 401) {
-//                 layer.msg('未授权！', {icon:2, time: 2000});
-//             } else {
-//                 layer.msg('请求失败！', {icon:2, time: 2000});
-//             }
-//             refreshTable();
-//         }
-//     );
-// }
+function deleteRows(toBeDeletedIdList) {
+    app.util.ajax.delete(app.util.api.getAPIUrl('valorant.endProduct.account.management.delete'),
+        {accountNoList: toBeDeletedIdList.join()},
+        function (res) {
+            // console.log(res);
+            if(res.code === app.RESPONSE_CODE.SUCCESS) {
+                layer.msg('删除成功。', {icon: 1, time: 2000});
+                refreshTable();
+            }
+        },
+        function (res) {
+            if(res.status === 401) {
+                layer.msg('未授权！', {icon:2, time: 2000});
+            } else {
+                layer.msg('请求失败！', {icon:2, time: 2000});
+            }
+            refreshTable();
+        }
+    );
+}
 
 // 顶部工具栏事件
 table.on('toolbar(dataTable)', function(obj){
@@ -315,13 +315,13 @@ table.on('tool(dataTable)', function(obj) {
             });
             break;
         }
-        // case 'del': {
-        //     layer.confirm('确认删除此行？', {icon: 3, title:'提示'}, function(index) {
-        //         let toBeDeletedIdList = [rowData.accountNo];
-        //         deleteRows(toBeDeletedIdList);
-        //     });
-        //     break;
-        // }
+        case 'del': {
+            layer.confirm('确认删除此行？', {icon: 3, title:'提示'}, function(index) {
+                let toBeDeletedIdList = [rowData.accountNo];
+                deleteRows(toBeDeletedIdList);
+            });
+            break;
+        }
     }
 });
 
