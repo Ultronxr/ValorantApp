@@ -44,14 +44,19 @@ public class RSOAuthResUri {
     public static RSOAuthResUri of(String uri) {
         RSOAuthResUri rsoARU = new RSOAuthResUri();
         rsoARU.setUri(URLDecoder.decode(uri, StandardCharsets.UTF_8));
-        List<String> list = ReUtil.getAllGroups(Pattern.compile(REGEX), rsoARU.getUri());
-        rsoARU.setAccessToken(list.get(3));
-        rsoARU.setScope(list.get(4));
-        rsoARU.setIss(list.get(5));
-        rsoARU.setIdToken(list.get(6));
-        rsoARU.setTokenType(list.get(7));
-        rsoARU.setSessionState(list.get(8));
-        rsoARU.setExpiresIn(Long.parseLong(list.get(9)));
+        try {
+            List<String> list = ReUtil.getAllGroups(Pattern.compile(REGEX), rsoARU.getUri());
+            rsoARU.setAccessToken(list.get(3));
+            rsoARU.setScope(list.get(4));
+            rsoARU.setIss(list.get(5));
+            rsoARU.setIdToken(list.get(6));
+            rsoARU.setTokenType(list.get(7));
+            rsoARU.setSessionState(list.get(8));
+            rsoARU.setExpiresIn(Long.parseLong(list.get(9)));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return rsoARU;
+        }
         return rsoARU;
     }
 

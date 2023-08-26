@@ -39,16 +39,21 @@ public class RSOUtils {
     }};
 
     static {
-        String UA = getRandomUA();
-        HEADER.put("User-Agent", UA);
-        log.info("生成随机UA={}", UA);
+        generateRandomUA();
     }
 
-    private static String getRandomUA() {
-        String UA = RandomUtil.randomStringUpper(8);
+    /**
+     * 随机生成请求头中的 User-Agent （为了避免拳头账号认证 API 403 Forbidden 问题）
+     */
+    public static void generateRandomUA() {
+        String UA = RandomUtil.randomStringUpper(10);
+        if(UA.startsWith("RIOT")) {
+            UA = RandomUtil.randomStringUpper(10);
+        }
         UA += "/";
         UA += RandomUtil.randomNumbers(1) + "." + RandomUtil.randomNumbers(2) + "." + RandomUtil.randomNumbers(2);
-        return UA;
+        HEADER.put("User-Agent", UA);
+        log.info("生成随机UA={}", UA);
     }
 
     private static final Map<String, Object> PING_BODY = new HashMap<>() {{

@@ -4,6 +4,7 @@ import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.http.Method;
+import cn.hutool.http.cookie.GlobalCookieManager;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import cn.ultronxr.valorant.auth.RSO;
@@ -19,8 +20,10 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.net.CookieStore;
 import java.net.HttpCookie;
 import java.util.List;
 
@@ -39,6 +42,43 @@ public class RSOServiceImpl implements RSOService {
     @Autowired
     private EndProductRiotAccountMapper endProductRiotAccountMapper;
 
+    /**
+     * Cookie ReAuth Test
+     */
+    public static void main(String[] args) {
+        CookieStore cookieStore = GlobalCookieManager.getCookieManager().getCookieStore();
+        // 清空 cookie ，防止服务器记住账号登录
+        List<HttpCookie> cookies = cookieStore.getCookies();
+        if(cookies.size() > 0) {
+            cookieStore.removeAll();
+            log.info("清空cookie");
+        }
+
+        HttpRequest request = HttpUtil.createPost(RSOUtils.AUTH_URL);
+
+        String cookie = "__cf_bm=I3SNpKc_aJZymOjeoxwjYwjtRSJ_BgQWjAUiyPSiRmU-1692778689-0-AR9DbCKKDcH9b6HrTOKQbxy39X7kXbV2CTvTtlvQo2LH+xWRvggShKGZUDu9Fpw0eMwjvS6e8fHerJNo+iTfmAY=; tdid=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEzYTJiMmVlLTBkOTktNDAwMC05ODcyLTA0NzYxYTQ4MmRlZCIsIm5vbmNlIjoiL1VXOGhIS0Erakk9IiwiaWF0IjoxNjkyNzc5MTg1fQ.mvqtKV3eF5ocN3epOb-nAiAvdlKvOa42bA7fYh1Dsn8; clid=as1; csid=VSF08A64Z4lrUqMxwaL7Cw.pYuWMQLdoWNYIldSF5xXbw; ssid=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzc2lkIjoiVlNGMDhBNjRaNGxyVXFNeHdhTDdDdy5wWXVXTVFMZG9XTllJbGRTRjV4WGJ3Iiwic3ViIjoiNmUxZTBmNTQtMDQwZS01OGNkLTk1ZjQtNzdiODA2Y2VmOTA4IiwiaWF0IjoxNjkyNzc5MTg1fQ.DR__1SMTUXfBkn6Bki3vRJnemi1W3bJZtqh_kbNPtgs; sub=6e1e0f54-040e-58cd-95f4-77b806cef908";
+        request.setUrl(RSOUtils.RE_AUTH_URL)
+                .method(Method.GET)
+                .headerMap(RSOUtils.getHeader(), true)
+                .header("Cookie", cookie);
+        HttpResponse responseReAuth = request.execute();
+        if(responseReAuth.getStatus() == 303 && responseReAuth.headers().containsKey("location")) {
+            // 解析 reauth 免密获取的token
+            String location = responseReAuth.header("location");
+            RSO rso = new RSO();
+            RSOUtils.resolveAuthResUri(location, rso);
+            log.info(location);
+            log.info("{}", rso.getAccessToken());
+        }
+    }
+
+    /**
+     * 每天随机生成请求头 User-Agent
+     */
+    @Scheduled(cron = "0 0 7 1/1 * ? ")
+    public void updateHeaderUA() {
+        RSOUtils.generateRandomUA();
+    }
 
     @Override
     public RSO processRSO(HttpRequest request, String username, String password, String multiFactorCode, boolean needRequestEntitlementsToken) {
@@ -46,22 +86,25 @@ public class RSOServiceImpl implements RSOService {
             return null;
         }
 
+        CookieStore cookieStore = GlobalCookieManager.getCookieManager().getCookieStore();
         // 清空 cookie ，防止服务器记住账号登录
-        List<HttpCookie> cookies = HttpRequest.getCookieManager().getCookieStore().getCookies();
+        List<HttpCookie> cookies = cookieStore.getCookies();
         if(cookies.size() > 0) {
-            HttpRequest.getCookieManager().getCookieStore().removeAll();
+            cookieStore.removeAll();
             log.info("清空cookie");
         }
 
         // TODO 2023/05/13 16:50:59 入参添加 cookie 参数，检查cookie是否过期，如果没有过期优先使用cookie进行免密登录
-        //String cookie = "__cf_bm=UARV6qco530OW9XbyJJtHed2KWC71DMEn03J57ugX5U-1683962421-0-ATev+RyOFU2/atzB8lOgqsxsmC+4ZWV9phzQs4Dg3uc5zisISx4ymRxbdyw+hJJJeAQpsTfL22rg1ZOxCXxUqgk=; tdid=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijg5YjBjODk1LWEzMTgtNDQ3ZC05MzE4LTJjMzdmNzZkZmNiYiIsIm5vbmNlIjoiRnkwUFBqcnNUOE09IiwiaWF0IjoxNjgzOTYyNDIxfQ.km_vMpl3dFUpGLPSbTwrtMnQlmZ767hkN67LT63Ijco; clid=ap1; csid=0Ej-jAhSyOLs7R6i6_FzRw.dddY7o_34UzXGYu9WCzs7w; ssid=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzc2lkIjoiMEVqLWpBaFN5T0xzN1I2aTZfRnpSdy5kZGRZN29fMzRVelhHWXU5V0N6czd3Iiwic3ViIjoiNmUxZTBmNTQtMDQwZS01OGNkLTk1ZjQtNzdiODA2Y2VmOTA4IiwibG9naW5Ub2tlbiI6IjU2MDU2ZDdiLTY3NzYtNGI2YS1hZWRiLWQxY2QwYmE0NjhjOCIsInNlcmllc1Rva2VuIjoiMDI3NGZjYzgtYjI0YS00MDBjLThkMDQtNTg5NzcyMjdhMTdmIiwiaWF0IjoxNjgzOTYyNDIxfQ.OA-m_IOQbfMxyhchCe2W56CMSgUfXgvUxyVfWWv3SlU; sub=6e1e0f54-040e-58cd-95f4-77b806cef908";
+        //String cookie = "__cf_bm=I3SNpKc_aJZymOjeoxwjYwjtRSJ_BgQWjAUiyPSiRmU-1692778689-0-AR9DbCKKDcH9b6HrTOKQbxy39X7kXbV2CTvTtlvQo2LH+xWRvggShKGZUDu9Fpw0eMwjvS6e8fHerJNo+iTfmAY=; tdid=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEzYTJiMmVlLTBkOTktNDAwMC05ODcyLTA0NzYxYTQ4MmRlZCIsIm5vbmNlIjoiL1VXOGhIS0Erakk9IiwiaWF0IjoxNjkyNzc5MTg1fQ.mvqtKV3eF5ocN3epOb-nAiAvdlKvOa42bA7fYh1Dsn8; clid=as1; csid=VSF08A64Z4lrUqMxwaL7Cw.pYuWMQLdoWNYIldSF5xXbw; ssid=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzc2lkIjoiVlNGMDhBNjRaNGxyVXFNeHdhTDdDdy5wWXVXTVFMZG9XTllJbGRTRjV4WGJ3Iiwic3ViIjoiNmUxZTBmNTQtMDQwZS01OGNkLTk1ZjQtNzdiODA2Y2VmOTA4IiwiaWF0IjoxNjkyNzc5MTg1fQ.DR__1SMTUXfBkn6Bki3vRJnemi1W3bJZtqh_kbNPtgs; sub=6e1e0f54-040e-58cd-95f4-77b806cef908";
         //request.setUrl(RSOUtils.RE_AUTH_URL)
         //        .method(Method.GET)
         //        .headerMap(RSOUtils.getHeader(), true)
         //        .header("Cookie", cookie);
-        //HttpResponse response = request.execute();
-        //if(response.getStatus() == 303 && response.headers().containsKey("location")) {
+        //HttpResponse responseReAuth = request.execute();
+        //if(responseReAuth.getStatus() == 303 && responseReAuth.headers().containsKey("location")) {
         //    // 解析reauth 免密获取的token
+        //    String location = responseReAuth.header("location");
+        //
         //}
 
         request.setUrl(RSOUtils.AUTH_URL)
@@ -76,6 +119,7 @@ public class RSOServiceImpl implements RSOService {
         if(!"response".equals(resType)) {
             request.method(Method.PUT)
                     .headerMap(RSOUtils.getHeader(), true)
+                    .cookie(cookieStore.getCookies())
                     .body(RSOUtils.getAuthBodyJsonStr(username, password, true));
             response = request.execute();
             log.info("RSO流程第二步：auth response = {}", StringUtils.substring(response.body(), 0, 100));
@@ -109,7 +153,8 @@ public class RSOServiceImpl implements RSOService {
                         case "auth_failure":
                             throw new RSOAuthFailureException();
                         case "rate_limited":
-                            throw new RSORateLimitedException();
+                            int retryAfter = Integer.parseInt(response.header("Retry-After"));
+                            throw new RSORateLimitedException(retryAfter);
                         default:
                             throw new RSOUnknownAuthErrorException();
                     }
@@ -182,6 +227,18 @@ public class RSOServiceImpl implements RSOService {
                     authFailureEx.getMessage(), account.getUserId(), account.getUsername());
             account.setIsAuthFailure(true);
             accountMapper.updateById(account);
+            return null;
+        } catch (RSORateLimitedException rateLimitedException) {
+            log.warn("RSO验证失败：exception={}, Retry-After={}秒（{}分钟）",
+                    rateLimitedException.getMessage(), rateLimitedException.getRetryAfter(), rateLimitedException.getRetryAfter() / 60.0f);
+            try {
+                long sleepMillis = (long) ((rateLimitedException.getRetryAfter() + 10) * 1000.0f);
+                log.info("触发retry-after，开始休眠，休眠时长sleepMillis={}", sleepMillis);
+                Thread.sleep(sleepMillis);
+                log.info("触发retry-after，休眠结束，休眠时长sleepMillis={}", sleepMillis);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             return null;
         } catch (Exception e) {
             log.warn("RSO验证失败：exception={}, userId={}, username={}, ", e.getMessage(), account.getUserId(), account.getUsername());
