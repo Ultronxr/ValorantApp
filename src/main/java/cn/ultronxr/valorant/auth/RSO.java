@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.ultronxr.valorant.bean.RiotClientVersion;
 import cn.ultronxr.valorant.bean.mybatis.bean.RiotAccount;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -88,10 +89,11 @@ public class RSO {
     }
 
     /**
-     * 检验 accessToken 是否过期
+     * 检验 accessToken 是否过期<br/>
+     * 过期条件：accessToken 为空，或者其有效期超时
      */
     public boolean isAccessTokenExpired() {
-        return DateUtil.compare(this.accessTokenExpireAt, DateUtil.date()) <= 0;
+        return StringUtils.isBlank(accessToken) || DateUtil.compare(this.accessTokenExpireAt, DateUtil.date()) <= 0;
     }
 
     @Override
@@ -101,6 +103,7 @@ public class RSO {
                 ", accessTokenExpireAt=" + accessTokenExpireAt +
                 ", entitlementsToken='" + entitlementsToken + '\'' +
                 ", userId='" + userId + '\'' +
+                //", cookie='" + cookie + '\'' +
                 ", riotClientPlatform='" + riotClientPlatform + '\'' +
                 ", riotClientVersion='" + riotClientVersion + '\'' +
                 ", riotClientBuild='" + riotClientBuild + '\'' +

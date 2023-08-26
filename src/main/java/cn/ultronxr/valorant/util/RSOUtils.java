@@ -38,6 +38,19 @@ public class RSOUtils {
         put("Content-Type", "application/json");
     }};
 
+    static {
+        String UA = getRandomUA();
+        HEADER.put("User-Agent", UA);
+        log.info("生成随机UA={}", UA);
+    }
+
+    private static String getRandomUA() {
+        String UA = RandomUtil.randomStringUpper(8);
+        UA += "/";
+        UA += RandomUtil.randomNumbers(1) + "." + RandomUtil.randomNumbers(2) + "." + RandomUtil.randomNumbers(2);
+        return UA;
+    }
+
     private static final Map<String, Object> PING_BODY = new HashMap<>() {{
         put("acr_values", "");
         put("claims", "");
@@ -127,7 +140,27 @@ public class RSOUtils {
         if(null == rso) {
             rso = new RSO();
         }
-        RSOAuthResUri rsoARU = RSOAuthResUri.of(uri);
+        return resolveAuthResUri(uri, rso);
+    }
+
+    /**
+     * 解析 RSO 验证流程 第2/3步 验证成功的响应结果 uri 内容<br/>
+     * 该 URI 中包含了 accessToken 等账户验证信息
+     *
+     * @param authResUri {@link RSOAuthResUri}
+     * @param rso        待更新的 RSO 对象
+     * @return 更新了 accessToken 与 userId 的 RSO 对象
+     */
+    public static RSO resolveAuthResUri(String authResUri, RSO rso) {
+        if(StringUtils.isBlank(authResUri)) {
+            return rso;
+        }
+        // 从 URI 中提取账户验证信息
+        RSOAuthResUri rsoARU = RSOAuthResUri.of(authResUri);
+        // 检查是否包含格式正确的 accessToken 信息
+        if(StringUtils.isBlank(rsoARU.getAccessToken())) {
+            return rso;
+        }
         JSONObject JWTObj = decodeJWT(rsoARU.getAccessToken());
         rso.setAccessToken(rsoARU.getAccessToken());
         rso.setAccessTokenExpireAt(getExpireAtTimeFromAccessTokenJsonObj(JWTObj));

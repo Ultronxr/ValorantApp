@@ -24,7 +24,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.jeffreyning.mybatisplus.service.MppServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -62,7 +61,15 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
 
     /** 事先每个节点更新账号 access token 的数据量 */
     @Value("${valorant.storefront.pre-update-account-token.count-per-datanode}")
-    private Long priorUpdateAccountTokenCountPerDataNode;
+    private Long preUpdateAccountTokenCountPerDataNode;
+
+    /** 预更新账号token，每两个账号请求之间的等待时间（避免触发拳头账号验证API速率上限） */
+    @Value("${valorant.storefront.pre-update-account-token.sleep-seconds-between-account}")
+    private Float preUpdateAccountSleepSecondsBetweenAccount;
+
+    /** 更新每日商店+夜市，每两个账号请求之间的等待时间（避免触发拳头账号验证API速率上限） */
+    @Value("${valorant.storefront.batch-update-both.sleep-seconds-between-account}")
+    private Float batchUpdateBothSleepSecondsBetweenAccount;
 
 
     @Override
@@ -217,8 +224,8 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
     public void preUpdateAccountToken() {
         long dataNodeIndex = dataNodeManager.getIndex(),
                 dataNodeTotal = dataNodeManager.getTotal();
-        long sqlLimitIndex = dataNodeIndex * priorUpdateAccountTokenCountPerDataNode,
-                sqlLimitCount = priorUpdateAccountTokenCountPerDataNode;
+        long sqlLimitIndex = dataNodeIndex * preUpdateAccountTokenCountPerDataNode,
+                sqlLimitCount = preUpdateAccountTokenCountPerDataNode;
         log.info("开始预更新拳头账号的 RSO token 。数据节点总数：{}，当前数据节点index：{}，当前数据节点ID：{}", dataNodeTotal, dataNodeIndex, dataNodeManager.getDataNodeId());
         log.info("预更新数据量：SQL LIMIT {},{}", sqlLimitIndex, sqlLimitCount);
 
@@ -236,7 +243,8 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
             if(rso.isAccessTokenExpired()) {
                 rsoService.updateRSO((String) userId);
                 try {
-                    Thread.sleep(2100);
+                    log.info("请求API后等待时间：{} 秒", preUpdateAccountSleepSecondsBetweenAccount);
+                    Thread.sleep((long) (preUpdateAccountSleepSecondsBetweenAccount * 1000.0f));
                 } catch (InterruptedException e) {
                     log.warn("", e);
                 }
@@ -314,7 +322,7 @@ public class StoreFrontServiceImpl extends MppServiceImpl<StoreFrontMapper, Stor
             // 处理一个账号数据需要请求4-6次API（包括RSO认证），2分钟的请求上限为20个账号，即6秒处理一个账号
             // 实测处理一个账号数据请求时间为1.5秒左右，添加 sleep
             try {
-                singleItemOffersWithSleep(userId, date, 1.6f);
+                singleItemOffersWithSleep(userId, date, batchUpdateBothSleepSecondsBetweenAccount);
             } catch (Exception e) {
                 log.warn("更新未预更新token账号的每日商店+夜市数据时抛出异常！", e);
             }

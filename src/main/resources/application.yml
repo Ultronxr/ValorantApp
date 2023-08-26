@@ -73,9 +73,16 @@ valorant:
       clear-datanode: "0 55 6 * * ? "
       add-datanode: "0 0 7 * * ? "
   storefront:
-    # 预更新拳头账号token的数据量（每个数据节点）
+    # 预更新拳头账号token
     pre-update-account-token:
-      count-per-datanode: 520
+      # 每个数据节点的预更新账号数量
+      count-per-datanode: 300
+      # 每两个账号请求之间的等待时间（避免触发拳头账号验证API速率上限）
+      sleep-seconds-between-account: 5.0
+    # 更新每日商店+夜市
+    batch-update-both:
+      # 每两个账号请求之间的等待时间（避免触发拳头账号验证API速率上限）
+      sleep-seconds-between-account: 4.0
     # 定时任务cron
     cron:
       # 预更新账号token
